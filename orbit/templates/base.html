@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block page_title %}Default Title{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/main.css">
+        <script type="text/javascript" src="{{ STATIC_URL }}js/main.js"></script>
+    </head>
+    <body>
+        {% block body %}
+            <div id="header">
+                {% block header %}
+                    <h1>{% block header_title %}{% endblock %}</h1>
+                {% endblock %}
+            </div>
+
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+
+            <div id="footer">
+                {% block footer %}
+                <hr />
+                {% endblock %}
+            </div>
+        {% endblock %}
+        <!-- print debug queries -->
+        {% if queries %}
+            <ul>
+            {% for q in queries %}
+                <li><pre>{{ q.sql }}</pre></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </body>
+</html>

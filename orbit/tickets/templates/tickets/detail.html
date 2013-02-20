@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ project.name }}: #{{ ticket.pk }} {{ ticket.summary }}</h2>
+<div class="ticket-description">
+    {{ ticket.description|safe }}
+</div>
+{% endblock %}
+

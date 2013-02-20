@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+{% load url from future %}
+<h2>Projects</h2>
+<a href="{% url 'projects-create' %}">Create a New Project</a>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+            <tr>
+                <td><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
