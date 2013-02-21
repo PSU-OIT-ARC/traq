@@ -1,3 +1,4 @@
+{% load url from future %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -11,6 +12,19 @@
                 {% block header %}
                     <h1>{% block header_title %}{% endblock %}</h1>
                 {% endblock %}
+
+                {% block nav %}
+                    {% if user.is_authenticated %}
+                        <ul>
+                            <li><a href="{% url 'projects-all' %}">Projects</a></li>
+                        </ul>
+                    {% endif %}
+                {% endblock %}
+
+                {% block breadcrums %}
+
+                {% endblock %}
+
             </div>
 
             <div id="content">
@@ -23,6 +37,7 @@
                 {% endblock %}
             </div>
         {% endblock %}
+
         <!-- print debug queries -->
         {% if queries %}
             <ul>

@@ -14,7 +14,7 @@
     <tbody>
         {% for ticket in tickets %}
             <tr>
-                <td><a href="{% url 'tickets-detail' project.pk ticket.pk %}">{{ ticket.summary }}</a></td>
+                <td><a href="{% url 'tickets-detail' project.pk ticket.pk %}">{{ ticket.title }}</a></td>
                 <td>{{ ticket.status }}</td>
             </tr>
         {% endfor %}

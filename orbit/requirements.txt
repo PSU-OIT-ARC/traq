@@ -1,0 +1,4 @@
+Django==1.4.3
+MySQL-python==1.2.4
+-e git://github.com/mdj2/django-cas.git#egg=django_cas-2.1.1-py2.6-dev
+wsgiref==0.1.2

@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
+{% import url from future %}
 
 {% block page_title %}Welcome{% endblock %}
 
-{% block header_title %}IT WORKED!{% endblock %}
+{% block header_title %}Login{% endblock %}
 
 {% block content %}
-    <p>Hello {{ user_agent }} visiting from {{ ip }}</p>
+    <p><a href="{% url 'accounts-login' %}">Login</a></p>
 {% endblock %}
 

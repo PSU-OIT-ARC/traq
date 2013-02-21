@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 import views
 import projects.views
 import tickets.views
+import accounts.views
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -9,11 +10,23 @@ import tickets.views
 
 urlpatterns = patterns('',
     url(r'^$', views.home),
+
+    # auth
+    url(r'^accounts/login/$', 'django_cas.views.login', name='accounts-login'),
+    url(r'^accounts/logout/$', 'django_cas.views.logout'),
+
+    # accounts
+    url(r'^accounts/profile/$', accounts.views.profile, name='accounts-profile'),
+
+    # projects
     url(r'^projects/create/?$', projects.views.create, name='projects-create'),
     url(r'^projects/?$', projects.views.all, name='projects-all'),
     url(r'^projects/(\d+)/?$', projects.views.detail, name='projects-detail'),
-    url(r'^projects/(\d+)/tickets/create?$', tickets.views.create, name='tickets-create'),
+
+    # tickets
+    url(r'^projects/(\d+)/tickets/create/?$', tickets.views.create, name='tickets-create'),
     url(r'^projects/(\d+)/tickets/(\d+)/?$', tickets.views.detail, name='tickets-detail'),
+    url(r'^projects/(\d+)/tickets/(\d+)/edit/?$', tickets.views.edit, name='tickets-edit'),
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),
     # url(r'^example/', include('example.foo.urls')),
