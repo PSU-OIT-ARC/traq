@@ -4,38 +4,41 @@
     <head>
         <title>{% block page_title %}Default Title{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/main.css">
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/main.js"></script>
     </head>
     <body>
         {% block body %}
-            <div id="header">
-                {% block header %}
-                    <h1>{% block header_title %}{% endblock %}</h1>
-                {% endblock %}
-
-                {% block nav %}
-                    {% if user.is_authenticated %}
-                        <ul>
-                            <li><a href="{% url 'projects-all' %}">Projects</a></li>
+            <div id="wrapper">
+                <div id="header">
+                    {% block header %}
+                        <ul id="nav-breadcrums">
+                            {% block breadcrums %}{% endblock %}
                         </ul>
-                    {% endif %}
-                {% endblock %}
 
-                {% block breadcrums %}
+                        {% block nav %}
+                            {% if user.is_authenticated %}
+                                <ul id="nav-account">
+                                    <li><a href="{% url 'accounts-profile' %}">{{ user.username }}</a></li>
+                                    <li><a href="{% url 'accounts-logout' %}">Logout</a></li>
+                                </ul>
+                            {% endif %}
+                        {% endblock %}
+                        <div class="clear"></div>
+                    {% endblock %}
+                </div>
 
-                {% endblock %}
+                <div id="content">
+                    {% block content %}{% endblock %}
+                    <div class="clear"></div>
+                </div>
 
-            </div>
-
-            <div id="content">
-                {% block content %}{% endblock %}
-            </div>
-
-            <div id="footer">
-                {% block footer %}
-                <hr />
-                {% endblock %}
-            </div>
+                <div id="footer">
+                    {% block footer %}
+                    <hr />
+                    {% endblock %}
+                </div>
+            </div> <!-- /wrapper -->
         {% endblock %}
 
         <!-- print debug queries -->
@@ -46,5 +49,6 @@
             {% endfor %}
             </ul>
         {% endif %}
+
     </body>
 </html>

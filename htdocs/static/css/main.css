@@ -1,1 +1,262 @@
-body { background-color:#efefef; }
+/* 
+ * green: #6a7f10 
+ * light-gray: #ddd;
+ */
+body { 
+    background-color:#efefef; 
+}
+
+h2, h3, h4 {
+    margin-bottom:0;
+}
+
+label {
+    display:block;
+}
+
+input {
+    display:block;
+}
+
+.inline {
+    display:inline;
+}
+
+.errorlist {
+    color:#ff0000;
+}
+
+.error {
+    color:#ff0000;
+}
+
+p.error {
+    margin:0;
+    padding:0;
+}
+
+.clear {
+    clear:both;
+}
+
+.float-left {
+    float:left;
+}
+
+.float-right {
+    float:right;
+}
+
+.center {
+    /* override default alignment */
+    text-align:center !important;
+}
+
+.button {
+    font-size:10px;
+    display:inline-block;
+    font-family:Verdana, Arial;
+    vertical-align:middle;
+    text-transform:uppercase;
+    color:#000;
+    font-weight:bold;
+}
+
+#wrapper {
+    width:960px;
+    margin:auto;
+    background-color:#fff;
+}
+
+#header {
+    background-color:#6a7f10;
+    padding:3px;
+}
+
+#header a:link,
+#header a:visited,
+#header a:hover {
+    color:#ffffff;
+}
+
+#nav-account {
+    float:right;
+    list-style-type:none;
+    margin:0;
+}
+
+#nav-account li {
+    float:left;
+    margin-left:10px;
+}
+
+#nav-breadcrums {
+    float:left;
+    list-style-type:none;
+    margin:0;
+    color:#fff;
+    padding:0;
+}
+
+
+#nav-breadcrums li {
+    float:left;
+}
+
+#nav-breadcrums li:after {
+    padding-left:5px;
+    padding-right:5px;
+    content: ">";
+}
+
+#nav-breadcrums li:last-child:after {
+    content:"";
+}
+
+#content {
+    padding-left:20px;
+    padding-right:20px;
+}
+
+.ticket-wrapper {
+    width:600px;
+    float:left;
+}
+
+.ticket {
+    border:1px solid #ddd;
+    border-radius:5px;
+    margin-top:10px;
+}
+
+.ticket-info {
+    background-color:#6a7f10;
+    padding:5px;
+    color:#fff;
+}
+
+.ticket-info ul {
+    float:left;
+    list-style-type:none;
+    margin:0;
+    padding:0;
+    font-size:12px;
+}
+
+.ticket-info li {
+    float:left;
+    margin-right:10px;
+}
+
+.ticket-status {
+    background-color:#ffffff;
+    color:#000;
+}
+
+.ticket-body {
+    padding:5px;
+
+}
+
+.comment-info {
+    background-color:#ddd;
+    padding:5px;
+}
+
+.comment-info ul {
+    float:left;
+    list-style-type:none;
+    margin:0;
+    padding:0;
+    font-size:12px;
+}
+
+.comment-info li {
+    float:left;
+    margin-right:10px;
+}
+
+.ticket-sidebar h3 {
+    margin-top:0px;
+    color:#fff;
+    padding:3px;
+}
+
+.ticket-sidebar {
+    float:right;
+    width:300px;
+}
+
+.work-wrapper, .timer-wrapper {
+    background-color:#6a7f10;
+    border:1px solid #6a7f10;
+    border-radius:5px;
+    padding-bottom:5px;
+    margin-bottom:10px;
+}
+
+#work-form {
+    background-color:#fff;
+}
+
+.timer-clock-control {
+    font-size:12px;
+}
+
+.timer-wrapper {
+}
+
+.work-log {
+    font-size:12px;
+    background-color:#fff;
+    width:100%;
+    border:none;
+    border-spacing:0;
+}
+
+.work-log th {
+    padding:0;
+    text-align:left;
+    padding-top:3px;
+}
+
+.work-log td {
+    padding-bottom:3px;
+    padding-left:3px;
+}
+
+.work-log th:first-child {
+    padding-left:3px;
+}
+
+.work-log th:last-child {
+    text-align:right;
+    padding-right:3px;
+}
+
+.work-log tr.even td,
+.work-log tr.even th {
+    background-color:#efefef;
+}
+
+.work-log p {
+    padding:0;
+    margin:0;
+}
+
+#work-form {
+    padding:3px;
+}
+
+#work-form input, #work-form label {
+    display:inline-block;
+}
+
+#work-form #id_time, #work-form label {
+    width:80px;
+}
+
+#work-form label {
+    padding-right:4px
+}
+

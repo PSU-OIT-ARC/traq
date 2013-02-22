@@ -1,6 +1,6 @@
 from django import forms
-from .models import Ticket, Comment
-from ..projects.models import Attribute
+from .models import Ticket, Comment, Work
+from ..projects.models import Attribute, AttributeTypeName
 
 class TicketForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -16,9 +16,9 @@ class TicketForm(forms.ModelForm):
         self.instance.created_by = created_by
 
         # add the choices for the enum fields
-        self.fields['status'].queryset = Attribute.objects.asChoiceList('ticket_status')
+        self.fields['status'].queryset = Attribute.objects.ofType(AttributeTypeName.TICKET_STATUS)
         self.fields['status'].empty_label = None
-        self.fields['priority'].queryset = Attribute.objects.asChoiceList('ticket_priority')
+        self.fields['priority'].queryset = Attribute.objects.ofType(AttributeTypeName.TICKET_PRIORITY)
         self.fields['priority'].empty_label = None
 
         # a ticket doesn't neccessarily need to be assigned to anyone.
@@ -45,3 +45,23 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         exclude = ('ticket', 'created_by')
+
+class WorkForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        # these fields won't appear on the form; they need to be specified by
+        # the caller
+        ticket = kwargs.pop("ticket")
+        created_by = kwargs.pop("created_by")
+
+        super(WorkForm, self).__init__(*args, **kwargs)
+
+        self.instance.ticket = ticket
+        self.instance.created_by = created_by
+
+        self.fields['type'].queryset = Attribute.objects.ofType(AttributeTypeName.WORK_TYPE)
+        self.fields['type'].empty_label = None
+
+    class Meta:
+        model = Work
+        exclude = ('ticket', 'created_by')
+

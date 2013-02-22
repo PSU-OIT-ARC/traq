@@ -14,11 +14,17 @@ class Project(models.Model):
 # each attribute type (so the attribute type "ticket_status" would contain a
 # bunch of rows like "started", "working on", "completed")
 
+# enums for the AttributeType table
+class AttributeTypeName:
+    TICKET_STATUS = "ticket_status"
+    TICKET_PRIORITY = "ticket_priority"
+    WORK_TYPE = "work_type"
+
 # The Attribute model has a custom manager that has some helper methods
 class AttributeManager(models.Manager):
     # Returns a list of tuples for the attribute of type_name
     # Useful when setting the choices parameter on model fields
-    def asChoiceList(self, type_name):
+    def ofType(self, type_name):
         return Attribute.objects.filter(type__name=type_name).order_by("rank")
 
 class AttributeType(models.Model):

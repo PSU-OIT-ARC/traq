@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></li>
+    <li>Work</li>
+    <li>"{{ work.description }}"</li>
+    <li>Edit</li>
+{% endblock %}
+
+{% block content %}
+<h2>Edit Work</h2>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="submit" value="Submit" />
+</form>
+{% endblock %}
+

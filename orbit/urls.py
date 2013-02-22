@@ -13,7 +13,7 @@ urlpatterns = patterns('',
 
     # auth
     url(r'^accounts/login/$', 'django_cas.views.login', name='accounts-login'),
-    url(r'^accounts/logout/$', 'django_cas.views.logout'),
+    url(r'^accounts/logout/$', 'django_cas.views.logout', name='accounts-logout'),
 
     # accounts
     url(r'^accounts/profile/$', accounts.views.profile, name='accounts-profile'),
@@ -25,8 +25,13 @@ urlpatterns = patterns('',
 
     # tickets
     url(r'^projects/(\d+)/tickets/create/?$', tickets.views.create, name='tickets-create'),
-    url(r'^projects/(\d+)/tickets/(\d+)/?$', tickets.views.detail, name='tickets-detail'),
-    url(r'^projects/(\d+)/tickets/(\d+)/edit/?$', tickets.views.edit, name='tickets-edit'),
+    url(r'^tickets/(\d+)/?$', tickets.views.detail, name='tickets-detail'),
+    url(r'^tickets/(\d+)/edit/?$', tickets.views.edit, name='tickets-edit'),
+    # comments
+    url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),
+    # work
+    url(r'^work/(\d+)/edit/?$', tickets.views.work_edit, name='work-edit'),
+    #url(r'^projects/(\d+)/tickets/(\d+)/comments/edit/?$', tickets.views.edit, name='tickets-edit'),
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),
     # url(r'^example/', include('example.foo.urls')),
