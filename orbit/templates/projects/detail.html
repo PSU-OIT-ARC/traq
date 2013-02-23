@@ -1,24 +1,55 @@
 {% extends "base.html" %}
-{% block content %}
 {% load url from future %}
+{% load tickets_time %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li>{{ project.name }}</li>
+{% endblock %}
+{% block content %}
 <h2>{{ project.name }}</h2>
-<h3>Tickets</h3>
-<a href="{% url 'tickets-create' project.pk %}">New Ticket</a>
-<table>
-    <thead>
-        <tr>
-            <td>Ticket</td>
-            <td>Status</td>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ticket in tickets %}
-            <tr>
-                <td><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></td>
-                <td>{{ ticket.status }}</td>
-            </tr>
-        {% endfor %}
-</table>
 
+
+<div class="left-section-wrapper">
+    <h3>Tickets <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a></h3>
+    <table class="table-info">
+        <thead>
+            <tr>
+                <th>Ticket</th>
+                <th>Component</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+                <tr class="ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
+                    <td><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></td>
+                    <td>{{ ticket.component }}</td>
+                    <td>{{ ticket.status }}</td>
+                    <td>{{ ticket.assigned_to }}</td>
+                    <td class="ticket-priority">{{ ticket.priority }}</td>
+                </tr>
+            {% empty %}
+                <tr><td class="center" colspan="5">No tickets</td></td>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="right-section-wrapper">
+    <div class="right-section-block">
+        <h3>Components <a href="{% url 'components-create' project.pk %}" class="button">Create</a></h3>
+        <table class="block-table">
+            {% for comp in components %}
+                <tr class="{% cycle 'odd' 'even' %}">
+                    <td>{{ comp.name }}</td>
+                    <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+</div>
 {% endblock %}
 

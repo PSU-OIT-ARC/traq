@@ -1,15 +1,16 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.db import connection
 from .forms import TicketForm, CommentForm, WorkForm
 from .models import Ticket, Comment, Work
-from ..projects.models import Project, Attribute, AttributeTypeName
+from ..projects.models import Project
 
 def detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
-    comments = Comment.objects.filter(ticket=ticket)
-    work = Work.objects.filter(ticket=ticket).order_by('-created_on')
+    comments = Comment.objects.filter(ticket=ticket).select_related('created_by')
+    work = Work.objects.filter(ticket=ticket).select_related("created_by").order_by('-created_on')
     times = ticket.totalTimes()
 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
@@ -38,6 +39,7 @@ def detail(request, ticket_id):
         'comment_form': comment_form,
         'work_form': work_form,
         'times': times,
+        'queries': connection.queries,
     })
     
 
@@ -47,7 +49,7 @@ def create(request, project_id):
         form = TicketForm(request.POST, project=project, created_by=request.user)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse("tickets-detail", args=(project.pk, form.instance.pk)))
+            return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
     else:
         form = TicketForm(project=project, created_by=request.user)
 
@@ -63,7 +65,7 @@ def edit(request, ticket_id):
         form = TicketForm(request.POST, instance=ticket, project=project, created_by=ticket.created_by)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse("tickets-detail", args=(project.pk, form.instance.pk)))
+            return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
     else:
         form = TicketForm(instance=ticket, project=project, created_by=ticket.created_by)
 

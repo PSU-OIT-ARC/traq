@@ -14,7 +14,7 @@
 <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
 </h2>
 
-<div class="ticket-wrapper">
+<div class="left-section-wrapper">
     <div class="ticket">
         <div class="ticket-info">
             <ul>
@@ -32,6 +32,7 @@
             <ul>
                 <li><strong>Estimated Time:</strong> {{ ticket.estimated_time|tickettime }}</li>
                 <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li>
+                <li><strong>Component:</strong> {{ ticket.component }} </li>
             </ul>
             <div class="clear"></div>
         </div>
@@ -68,8 +69,8 @@
     </div>
 </div>
 
-<div class="ticket-sidebar">
-    <div class="timer-wrapper">
+<div class="right-section-wrapper">
+    <div class="right-section-block">
         <h3>Add Work <a class="timer-clock-control button" href="#" id="timer-clock">start clock</a></h3>
         <form id="work-form" action="" method="post">
             {% if work_form.errors %}
@@ -93,9 +94,9 @@
         </form>
     </div>
 
-    <div class="work-wrapper">
+    <div class="right-section-block">
         <h3>Work Log</h3>
-        <table class="work-log">
+        <table class="block-table">
         {% for w in work %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <th>{{ w.created_by }} <a href="{% url 'work-edit' w.pk %}" class="button">Edit</a></th>
@@ -115,6 +116,8 @@
             <tr class="{% cycle 'odd' 'even' %}">
                 <td colspan="3">{{ w.description }}</td>
             </tr>
+        {% empty %}
+            <tr><th class="center">No work logged on this ticket</th></tr>
         {% endfor %}
         </table>
     </div>

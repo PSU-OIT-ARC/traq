@@ -1,6 +1,5 @@
 from django import forms
-from .models import Ticket, Comment, Work
-from ..projects.models import Attribute, AttributeTypeName
+from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkType
 
 class TicketForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -15,15 +14,18 @@ class TicketForm(forms.ModelForm):
         self.instance.project = project
         self.instance.created_by = created_by
 
-        # add the choices for the enum fields
-        self.fields['status'].queryset = Attribute.objects.ofType(AttributeTypeName.TICKET_STATUS)
+        # remove the blank choices from the fields
         self.fields['status'].empty_label = None
-        self.fields['priority'].queryset = Attribute.objects.ofType(AttributeTypeName.TICKET_PRIORITY)
         self.fields['priority'].empty_label = None
+
+        if not self.is_bound:
+            self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
+            self.fields['priority'].initial = TicketPriority.objects.get(is_default=1)
 
         # a ticket doesn't neccessarily need to be assigned to anyone.
         # for some reason, you can't set this in the model field
         self.fields['assigned_to'].required = False
+        self.fields['component'].required = False
 
     class Meta:
         model = Ticket
@@ -58,8 +60,10 @@ class WorkForm(forms.ModelForm):
         self.instance.ticket = ticket
         self.instance.created_by = created_by
 
-        self.fields['type'].queryset = Attribute.objects.ofType(AttributeTypeName.WORK_TYPE)
         self.fields['type'].empty_label = None
+        if not self.is_bound:
+            self.fields['type'].initial = WorkType.objects.get(is_default=1)
+
 
     class Meta:
         model = Work

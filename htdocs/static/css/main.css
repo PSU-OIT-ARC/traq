@@ -62,6 +62,26 @@ p.error {
     font-weight:bold;
 }
 
+.table-info {
+    border-spacing:0;
+}
+
+.table-info th {
+    background-color:#6a7f10;
+    color:#fff;
+    text-align:center;
+    padding:3px;
+}
+
+.table-info td {
+    padding:3px;
+}
+
+.table-info tr.even td,
+.table-info tr.even th {
+    background-color:#efefef;
+}
+
 #wrapper {
     width:960px;
     margin:auto;
@@ -118,7 +138,7 @@ p.error {
     padding-right:20px;
 }
 
-.ticket-wrapper {
+.left-section-wrapper {
     width:600px;
     float:left;
 }
@@ -176,18 +196,18 @@ p.error {
     margin-right:10px;
 }
 
-.ticket-sidebar h3 {
+.right-section-wrapper h3 {
     margin-top:0px;
     color:#fff;
     padding:3px;
 }
 
-.ticket-sidebar {
+.right-section-wrapper {
     float:right;
     width:300px;
 }
 
-.work-wrapper, .timer-wrapper {
+.right-section-block {
     background-color:#6a7f10;
     border:1px solid #6a7f10;
     border-radius:5px;
@@ -203,10 +223,7 @@ p.error {
     font-size:12px;
 }
 
-.timer-wrapper {
-}
-
-.work-log {
+.block-table {
     font-size:12px;
     background-color:#fff;
     width:100%;
@@ -214,32 +231,32 @@ p.error {
     border-spacing:0;
 }
 
-.work-log th {
+.block-table th {
     padding:0;
     text-align:left;
     padding-top:3px;
 }
 
-.work-log td {
+.block-table td {
     padding-bottom:3px;
     padding-left:3px;
 }
 
-.work-log th:first-child {
+.block-table th:first-child {
     padding-left:3px;
 }
 
-.work-log th:last-child {
+.block-table th:last-child {
     text-align:right;
     padding-right:3px;
 }
 
-.work-log tr.even td,
-.work-log tr.even th {
+.block-table tr.even td,
+.block-table tr.even th {
     background-color:#efefef;
 }
 
-.work-log p {
+.block-table p {
     padding:0;
     margin:0;
 }
@@ -260,3 +277,29 @@ p.error {
     padding-right:4px
 }
 
+.ticket-priority-normal .ticket-priority {
+    color:#6a7f10;
+}
+
+.ticket-priority-high .ticket-priority {
+    color:#ff0000;
+}
+
+.ticket-priority-low .ticket-priority {
+    color:#0000ff;
+}
+
+.ticket-status-closed {
+}
+
+.ticket-status-closed .ticket-priority {
+    color:#000;
+}
+
+.ticket-status-closed td {
+    opacity:.3;
+}
+
+.ticket-status-closed:hover td {
+    opacity:1;
+}
