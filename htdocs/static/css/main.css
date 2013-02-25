@@ -47,6 +47,51 @@ p.error {
     float:right;
 }
 
+/* these colors are from twitter bootstrap */
+.label-default {
+    background-color:#999999;
+}
+
+.label-success {
+    background-color:#468847;
+}
+
+.label-warning {
+    background-color:#f89406;
+}
+
+.label-important{
+    background-color:#b94a48;
+}
+
+.label-info {
+    background-color:##3a87ad;
+}
+
+.alert {
+    padding: 8px 35px 8px 14px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    border: 1px solid #fbeed5;
+}
+
+.alert-error {
+    color: #b94a48;
+    background-color: #f2dede;
+    border-color: #eed3d7;
+}
+
+.alert-success {
+    color: #468847;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+ 
+/* end bootstrap stuff */
+.messages {
+    margin-top:10px;
+}
+
 .center {
     /* override default alignment */
     text-align:center !important;
@@ -60,6 +105,26 @@ p.error {
     text-transform:uppercase;
     color:#000;
     font-weight:bold;
+}
+
+.table-info {
+    border-spacing:0;
+}
+
+.table-info th {
+    background-color:#6a7f10;
+    color:#fff;
+    text-align:left;
+    padding:3px;
+}
+
+.table-info td {
+    padding:3px;
+}
+
+.table-info tr.even td,
+.table-info tr.even th {
+    background-color:#efefef;
 }
 
 #wrapper {
@@ -118,7 +183,7 @@ p.error {
     padding-right:20px;
 }
 
-.ticket-wrapper {
+.left-section-wrapper {
     width:600px;
     float:left;
 }
@@ -176,18 +241,18 @@ p.error {
     margin-right:10px;
 }
 
-.ticket-sidebar h3 {
+.right-section-wrapper h3 {
     margin-top:0px;
     color:#fff;
     padding:3px;
 }
 
-.ticket-sidebar {
+.right-section-wrapper {
     float:right;
     width:300px;
 }
 
-.work-wrapper, .timer-wrapper {
+.right-section-block {
     background-color:#6a7f10;
     border:1px solid #6a7f10;
     border-radius:5px;
@@ -203,10 +268,7 @@ p.error {
     font-size:12px;
 }
 
-.timer-wrapper {
-}
-
-.work-log {
+.block-table {
     font-size:12px;
     background-color:#fff;
     width:100%;
@@ -214,32 +276,32 @@ p.error {
     border-spacing:0;
 }
 
-.work-log th {
+.block-table th {
     padding:0;
     text-align:left;
     padding-top:3px;
 }
 
-.work-log td {
+.block-table td {
     padding-bottom:3px;
     padding-left:3px;
 }
 
-.work-log th:first-child {
+.block-table th:first-child {
     padding-left:3px;
 }
 
-.work-log th:last-child {
+.block-table th:last-child {
     text-align:right;
     padding-right:3px;
 }
 
-.work-log tr.even td,
-.work-log tr.even th {
+.block-table tr.even td,
+.block-table tr.even th {
     background-color:#efefef;
 }
 
-.work-log p {
+.block-table p {
     padding:0;
     margin:0;
 }
@@ -260,3 +322,42 @@ p.error {
     padding-right:4px
 }
 
+.ticket-priority {
+    display:inline-block;
+    font-size:11px;
+    color:#ffffff;
+    font-weight:bold;
+    padding:3px;
+    border-radius:5px;
+}
+
+.ticket-priority-normal .ticket-priority {
+    background-color:#f89406;
+}
+
+.ticket-priority-high .ticket-priority {
+    background-color:#b94a48;
+}
+
+.ticket-priority-low .ticket-priority {
+    background-color:#3a87ad;
+}
+
+.ticket-status-closed {
+}
+
+.ticket-status-closed .ticket-priority {
+
+}
+
+.ticket-status-closed td {
+    opacity:.3;
+}
+
+.ticket-status-closed:hover td {
+}
+
+#ticket-quick-form {
+    background-color:#fff;
+    padding:3px;
+}
