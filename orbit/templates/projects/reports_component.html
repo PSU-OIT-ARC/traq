@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load tickets_time %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>Reports</li>
+    <li>Components</li>
+{% endblock %}
+{% block content %}
+
+<h2>{{ project.name }}</h2>
+<table class="report">
+{% for comp in components %}
+    <tr>
+        <th colspan="2">{{ comp.name }}</th>
+        <th style="width:75px">{{ comp.total|tickettime }}</th>
+        <th style="width:75px">{{ comp.billable|tickettime }}</th>
+        <th style="width:75px">{{ comp.non_billable|tickettime }}</th>
+    </tr>
+    {% for ticket in comp.ticket_set.all %}
+        <tr>
+            <td>&nbsp;</td>
+            <td>{{ ticket.title }}</td>
+            <td>{{ ticket.totalTimes.total|tickettime }}</td>
+            <td>{{ ticket.totalTimes.billable|tickettime }}</td>
+            <td>{{ ticket.totalTimes.non_billable|tickettime }}</td>
+        </tr>
+    {% endfor %}
+{% endfor %}
+</table>
+
+{% endblock %}

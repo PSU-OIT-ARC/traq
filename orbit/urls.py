@@ -24,6 +24,10 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/?$', projects.views.detail, name='projects-detail'),
     # components
     url(r'^projects/(\d+)/components/create/?$', projects.views.components_create, name='components-create'),
+    url(r'^components/(\d+)/edit/?$', projects.views.components_edit, name='components-edit'),
+    # reports
+    url(r'^projects/(\d+)/reports/grid/?$', projects.views.reports_grid, name='projects-reports-grid'),
+    url(r'^projects/(\d+)/reports/component/?$', projects.views.reports_component, name='projects-reports-component'),
 
     # tickets
     url(r'^projects/(\d+)/tickets/create/?$', tickets.views.create, name='tickets-create'),

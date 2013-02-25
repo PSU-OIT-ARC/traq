@@ -48,10 +48,9 @@ class Ticket(models.Model):
     def totalTimes(self):
         rows = Ticket.objects.raw("""
             SELECT ticket_id, 
-            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE ticket_id = %s) AS total_time,
-            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE ticket_id = %s AND billable = 1) AS billable_time,
-            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE ticket_id = %s AND billable = 0) AS non_billable_time
-
+            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s) AS total_time,
+            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND billable = 1) AS billable_time,
+            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND billable = 0) AS non_billable_time
             FROM ticket 
             WHERE ticket_id = %s
         """, (self.pk, self.pk, self.pk, self.pk))
@@ -105,8 +104,6 @@ class Work(models.Model):
         db_table = 'work'
         ordering = ['-created_on']
     objects = WorkManager()
-
-
 
 class CommentManager(models.Manager):
     def get_query_set(self):

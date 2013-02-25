@@ -47,6 +47,14 @@ p.error {
     float:right;
 }
 
+.report th {
+    text-align:left;
+}
+
+.report th, .report td {
+    border:1px solid black;
+}
+
 /* these colors are from twitter bootstrap */
 .label-default {
     background-color:#999999;
@@ -260,6 +268,11 @@ p.error {
     margin-bottom:10px;
 }
 
+.inner {
+    background-color:#fff;
+    padding:3px;
+}
+
 #work-form {
     background-color:#fff;
 }
@@ -359,4 +372,9 @@ p.error {
 #ticket-quick-form {
     background-color:#fff;
     padding:3px;
+}
+
+#ticket-search {
+    display:inline-block;
+    float:right;
 }

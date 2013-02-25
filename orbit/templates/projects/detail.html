@@ -8,13 +8,52 @@
 {% block content %}
 
 <h2>{{ project.name }}</h2>
+<script type="text/javascript">
+TICKETS = {{ tickets_json|safe }};
+$(document).ready(function(){
+    $('#ticket-search').bind('keyup', function(e){
+        if(e.keyCode == 13){ // user hit enter key
+            window.location = $('#ticket-list tbody tr:visible a:first').attr('href');
+        }
+        var needles = $(this).val().toLowerCase().split(/\s+/g)
+        // for each ticket
+        for(var i = 0; i < TICKETS.length; i++){
+            var ticket = TICKETS[i];
+            var elements = $('#t1-' + ticket.ticket_id + ", #t2-" + ticket.ticket_id);
+            elements.hide();
+            // keep track of how many needles were found
+            var found_needles = 0;
+            // try to find all the needles in this ticket
+            for(var j = 0; j < needles.length; j++){
+                var needle = needles[j];
+                // search all the fields of this ticket for the needle
+                for(var k in ticket){
+                    var haystack = ticket[k];
+                    if(haystack == null) continue;
+                    // found the needle?
+                    if(haystack.toString().toLowerCase().indexOf(needles[j]) != -1){
+                        found_needles++;
+                        break;
+                    }
+                }
+            }
+            // if we found all the needles, then this ticket matches our search
+            // term
+            if(found_needles == needles.length){
+                elements.show();
+            }
+        }
+    });
+})
+</script>
 
 <div class="left-section-wrapper">
-    <h3>Tickets <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a></h3>
-    <form action="" method="POST">
-        {% csrf_token %}
-    </form>
-    <table class="table-info">
+    <h3>Tickets 
+        <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a>
+        <input type="text" name="search" id="ticket-search" placeholder="Search" />
+    </h3>
+    <div class="clear"></div>
+    <table class="table-info" id="ticket-list">
         <thead>
             <tr>
                 <th>Ticket</th>
@@ -25,13 +64,13 @@
         </thead>
         <tbody>
             {% for ticket in tickets %}
-                <tr class="ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
+                <tr id="t1-{{ ticket.pk }}" class="ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
                     <td colspan="4">
                         <span class="ticket-priority">{{ ticket.priority }}</span> 
                         <a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a>
                     </td>
                 </tr>
-                <tr class="ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
+                <tr id="t2-{{ ticket.pk }}" class="ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
                     <td>{{ ticket.component }}</td>
                     <td class="center">{{ ticket.status }}</td>
                     <td class="center">
@@ -77,7 +116,7 @@
         <table class="block-table">
             {% for comp in components %}
                 <tr class="{% cycle 'odd' 'even' %}">
-                    <td>{{ comp.name }}</td>
+                    <td>{{ comp.name }} <a href="{% url 'components-edit' comp.pk %}" class="button">Edit</a></td>
                     <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
                 </tr>
             {% endfor %}
@@ -111,6 +150,16 @@
             <tr><th class="center">No work logged on this project</th></tr>
         {% endfor %}
         </table>
+    </div>
+
+    <div class="right-section-block">
+        <h3>Reports</h3>
+        <div class="inner">
+            <ul>
+                <li><a href="{% url 'projects-reports-grid' project.pk %}">People and Time</a></li>
+                <li><a href="{% url 'projects-reports-component' project.pk %}">Component Breakdown</a></li>
+            </ul>
+        </div>
     </div>
 </div>
 {% endblock %}

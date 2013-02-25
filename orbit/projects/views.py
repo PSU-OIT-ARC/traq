@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -19,6 +20,7 @@ def detail(request, project_id):
     tickets = project.tickets()
     components = Component.objects.withTimes(project=project)
     work = project.latestWork(10)
+    tickets_json = project.tickets(to_json=True)
     if request.POST:
         form = QuickTicketForm(request.POST, project=project, created_by=request.user)
         if form.is_valid():
@@ -37,6 +39,7 @@ def detail(request, project_id):
         'components': components,
         'form': form,
         'work': work,
+        'tickets_json': tickets_json,
     })
     
 
@@ -68,4 +71,32 @@ def components_create(request, project_id):
     return render(request, 'projects/components_create.html', {
         'project': project,
         'form': form,
+    })
+
+def components_edit(request, component_id):
+    component = get_object_or_404(Component, pk=component_id)
+    project = component.project
+    if request.method == "POST":
+        form = ComponentForm(request.POST, instance=component, project=project)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
+    else:
+        form = ComponentForm(instance=component, project=project)
+
+    return render(request, 'projects/components_create.html', {
+        'project': project,
+        'form': form,
+    })
+
+def reports_grid(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    return HttpResponse("<img src='/static/img/mharvey.gif'/>")
+
+def reports_component(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    components = Component.objects.withTimes(project=project)
+    return render(request, 'projects/reports_component.html', {
+        'project': project,
+        'components': components,
     })

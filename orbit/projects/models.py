@@ -1,5 +1,8 @@
+import json
 from datetime import timedelta
 from django.db import models
+from django.db import connection
+from ..utils import dictfetchall, jsonhandler
 
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
@@ -18,12 +21,12 @@ class Project(models.Model):
             c.save()
 
     def defaultComponent(self):
-        return Component.objects.get(project=self, is_default=1)
+        return Component.objects.filter(project=self, is_default=1).order_by('rank')
 
     def latestWork(self, n):
         return Work.objects.filter(ticket__project=self).select_related('created_by', 'type')[:n]
 
-    def tickets(self):
+    def tickets(self, to_json=False):
         rows = Ticket.objects.filter(project=self).select_related(
             'status', 
             'priority', 
@@ -31,14 +34,30 @@ class Project(models.Model):
             'created_by',
             'component',
         ).extra(select={
-            "global_order": "IF(ticket_status.importance = 0, ticket.created_on, 0)"
+            # the sort order
+            "global_order": "IF(ticket_status.importance = 0, ticket.created_on, 0)",
+            # because the column name "name" is used in all these tables, alias
+            # each name column with something else, so when converted to a dict,
+            # the columns don't disappear
+            "status_name": "ticket_status.name",
+            "priority_name": "ticket_priority.name",
+            "component_name": "component.name",
         }).order_by("-status__importance", "-global_order", "-priority__rank")
-        return rows
+
+        if not to_json:
+            return rows
+
+        cursor = connection.cursor()
+        cursor.execute(str(rows.query))
+        return json.dumps(dictfetchall(cursor), default=jsonhandler)
 
     class Meta:
         db_table = 'project'
 
 class ComponentManager(models.Manager):
+    def get_query_set(self):
+        return super(ComponentManager, self).get_query_set().filter(is_deleted=False)
+
     def withTimes(self, project):
         rows = Component.objects.raw("""
             SELECT 
@@ -51,7 +70,8 @@ class ComponentManager(models.Manager):
             LEFT JOIN ticket ON ticket.component_id = component.component_id AND ticket.project_id = %s 
             LEFT JOIN `work` ON `work`.ticket_id = ticket.ticket_id
             WHERE
-                component.project_id = %s
+                component.project_id = %s AND
+                component.is_deleted = 0
             GROUP BY 
                 component.component_id
         """, (project.pk, project.pk))
@@ -71,6 +91,7 @@ class Component(models.Model):
     rank = models.IntegerField()
     is_default = models.BooleanField(default=False)
     project = models.ForeignKey(Project)
+    is_deleted = models.BooleanField(default=False)
 
     objects = ComponentManager()
 
