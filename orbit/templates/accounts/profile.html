@@ -6,7 +6,8 @@
 {% block header_title %}Orbit{% endblock %}
 
 {% block content %}
-<p>Hi {{ user.username }}</p>
+<p>Hi {{ user.username }},</p>
+<p><a href="{% url 'projects-all' %}">Move along</a>. Nothing to see here.</p>
     
 {% endblock %}
 
