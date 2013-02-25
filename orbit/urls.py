@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     url(r'^projects/create/?$', projects.views.create, name='projects-create'),
     url(r'^projects/?$', projects.views.all, name='projects-all'),
     url(r'^projects/(\d+)/?$', projects.views.detail, name='projects-detail'),
+    # components
+    url(r'^projects/(\d+)/components/create/?$', projects.views.components_create, name='components-create'),
 
     # tickets
     url(r'^projects/(\d+)/tickets/create/?$', tickets.views.create, name='tickets-create'),
