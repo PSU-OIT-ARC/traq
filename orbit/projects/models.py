@@ -70,7 +70,6 @@ class Component(models.Model):
     name = models.CharField(max_length=255)
     rank = models.IntegerField()
     is_default = models.BooleanField(default=False)
-
     project = models.ForeignKey(Project)
 
     objects = ComponentManager()

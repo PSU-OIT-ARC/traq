@@ -104,8 +104,9 @@ class Work(models.Model):
     class Meta:
         db_table = 'work'
         ordering = ['-created_on']
-
     objects = WorkManager()
+
+
 
 class CommentManager(models.Manager):
     def get_query_set(self):
