@@ -1,24 +1,117 @@
 {% extends "base.html" %}
-{% block content %}
 {% load url from future %}
-<h2>{{ project.name }}</h2>
-<h3>Tickets</h3>
-<a href="{% url 'tickets-create' project.pk %}">New Ticket</a>
-<table>
-    <thead>
-        <tr>
-            <td>Ticket</td>
-            <td>Status</td>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ticket in tickets %}
-            <tr>
-                <td><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></td>
-                <td>{{ ticket.status }}</td>
-            </tr>
-        {% endfor %}
-</table>
+{% load tickets_time %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li>{{ project.name }}</li>
+{% endblock %}
+{% block content %}
 
+<h2>{{ project.name }}</h2>
+
+<div class="left-section-wrapper">
+    <h3>Tickets <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a></h3>
+    <form action="" method="POST">
+        {% csrf_token %}
+    </form>
+    <table class="table-info">
+        <thead>
+            <tr>
+                <th>Ticket</th>
+                <th class="center">Status</th>
+                <th class="center">Assigned</th>
+                <th class="center">Created On</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+                <tr class="ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
+                    <td colspan="4">
+                        <span class="ticket-priority">{{ ticket.priority }}</span> 
+                        <a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a>
+                    </td>
+                </tr>
+                <tr class="ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
+                    <td>{{ ticket.component }}</td>
+                    <td class="center">{{ ticket.status }}</td>
+                    <td class="center">
+                        {% if ticket.assigned_to == user %} 
+                            <strong>{{ ticket.assigned_to }}</strong>
+                        {% else %}
+                            {{ ticket.assigned_to }}
+                        {% endif %}
+                    </td>
+                    <td class="center">{{ ticket.created_on|date:"Y-m-d H:i:s" }}</td>
+                </tr>
+            {% empty %}
+                <tr><td class="center" colspan="5">No tickets</td></td>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="right-section-wrapper">
+    <div class="right-section-block">
+        <h3>Quick Add Ticket</h3>
+        <form method="post" action="" id="ticket-quick-form">
+            {% csrf_token %}
+            {% for item in form %}
+            {% if item.errors %}
+            {{ item.label_tag }} {{ item.errors }}
+            {% endif %}
+            {% endfor %}
+            <label>Body</label>
+            {{ form.body }}
+            {{ form.estimated_time }}
+            {{ form.assigned_to }}
+            {{ form.status }}
+            {{ form.priority }}
+            {{ form.component }}
+
+            <input type="submit" name="submit" value="Submit" />
+        </form>
+    </div>
+
+    <div class="right-section-block">
+        <h3>Components <a href="{% url 'components-create' project.pk %}" class="button">Create</a></h3>
+        <table class="block-table">
+            {% for comp in components %}
+                <tr class="{% cycle 'odd' 'even' %}">
+                    <td>{{ comp.name }}</td>
+                    <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+    <div class="right-section-block">
+        <h3>Latest Work</h3>
+        <table class="block-table">
+        {% for w in work %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <th>{{ w.created_by }} <a href="{% url 'work-edit' w.pk %}" class="button">Edit</a></th>
+                <th class="center">
+                    {% if w.billable %}
+                        {% if 'basic' in w.type|lower %}$
+                        {% elif 'normal' in w.type|lower %}$$
+                        {% elif 'advanced' in w.type|lower %}$$$
+                        {% else %}:(
+                        {% endif %}
+                    {% else %}
+                    -
+                    {% endif %}
+                </th>
+                <th>{{ w.time|tickettime }}</th>
+            </tr>
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td colspan="3">{{ w.description }}</td>
+            </tr>
+        {% empty %}
+            <tr><th class="center">No work logged on this project</th></tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
 
