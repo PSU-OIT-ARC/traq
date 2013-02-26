@@ -29,6 +29,29 @@ class TicketForm(forms.ModelForm):
         # for some reason, you can't set this in the model field
         self.fields['assigned_to'].required = False
         self.fields['component'].required = False
+        # the QuickTicketForm inherits from this class, but exlcudes the title field,
+        # hence the if statement here
+        if "title" in self.fields:
+            self.fields['title'].required = False
+
+    def clean(self):
+        cleaned_data = super(TicketForm, self).clean()
+
+        # infer the title based on the body, if the title is not set
+        body = cleaned_data.get("body", None)
+        title = cleaned_data.get("title", None)
+
+        if body and not title:
+            # keep the title fairly short  
+            max_length = min(Ticket._meta.get_field('title').max_length, 80)
+            if len(body) > max_length:
+                last_space = body.rfind(' ', 0, max_length)
+                cleaned_data['title'] = body[0:last_space]
+            else:
+                cleaned_data['title'] = body
+
+        return cleaned_data
+
 
     class Meta:
         model = Ticket
@@ -57,19 +80,6 @@ class QuickTicketForm(TicketForm):
 
     def __init__(self, *args, **kwargs):
         super(QuickTicketForm, self).__init__(*args, **kwargs)
-
-    def save(self):
-        # infer the title based on the body
-        body = self.instance.body
-        # keep the title fairly short  
-        max_length = min(Ticket._meta.get_field('title').max_length, 80)
-        if len(body) > max_length:
-            last_space = body.rfind(' ', 0, max_length)
-            self.instance.title = body[0:last_space]
-        else:
-            self.instance.title = body
-
-        super(QuickTicketForm, self).save()
 
     class Meta:
         model = Ticket

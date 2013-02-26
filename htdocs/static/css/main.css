@@ -116,6 +116,7 @@ p.error {
 
 .table-info {
     border-spacing:0;
+    width:100%;
 }
 
 .table-info th {
