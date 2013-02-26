@@ -51,6 +51,7 @@ def create(request, project_id):
         form = TicketForm(request.POST, project=project, created_by=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Ticket Added')
             return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
     else:
         form = TicketForm(project=project, created_by=request.user)
@@ -67,7 +68,12 @@ def edit(request, ticket_id):
         form = TicketForm(request.POST, instance=ticket, project=project, created_by=ticket.created_by)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
+            if not form.instance.is_deleted:
+                messages.success(request, 'Ticket Editied')
+                return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
+            else:
+                messages.success(request, 'Ticket Deleted')
+                return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
     else:
         form = TicketForm(instance=ticket, project=project, created_by=ticket.created_by)
 

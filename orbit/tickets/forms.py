@@ -22,6 +22,8 @@ class TicketForm(forms.ModelForm):
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
             self.fields['priority'].initial = TicketPriority.objects.get(is_default=1)
             self.fields['component'].initial = project.defaultComponent()
+            self.fields['estimated_time'].initial = "1:00"
+            self.fields['assigned_to'].initial = created_by
 
         # a ticket doesn't neccessarily need to be assigned to anyone.
         # for some reason, you can't set this in the model field
@@ -57,8 +59,10 @@ class QuickTicketForm(TicketForm):
         super(QuickTicketForm, self).__init__(*args, **kwargs)
 
     def save(self):
+        # infer the title based on the body
         body = self.instance.body
-        max_length = self.fields['body'].max_length
+        # keep the title fairly short  
+        max_length = min(Ticket._meta.get_field('title').max_length, 80)
         if len(body) > max_length:
             last_space = body.rfind(' ', 0, max_length)
             self.instance.title = body[0:last_space]
@@ -69,7 +73,7 @@ class QuickTicketForm(TicketForm):
 
     class Meta:
         model = Ticket
-        exclude = ('project', 'created_by', 'title')
+        exclude = ('project', 'created_by', 'title', 'started_on')
         widgets = {'body': forms.Textarea(attrs={'cols': 30})}
 
 class CommentForm(forms.ModelForm):

@@ -1,7 +1,7 @@
 from django.db import models
 from ..projects.models import Project, Component
 from django.contrib.auth.models import User
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 class TicketStatus(models.Model):
     ticket_status_id = models.AutoField(primary_key=True)
@@ -30,13 +30,20 @@ class TicketPriority(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+class TicketManager(models.Manager):
+    def get_query_set(self):
+        return super(TicketManager, self).get_query_set().filter(is_deleted=False)
+
 class Ticket(models.Model):
     ticket_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
+    started_on = models.DateTimeField(default=lambda:datetime.utcnow())
     edited_on = models.DateTimeField(auto_now=True)
     estimated_time = models.TimeField(null=True, default=None)
+    is_deleted = models.BooleanField(default=False)
+    is_extra = models.BooleanField(default=False, verbose_name="Outside scope of original proposal")
 
     created_by = models.ForeignKey(User, related_name='+')
     assigned_to = models.ForeignKey(User, null=True, default=None, related_name='+')
@@ -44,6 +51,8 @@ class Ticket(models.Model):
     priority = models.ForeignKey(TicketPriority)
     project = models.ForeignKey(Project)
     component = models.ForeignKey(Component, null=True, default=None)
+
+    objects = TicketManager()
 
     def totalTimes(self):
         rows = Ticket.objects.raw("""

@@ -21,7 +21,10 @@ class Project(models.Model):
             c.save()
 
     def defaultComponent(self):
-        return Component.objects.filter(project=self, is_default=1).order_by('rank')
+        comps = Component.objects.filter(project=self, is_default=1).order_by('rank')
+        if len(comps) > 0:
+            return list(comps)[0]
+        return None
 
     def latestWork(self, n):
         return Work.objects.filter(ticket__project=self).select_related('created_by', 'type')[:n]

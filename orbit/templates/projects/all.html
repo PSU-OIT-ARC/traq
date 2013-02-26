@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 {% load url from future %}
-<h2>Projects</h2>
-<a href="{% url 'projects-create' %}">Create a New Project</a>
+<h2>Projects <a class="button" href="{% url 'projects-create' %}">New Project</a></h2>
+
 <table class="table-info">
     <thead>
         <tr>
