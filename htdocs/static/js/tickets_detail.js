@@ -1,19 +1,3 @@
-$(document).ready(function(){
-    $('#timer-clock').bind('click', function(){
-        var timer = new Timer(function(timer){
-            $('#id_time').val(timer.toString())
-        });
-        timer.start()
-    });
-
-    $('#id_description').bind('click focus blur', function(){
-        var DEFAULT_TEXT = 'description';
-        if($(this).val() == DEFAULT_TEXT){
-            $(this).val("");
-        }
-    })
-});
-
 function Timer(onTick){
     var interval = null;
     this.seconds = 0;

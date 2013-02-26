@@ -1,5 +1,6 @@
 from django import forms
 from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkType
+from ..projects.models import Component
 
 class TicketForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -17,6 +18,7 @@ class TicketForm(forms.ModelForm):
         # remove the blank choices from the fields
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
+        self.fields['component'].empty_label = None
 
         if not self.is_bound:
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
@@ -33,6 +35,9 @@ class TicketForm(forms.ModelForm):
         # hence the if statement here
         if "title" in self.fields:
             self.fields['title'].required = False
+
+        # only display components associated with this project
+        self.fields['component'].queryset = Component.objects.filter(project=project)
 
     def clean(self):
         cleaned_data = super(TicketForm, self).clean()
@@ -123,4 +128,5 @@ class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
         exclude = ('ticket', 'created_by')
+        widgets = {"description": forms.TextInput(attrs={"placeholder": "description"})}
 

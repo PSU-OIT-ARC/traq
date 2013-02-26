@@ -10,29 +10,27 @@
 
 {% block content %}
 
-<h2>#{{ ticket.pk }}: {{ ticket.title }} 
-<a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
+<h2>
+    <span class="lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
+    #{{ ticket.pk }}: {{ ticket.title }} 
+    <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
 </h2>
 
 <div class="left-section-wrapper">
     <div class="ticket">
-        <div class="ticket-info">
-            <ul>
-                <li><strong>Priority:</strong> {{ ticket.priority }}</li>
-                <li><strong>Status:</strong> {{ ticket.status }}</li>
-                <li><strong>Assigned To:</strong> {{ ticket.assigned_to }}</li>
-                <li><strong>Created:</strong> {{ ticket.created_on }} by {{ ticket.created_by }}</li>
-            </ul>
-            <div class="clear"></div>
-        </div>
         <div class="ticket-body">
             {{ ticket.body|safe }}
         </div>
         <div class="ticket-info ticket-status">
             <ul>
+                <li><strong>Component:</strong> {{ ticket.component }} </li>
+                <li><strong>Status:</strong> {{ ticket.status }}</li>
+                <li><strong>Assigned To:</strong> {{ ticket.assigned_to }}</li>
+                <li><strong>Created:</strong> {{ ticket.created_on }} by {{ ticket.created_by }}</li>
+            </ul>
+            <ul>
                 <li><strong>Estimated Time:</strong> {{ ticket.estimated_time|tickettime }}</li>
                 <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li>
-                <li><strong>Component:</strong> {{ ticket.component }} </li>
             </ul>
             <div class="clear"></div>
         </div>
@@ -122,8 +120,6 @@
         </table>
     </div>
 </div>
-
-<script type="text/javascript" src="{{ STATIC_URL }}js/tickets_detail.js"></script>
 
 {% endblock %}
 

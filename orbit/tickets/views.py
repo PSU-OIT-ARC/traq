@@ -15,7 +15,7 @@ def detail(request, ticket_id):
     times = ticket.totalTimes()
 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
-    work_form = WorkForm(initial={"time": "00:30:00", "description": "description"}, created_by=request.user, ticket=ticket)
+    work_form = WorkForm(initial={"time": "00:30:00"}, created_by=request.user, ticket=ticket)
 
     if request.POST:
         # there are a few forms on the page, so we use this to determine which

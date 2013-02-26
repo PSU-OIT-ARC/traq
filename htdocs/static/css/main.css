@@ -4,6 +4,8 @@
  */
 body { 
     background-color:#efefef; 
+    font-family:Arial, Arial, sans-serif;
+    font-size:14px;
 }
 
 h2, h3, h4 {
@@ -37,6 +39,10 @@ p.error {
 
 .clear {
     clear:both;
+}
+
+.option input {
+    display:inline;
 }
 
 .float-left {
@@ -228,6 +234,7 @@ p.error {
 
 .ticket-body {
     padding:5px;
+    font-size:16px;
 
 }
 
@@ -342,24 +349,22 @@ p.error {
     font-weight:bold;
     padding:3px;
     border-radius:5px;
+    vertical-align:middle;
 }
 
-.ticket-priority-normal .ticket-priority {
+.ticket-priority-normal {
     background-color:#f89406;
 }
 
-.ticket-priority-high .ticket-priority {
+.ticket-priority-high {
     background-color:#b94a48;
 }
 
-.ticket-priority-low .ticket-priority {
+.ticket-priority-low {
     background-color:#3a87ad;
 }
 
 .ticket-status-closed {
-}
-
-.ticket-status-closed .ticket-priority {
 }
 
 .ticket-status-closed td {

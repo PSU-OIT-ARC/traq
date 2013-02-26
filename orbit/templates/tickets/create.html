@@ -18,7 +18,30 @@
 {% endif %}
 <form method="post" action="">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.title.label_tag }}
+    {{ form.title }}
+    {{ form.assigned_to }}
+    {{ form.status }}
+    {{ form.priority }}
+    {{ form.component }}
+
+    {{ form.body.label_tag }}
+    {{ form.body }}
+
+    <div class="clear"></div>
+    <div class="float-left">
+    {{ form.started_on.label_tag }}
+    {{ form.started_on }}
+    </div>
+
+    <div class="float-left">
+    {{ form.estimated_time.label_tag }}
+    {{ form.estimated_time }}
+    </div>
+    <div class="clear"></div>
+
+    <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
+    <label class="option float-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
     <input type="submit" name="submit" value="Submit" />
 </form>
 {% endblock %}

@@ -50,7 +50,7 @@ class Ticket(models.Model):
     status = models.ForeignKey(TicketStatus)
     priority = models.ForeignKey(TicketPriority)
     project = models.ForeignKey(Project)
-    component = models.ForeignKey(Component, null=True, default=None)
+    component = models.ForeignKey(Component)
 
     objects = TicketManager()
 
