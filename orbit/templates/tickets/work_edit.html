@@ -3,9 +3,10 @@
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>Tickets</li>
     <li><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></li>
     <li>Work</li>
-    <li>"{{ work.description }}"</li>
+    <li>{{ work.description }}</li>
     <li>Edit</li>
 {% endblock %}
 

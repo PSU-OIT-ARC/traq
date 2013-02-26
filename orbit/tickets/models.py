@@ -77,9 +77,12 @@ class Ticket(models.Model):
     class Meta:
         db_table = 'ticket'
 
-class WorkManager(models.Manager):
-    def get_query_set(self):
-        return super(WorkManager, self).get_query_set().filter(is_deleted=False)
+class WorkTypeManager(models.Manager):
+    def default(self):
+        objs = WorkType.objects.filter(is_default=1).order_by('rank')
+        if len(objs) > 0:
+            return list(objs)[0]
+        return None
 
 class WorkType(models.Model):
     work_type_id = models.AutoField(primary_key=True)
@@ -88,6 +91,8 @@ class WorkType(models.Model):
     is_default = models.BooleanField(default=False)
     rank = models.IntegerField()
 
+    objects = WorkTypeManager()
+
     class Meta:
         ordering = ['rank']
         db_table = 'work_type'
@@ -95,6 +100,9 @@ class WorkType(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+class WorkManager(models.Manager):
+    def get_query_set(self):
+        return super(WorkManager, self).get_query_set().filter(is_deleted=False)
 
 class Work(models.Model):
     work_id = models.AutoField(primary_key=True)

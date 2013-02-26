@@ -64,13 +64,13 @@ $(document).ready(function(){
         </thead>
         <tbody>
             {% for ticket in tickets %}
-                <tr id="t1-{{ ticket.pk }}" class="{% cycle 'odd' 'even' %}">
+                <tr id="t1-{{ ticket.pk }}" class="ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
                     <td colspan="4">
-                        <span class="ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span> 
+                        <span class="ticket-priority ticket-priority-{{ ticket.priority|slugify }} ">{{ ticket.priority }}</span> 
                         <a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a>
                     </td>
                 </tr>
-                <tr id="t2-{{ ticket.pk }}" class="{% cycle 'odd' 'even' %}">
+                <tr id="t2-{{ ticket.pk }}" class="ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
                     <td>{{ ticket.component }}</td>
                     <td class="center">{{ ticket.status }}</td>
                     <td class="center">
@@ -80,7 +80,7 @@ $(document).ready(function(){
                             {{ ticket.assigned_to }}
                         {% endif %}
                     </td>
-                    <td class="center">{{ ticket.created_on|date:"Y-m-d H:i:s" }}</td>
+                    <td class="center"><span class="timestamp">{{ ticket.created_on }}</span></td>
                 </tr>
             {% empty %}
                 <tr><td class="center" colspan="5">No tickets</td></td>
@@ -106,7 +106,9 @@ $(document).ready(function(){
             {{ form.status }}
             {{ form.priority }}
             {{ form.component }}
-            
+            <hr />
+            <label class="option">{{ form.add_work }} Add work line-item</label>
+            <br />
 
             <input type="submit" name="submit" value="Submit" />
         </form>
@@ -117,7 +119,7 @@ $(document).ready(function(){
         <table class="block-table">
             {% for comp in components %}
                 <tr class="{% cycle 'odd' 'even' %}">
-                    <td>{{ comp.name }} <a href="{% url 'components-edit' comp.pk %}" class="button">Edit</a></td>
+                    <td><a href="{% url 'components-edit' comp.pk %}" class="discrete">{{ comp.name }}</a></td>
                     <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
                 </tr>
             {% endfor %}
@@ -126,31 +128,7 @@ $(document).ready(function(){
 
 
     <div class="right-section-block">
-        <h3>Latest Work</h3>
-        <table class="block-table">
-        {% for w in work %}
-            <tr class="{% cycle 'odd' 'even' %}">
-                <th>{{ w.created_by }} <a href="{% url 'work-edit' w.pk %}" class="button">Edit</a></th>
-                <th class="center">
-                    {% if w.billable %}
-                        {% if 'basic' in w.type|lower %}$
-                        {% elif 'normal' in w.type|lower %}$$
-                        {% elif 'advanced' in w.type|lower %}$$$
-                        {% else %}:(
-                        {% endif %}
-                    {% else %}
-                    -
-                    {% endif %}
-                </th>
-                <th>{{ w.time|tickettime }}</th>
-            </tr>
-            <tr class="{% cycle 'odd' 'even' %}">
-                <td colspan="3">{{ w.description }}</td>
-            </tr>
-        {% empty %}
-            <tr><th class="center">No work logged on this project</th></tr>
-        {% endfor %}
-        </table>
+        {% include 'tickets/_worklog.html' %}
     </div>
 
     <div class="right-section-block">

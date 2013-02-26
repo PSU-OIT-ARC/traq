@@ -5,6 +5,7 @@
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>Tickets</li>
     <li>{{ ticket.title }}</li>
 {% endblock %}
 
@@ -26,7 +27,7 @@
                 <li><strong>Component:</strong> {{ ticket.component }} </li>
                 <li><strong>Status:</strong> {{ ticket.status }}</li>
                 <li><strong>Assigned To:</strong> {{ ticket.assigned_to }}</li>
-                <li><strong>Created:</strong> {{ ticket.created_on }} by {{ ticket.created_by }}</li>
+                <li><strong>Created:</strong> <span class="timestamp">{{ ticket.created_on }}</span> by {{ ticket.created_by }}</li>
             </ul>
             <ul>
                 <li><strong>Estimated Time:</strong> {{ ticket.estimated_time|tickettime }}</li>
@@ -43,7 +44,7 @@
                 <div class="comment-info">
                     <ul>
                         <li><strong>Author:</strong> {{ comment.created_by }}</li>
-                        <li><strong>Created On:</strong> {{ comment.created_on }}</li>
+                        <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
                         <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
                     </ul>
                     <div class="clear"></div>
@@ -93,31 +94,7 @@
     </div>
 
     <div class="right-section-block">
-        <h3>Work Log</h3>
-        <table class="block-table">
-        {% for w in work %}
-            <tr class="{% cycle 'odd' 'even' %}">
-                <th>{{ w.created_by }} <a href="{% url 'work-edit' w.pk %}" class="button">Edit</a></th>
-                <th class="center">
-                    {% if w.billable %}
-                        {% if 'basic' in w.type|lower %}$
-                        {% elif 'normal' in w.type|lower %}$$
-                        {% elif 'advanced' in w.type|lower %}$$$
-                        {% else %}:(
-                        {% endif %}
-                    {% else %}
-                    -
-                    {% endif %}
-                </th>
-                <th>{{ w.time|tickettime }}</th>
-            </tr>
-            <tr class="{% cycle 'odd' 'even' %}">
-                <td colspan="3">{{ w.description }}</td>
-            </tr>
-        {% empty %}
-            <tr><th class="center">No work logged on this ticket</th></tr>
-        {% endfor %}
-        </table>
+        {% include 'tickets/_worklog.html' %}
     </div>
 </div>
 

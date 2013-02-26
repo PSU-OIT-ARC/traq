@@ -5,8 +5,8 @@ import tickets.views
 import accounts.views
 
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', views.home),
@@ -37,7 +37,7 @@ urlpatterns = patterns('',
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),
     # work
     url(r'^work/(\d+)/edit/?$', tickets.views.work_edit, name='work-edit'),
-    #url(r'^projects/(\d+)/tickets/(\d+)/comments/edit/?$', tickets.views.edit, name='tickets-edit'),
+
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),
     # url(r'^example/', include('example.foo.urls')),
@@ -46,5 +46,5 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )

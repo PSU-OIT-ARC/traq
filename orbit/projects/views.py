@@ -8,6 +8,7 @@ from .forms import ProjectForm, ComponentForm
 from .models import Project, Component
 from ..tickets.models import Ticket
 from ..tickets.forms import QuickTicketForm
+from ..decorators import can_view, can_edit, can_create
 
 def all(request):
     projects = Project.objects.all()
@@ -15,6 +16,7 @@ def all(request):
         'projects': projects,
     })
 
+@can_view(Project)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     tickets = project.tickets()
@@ -27,7 +29,7 @@ def detail(request, project_id):
             messages.success(request, 'Ticket Created')
             form.save()
             request.session['ticket_initial_data'] = form.cleaned_data
-            return HttpResponseRedirect(request.path)
+            return HttpResponseRedirect(reverse('projects-detail', args=(project.pk,)))
     else:
         initial_data = request.session.get("ticket_initial_data", {})
         initial_data.pop("body", None)
@@ -43,46 +45,49 @@ def detail(request, project_id):
     })
     
 
+@can_create(Project)
 def create(request):
     if request.method == "POST":
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, created_by=request.user)
         if form.is_valid():
             form.save()
             form.instance.createDefaultComponents()
             return HttpResponseRedirect(reverse("projects-all"))
     else:
-        form = ProjectForm()
+        form = ProjectForm(created_by=request.user)
 
     return render(request, 'projects/create.html', {
         'form': form,
     })
 
 
+@can_create(Component)
 def components_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
-        form = ComponentForm(request.POST, project=project)
+        form = ComponentForm(request.POST, project=project, created_by=request.user)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
     else:
-        form = ComponentForm(project=project)
+        form = ComponentForm(project=project, created_by=request.user)
 
     return render(request, 'projects/components_create.html', {
         'project': project,
         'form': form,
     })
 
+@can_edit(Component)
 def components_edit(request, component_id):
     component = get_object_or_404(Component, pk=component_id)
     project = component.project
     if request.method == "POST":
-        form = ComponentForm(request.POST, instance=component, project=project)
+        form = ComponentForm(request.POST, instance=component, project=project, created_by=component.created_by)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
     else:
-        form = ComponentForm(instance=component, project=project)
+        form = ComponentForm(instance=component, project=project, created_by=component.created_by)
 
     return render(request, 'projects/components_create.html', {
         'project': project,

@@ -36,6 +36,8 @@ class TicketForm(forms.ModelForm):
         if "title" in self.fields:
             self.fields['title'].required = False
 
+        self.fields['body'].required = False
+
         # only display components associated with this project
         self.fields['component'].queryset = Component.objects.filter(project=project)
 
@@ -54,15 +56,19 @@ class TicketForm(forms.ModelForm):
                 cleaned_data['title'] = body[0:last_space]
             else:
                 cleaned_data['title'] = body
+        elif title and not body:
+            cleaned_data['body'] = title
+        elif not title and not body:
+            self._errors['body'] = self.error_class(['This field is required'])
 
         return cleaned_data
-
 
     class Meta:
         model = Ticket
         exclude = ('project', 'created_by')
 
 class QuickTicketForm(TicketForm):
+    add_work = forms.BooleanField(required=False)
     TIME_CHOICES = (
         ('00:30', '30m'),
         ('01:00', '1h'),
@@ -86,9 +92,20 @@ class QuickTicketForm(TicketForm):
     def __init__(self, *args, **kwargs):
         super(QuickTicketForm, self).__init__(*args, **kwargs)
 
+    def save(self, *args, **kwargs):
+        super(QuickTicketForm, self).save(*args, **kwargs)
+        if self.cleaned_data.get('add_work', False):
+            w = Work()
+            w.description = "Did stuff"
+            w.time = self.cleaned_data['estimated_time']
+            w.type = WorkType.objects.default()
+            w.ticket = self.instance
+            w.created_by = self.instance.created_by
+            w.save()
+
     class Meta:
         model = Ticket
-        exclude = ('project', 'created_by', 'title', 'started_on')
+        exclude = ('project', 'created_by', 'started_on')
         widgets = {'body': forms.Textarea(attrs={'cols': 30})}
 
 class CommentForm(forms.ModelForm):

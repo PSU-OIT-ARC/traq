@@ -1,0 +1,31 @@
+{% load tickets_time %}
+{% load url from future %}
+<h3>Work Log</h3>
+<table class="block-table">
+{% for w in work %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <th>
+            {{ w.created_by }} 
+            - 
+            <span class="timestamp">{{ w.created_on }}</span> 
+        </th>
+        <th class="center">
+            {% if w.billable %}
+                {% if 'basic' in w.type|lower %}$
+                {% elif 'normal' in w.type|lower %}$$
+                {% elif 'advanced' in w.type|lower %}$$$
+                {% else %}:(
+                {% endif %}
+            {% else %}
+            -
+            {% endif %}
+        </th>
+        <th><a href="{% url 'work-edit' w.pk %}" class="discrete">{{ w.time|tickettime }}</a></th>
+    </tr>
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td colspan="3">{{ w.description }}</td>
+    </tr>
+{% empty %}
+    <tr><th class="center">No work logged</th></tr>
+{% endfor %}
+</table>

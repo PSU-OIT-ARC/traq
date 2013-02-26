@@ -6,7 +6,9 @@ from django.contrib import messages
 from .forms import TicketForm, CommentForm, WorkForm
 from .models import Ticket, Comment, Work
 from ..projects.models import Project
+from ..decorators import can_view, can_edit, can_create
 
+@can_view(Ticket)
 def detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
@@ -45,6 +47,7 @@ def detail(request, ticket_id):
         'queries': connection.queries,
     })
     
+@can_create(Ticket)
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
@@ -61,6 +64,7 @@ def create(request, project_id):
         'project': project,
     })
 
+@can_edit(Ticket)
 def edit(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
@@ -83,6 +87,7 @@ def edit(request, ticket_id):
         'ticket': ticket,
     })
 
+@can_edit(Comment)
 def comments_edit(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     ticket = comment.ticket
@@ -103,6 +108,7 @@ def comments_edit(request, comment_id):
         'project': project,
     })
 
+@can_edit(Work)
 def work_edit(request, work_id):
     work = get_object_or_404(Work, pk=work_id)
     ticket = work.ticket

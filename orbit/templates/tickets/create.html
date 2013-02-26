@@ -3,11 +3,12 @@
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>Tickets</li>
     {% if ticket %}
         <li><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></li>
         <li>Edit</li>
     {% else %}
-        <li>Create Ticket</li>
+        <li>Create</li>
     {% endif %}
 {% endblock %}
 {% block content %}
@@ -16,6 +17,14 @@
 {% else %}
     <h2>Create a new Ticket</h2>
 {% endif %}
+
+{% for field in form %}
+    {% if field.errors %}
+        {{ field.name }}
+        {{ field.errors }}
+    {% endif %}
+{% endfor %}
+
 <form method="post" action="">
     {% csrf_token %}
     {{ form.title.label_tag }}

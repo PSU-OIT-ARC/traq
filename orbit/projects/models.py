@@ -2,12 +2,15 @@ import json
 from datetime import timedelta
 from django.db import models
 from django.db import connection
+from django.contrib.auth.models import User
 from ..utils import dictfetchall, jsonhandler
 
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
+
+    created_by = models.ForeignKey(User, related_name='+')
 
     def createDefaultComponents(self):
         components = [
@@ -17,7 +20,7 @@ class Project(models.Model):
         ]
 
         for i, name in enumerate(components):
-            c = Component(name=name, rank=i, is_default=(i == 0), project=self)
+            c = Component(name=name, rank=i, is_default=(i == 0), project=self, created_by=self.created_by)
             c.save()
 
     def defaultComponent(self):
@@ -71,7 +74,7 @@ class ComponentManager(models.Manager):
             FROM
                 component
             LEFT JOIN ticket ON ticket.component_id = component.component_id AND ticket.project_id = %s 
-            LEFT JOIN `work` ON `work`.ticket_id = ticket.ticket_id
+            LEFT JOIN `work` ON `work`.ticket_id = ticket.ticket_id AND `work`.is_deleted = 0
             WHERE
                 component.project_id = %s AND
                 component.is_deleted = 0
@@ -93,8 +96,10 @@ class Component(models.Model):
     name = models.CharField(max_length=255)
     rank = models.IntegerField()
     is_default = models.BooleanField(default=False)
-    project = models.ForeignKey(Project)
     is_deleted = models.BooleanField(default=False)
+
+    project = models.ForeignKey(Project)
+    created_by = models.ForeignKey(User, related_name='+')
 
     objects = ComponentManager()
 

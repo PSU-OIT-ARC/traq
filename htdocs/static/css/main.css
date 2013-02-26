@@ -45,6 +45,10 @@ p.error {
     display:inline;
 }
 
+.discrete {
+    color:inherit;
+}
+
 .float-left {
     float:left;
 }
@@ -112,6 +116,7 @@ p.error {
 }
 
 .button {
+    color:inherit;
     font-size:10px;
     display:inline-block;
     font-family:Verdana, Arial;
