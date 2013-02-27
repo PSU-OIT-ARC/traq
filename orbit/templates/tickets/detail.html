@@ -50,7 +50,7 @@
                     <div class="clear"></div>
                 </div>
                 <div class="ticket-body">
-                    {{ comment.body|safe }}
+                    <div class="markdown">{{ comment.body|tomarkdown }}</div>
                 </div>
             </div>
         {% endfor %}

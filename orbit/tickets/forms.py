@@ -67,6 +67,7 @@ class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         exclude = ('project', 'created_by')
+        widgets = {'body': forms.Textarea(attrs={'cols': 100})}
 
 class QuickTicketForm(TicketForm):
     add_work = forms.BooleanField(required=False)
