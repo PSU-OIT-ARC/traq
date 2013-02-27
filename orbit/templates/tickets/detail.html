@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
-{% load tickets_time %}
+{% load tickets %}
 
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
@@ -20,7 +20,7 @@
 <div class="left-section-wrapper">
     <div class="ticket">
         <div class="ticket-body">
-            {{ ticket.body|safe }}
+            <div class="markdown">{{ ticket.body|tomarkdown }}</div>
         </div>
         <div class="ticket-info ticket-status">
             <ul>

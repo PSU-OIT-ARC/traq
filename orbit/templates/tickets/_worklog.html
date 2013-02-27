@@ -1,4 +1,4 @@
-{% load tickets_time %}
+{% load tickets %}
 {% load url from future %}
 <h3>Work Log</h3>
 <table class="block-table">
@@ -7,7 +7,7 @@
         <th>
             {{ w.created_by }} 
             - 
-            <span class="timestamp">{{ w.created_on }}</span> 
+            <span class="timestamp">{{ w.started_on }}</span> 
         </th>
         <th class="center">
             {% if w.billable %}

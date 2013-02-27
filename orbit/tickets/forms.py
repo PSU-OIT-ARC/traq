@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django import forms
 from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkType
 from ..projects.models import Component
@@ -94,13 +95,16 @@ class QuickTicketForm(TicketForm):
 
     def save(self, *args, **kwargs):
         super(QuickTicketForm, self).save(*args, **kwargs)
+        # add the work line item too
         if self.cleaned_data.get('add_work', False):
             w = Work()
             w.description = "Did stuff"
-            w.time = self.cleaned_data['estimated_time']
+            w.time = self.instance.estimated_time
             w.type = WorkType.objects.default()
             w.ticket = self.instance
             w.created_by = self.instance.created_by
+            # assume the work started w.time hours/minutes ago
+            w.started_on = datetime.now() - timedelta(hours=w.time.hour, minutes=w.time.minute)
             w.save()
 
     class Meta:
@@ -140,6 +144,7 @@ class WorkForm(forms.ModelForm):
         self.fields['type'].empty_label = None
         if not self.is_bound:
             self.fields['type'].initial = WorkType.objects.get(is_default=1)
+            self.fields['started_on'].initial = datetime.now()
 
 
     class Meta:

@@ -110,6 +110,7 @@ class Work(models.Model):
     description = models.CharField(max_length=255)
     billable = models.BooleanField(default=True)
     time = models.TimeField()
+    started_on = models.DateTimeField()
 
     type = models.ForeignKey(WorkType)
     ticket = models.ForeignKey(Ticket)
