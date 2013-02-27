@@ -142,10 +142,18 @@ class WorkForm(forms.ModelForm):
         self.instance.created_by = created_by
 
         self.fields['type'].empty_label = None
+        self.fields['started_on'].required = False
+
         if not self.is_bound:
             self.fields['type'].initial = WorkType.objects.get(is_default=1)
             self.fields['started_on'].initial = datetime.now()
 
+    def clean_started_on(self):
+        started_on = self.cleaned_data.get('started_on', "")
+        if not started_on:
+            started_on = datetime.now()
+
+        return started_on
 
     class Meta:
         model = Work
