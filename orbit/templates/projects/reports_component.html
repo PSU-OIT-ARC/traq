@@ -11,20 +11,23 @@
 
 <h2>{{ project.name }}</h2>
 <table class="report">
+    <tr>
+        <th colspan="2">&nbsp;</th>
+        <th style="width:75px">Total Hours</th>
+        <th style="width:75px">Billable Hours</th>
+    </tr>
 {% for comp in components %}
     <tr>
         <th colspan="2">{{ comp.name }}</th>
-        <th style="width:75px">{{ comp.total|tickettime }}</th>
-        <th style="width:75px">{{ comp.billable|tickettime }}</th>
-        <th style="width:75px">{{ comp.non_billable|tickettime }}</th>
+        <th>{{ comp.total|tickettimepretty }}</th>
+        <th>{{ comp.billable|tickettimepretty }}</th>
     </tr>
     {% for ticket in comp.ticket_set.all %}
         <tr>
             <td>&nbsp;</td>
             <td>{{ ticket.title }}</td>
-            <td>{{ ticket.totalTimes.total|tickettime }}</td>
-            <td>{{ ticket.totalTimes.billable|tickettime }}</td>
-            <td>{{ ticket.totalTimes.non_billable|tickettime }}</td>
+            <td>{{ ticket.totalTimes.total|tickettimepretty }}</td>
+            <td>{{ ticket.totalTimes.billable|tickettimepretty }}</td>
         </tr>
     {% endfor %}
 {% endfor %}

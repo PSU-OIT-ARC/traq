@@ -1,7 +1,11 @@
 from django.core.exceptions import PermissionDenied
 
-ARCSTAFF = "arcstaff"
+STAFF = "arcstaff"
 
+# This is the base class for the can_* decorators
+# can_* decorators simply need to implement the 
+# check(self, request, user, model, pk) method
+# and raise an exception if permission is denied
 class can_do(object):
     def __init__(self, model):
         self.model = model
@@ -36,7 +40,7 @@ class can_create(can_do):
 
 class can_edit(can_do):
     def check(self, request, user, model, pk):
-        if user.groups.filter(name=ARCSTAFF).exists():
+        if user.groups.filter(name=STAFF).exists():
             return
 
         try:

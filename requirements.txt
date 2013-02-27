@@ -1,4 +1,4 @@
-Django==1.4.3
+Django==1.5
 MySQL-python==1.2.4
--e git+https://github.com/mdj2/django-cas.git@8d9734fc2441b99c9074059939c38221c5017787#egg=django_cas-dev
+-e git+https://github.com/mdj2/django-cas.git@87281ca8088febd04a721771f94bc2e60275a394#egg=django_cas-dev
 wsgiref==0.1.2

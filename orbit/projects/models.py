@@ -94,6 +94,7 @@ class ComponentManager(models.Manager):
 class Component(models.Model):
     component_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    description = models.TextField()
     rank = models.IntegerField()
     is_default = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)

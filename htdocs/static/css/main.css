@@ -62,7 +62,11 @@ p.error {
 }
 
 .report th, .report td {
-    border:1px solid black;
+    /*border:1px solid black;*/
+}
+
+.report .summary {
+
 }
 
 /* these colors are from twitter bootstrap */

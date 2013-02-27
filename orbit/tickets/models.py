@@ -142,3 +142,9 @@ class Comment(models.Model):
         ordering = ['created_on']
         db_table = 'comment'
 
+#class TimeTracker(models.Model):
+#    time_tracker_id = models.AutoField(primary_key=True)
+#    time = models.TimeField()
+#    started_on = models.DateTimeField(auto_now_add=True)
+#
+#    ticket = models.ForeignKey(Ticket)

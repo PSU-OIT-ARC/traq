@@ -6,6 +6,10 @@ CAS_SERVER_URL = 'https://sso.pdx.edu/cas/login'
 # prevents CAS login on the admin pages
 CAS_ADMIN_PREFIX = 'admin'
 
+# for django-cas to work, it needs HttpRequest.get_host(), which requires this setting
+# https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ['.pdx.edu']
+
 DATETIME_FORMAT = 'c'
 
 # Local time zone for this installation. Choices can be found here:
