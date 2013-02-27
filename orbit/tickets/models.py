@@ -105,12 +105,21 @@ class WorkManager(models.Manager):
         return super(WorkManager, self).get_query_set().filter(is_deleted=False)
 
 class Work(models.Model):
+    RUNNING = 1
+    PAUSED = 2
+    DONE = 3
+
     work_id = models.AutoField(primary_key=True)
     created_on = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255)
     billable = models.BooleanField(default=True)
     time = models.TimeField()
     started_on = models.DateTimeField()
+    state = models.IntegerField(choices=(
+        (RUNNING, "Running"),
+        (PAUSED, "Paused"),
+        (DONE, "Done"),
+    ))
 
     type = models.ForeignKey(WorkType)
     ticket = models.ForeignKey(Ticket)
@@ -143,9 +152,3 @@ class Comment(models.Model):
         ordering = ['created_on']
         db_table = 'comment'
 
-#class TimeTracker(models.Model):
-#    time_tracker_id = models.AutoField(primary_key=True)
-#    time = models.TimeField()
-#    started_on = models.DateTimeField(auto_now_add=True)
-#
-#    ticket = models.ForeignKey(Ticket)

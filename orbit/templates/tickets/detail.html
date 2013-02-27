@@ -70,7 +70,7 @@
 
 <div class="right-section-wrapper">
     <div class="right-section-block">
-        <h3>Add Work <a class="timer-clock-control button" href="#" id="timer-clock">start clock</a></h3>
+        <h3>Add Work <a class="timer-clock-control button" href="{% url 'work-create' ticket.pk %}" id="timer-clock">Start Work</a></h3>
         <form id="work-form" action="" method="post">
             {% if work_form.errors %}
                 <p class="error">

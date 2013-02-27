@@ -128,3 +128,8 @@ def work_edit(request, work_id):
         'work': work,
     })
 
+@can_create(Work)
+def work_create(request, ticket_id):
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    project = ticket.project
+

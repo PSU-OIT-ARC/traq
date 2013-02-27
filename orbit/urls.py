@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),
     # work
     url(r'^work/(\d+)/edit/?$', tickets.views.work_edit, name='work-edit'),
+    url(r'^tickets/(\d+)/work/create/?$', tickets.views.work_create, name='work-create'),
 
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),
