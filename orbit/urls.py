@@ -38,6 +38,8 @@ urlpatterns = patterns('',
     # work
     url(r'^work/(\d+)/edit/?$', tickets.views.work_edit, name='work-edit'),
     url(r'^tickets/(\d+)/work/create/?$', tickets.views.work_create, name='work-create'),
+    url(r'^work/(\d+)/pause/?$', tickets.views.work_pause, name='work-pause'),
+    url(r'^work/(\d+)/continue/?$', tickets.views.work_continue, name='work-continue'),
 
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),

@@ -158,6 +158,6 @@ class WorkForm(forms.ModelForm):
 
     class Meta:
         model = Work
-        exclude = ('ticket', 'created_by')
+        exclude = ('ticket', 'created_by', 'state', 'state_changed_on')
         widgets = {"description": forms.TextInput(attrs={"placeholder": "description"})}
 

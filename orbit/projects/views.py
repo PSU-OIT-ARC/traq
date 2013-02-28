@@ -8,7 +8,7 @@ from .forms import ProjectForm, ComponentForm
 from .models import Project, Component
 from ..tickets.models import Ticket
 from ..tickets.forms import QuickTicketForm
-from ..decorators import can_view, can_edit, can_create
+from ..permissions.decorators import can_view, can_edit, can_create
 
 def all(request):
     projects = Project.objects.all()

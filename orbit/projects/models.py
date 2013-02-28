@@ -30,7 +30,7 @@ class Project(models.Model):
         return None
 
     def latestWork(self, n):
-        return Work.objects.filter(ticket__project=self).select_related('created_by', 'type')[:n]
+        return Work.objects.filter(ticket__project=self, state=Work.DONE).select_related('created_by', 'type')[:n]
 
     def tickets(self, to_json=False):
         rows = Ticket.objects.filter(project=self).select_related(

@@ -1,19 +1,21 @@
+from datetime import datetime, time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from .forms import TicketForm, CommentForm, WorkForm
-from .models import Ticket, Comment, Work
+from .models import Ticket, Comment, Work, WorkType
 from ..projects.models import Project
-from ..decorators import can_view, can_edit, can_create
+from ..permissions.decorators import can_view, can_edit, can_create
 
 @can_view(Ticket)
 def detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
     comments = Comment.objects.filter(ticket=ticket).select_related('created_by')
-    work = Work.objects.filter(ticket=ticket).select_related("created_by", "type").order_by('-created_on')
+    work = Work.objects.filter(ticket=ticket).filter(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
+    running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
@@ -45,6 +47,7 @@ def detail(request, ticket_id):
         'work_form': work_form,
         'times': times,
         'queries': connection.queries,
+        'running_work': running_work,
     })
     
 @can_create(Ticket)
@@ -114,11 +117,13 @@ def work_edit(request, work_id):
     ticket = work.ticket
     project = ticket.project
     if request.method == "POST":
+        work.state = work.DONE
         form = WorkForm(request.POST, instance=work, created_by=request.user, ticket=ticket)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
     else:
+        work.time = work.duration()
         form = WorkForm(instance=work, created_by=request.user, ticket=ticket)
 
     return render(request, 'tickets/work_edit.html', {
@@ -128,8 +133,48 @@ def work_edit(request, work_id):
         'work': work,
     })
 
+HAD_RUNNING_WORK_MESSAGE = """<strong>Dawg!</strong> You had other running work, which was paused for you. You're welcome."""
+
 @can_create(Work)
 def work_create(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
 
+    had_running_work = Work.objects.pauseRunning(created_by=request.user)
+
+    w = Work(
+        ticket=ticket, 
+        description="", 
+        billable=True, 
+        time=time(), 
+        started_on=datetime.now(),
+        state=Work.RUNNING,
+        type=WorkType.objects.default(),
+        created_by=request.user,
+    )
+    w.save()
+    messages.success(request, 'Work Started')
+
+    if had_running_work:
+        messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
+
+    return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
+
+@can_edit(Work)
+def work_pause(request, work_id):
+    work = get_object_or_404(Work, pk=work_id)
+    ticket = work.ticket
+    work.pause()
+    return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
+
+@can_edit(Work)
+def work_continue(request, work_id):
+    work = get_object_or_404(Work, pk=work_id)
+    ticket = work.ticket
+    had_running_work = Work.objects.pauseRunning(created_by=request.user)
+    work.continue_()
+    messages.success(request, 'Work Started')
+    if had_running_work:
+        messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
+
+    return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load url from future %}
 {% load tickets %}
+{% load permissions %}
 
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
@@ -70,7 +71,31 @@
 
 <div class="right-section-wrapper">
     <div class="right-section-block">
-        <h3>Add Work <a class="timer-clock-control button" href="{% url 'work-create' ticket.pk %}" id="timer-clock">Start Work</a></h3>
+        <h3>Running Work <a class="timer-clock-control button" href="{% url 'work-create' ticket.pk %}" id="timer-clock">Start Work</a></h3>
+        <table class="block-table">
+        {% for w in running_work %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ w.created_by }}</td>
+                <td>{{ w.duration|tickettime }}</td>
+                <td>
+                    {% if user|can_edit:w %}
+                        {% if w.state == w.PAUSED %}
+                            <a href="{% url 'work-continue' w.pk %}">Continue</a>
+                        {% else %}
+                            <a href="{% url 'work-pause' w.pk %}">Pause</a></td>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user|can_edit:w %}
+                        <a href="{% url 'work-edit' w.pk %}">Complete</a></td>
+                    {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div class="right-section-block">
+        <h3>Add Work </h3>
         <form id="work-form" action="" method="post">
             {% if work_form.errors %}
                 <p class="error">

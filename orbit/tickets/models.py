@@ -1,7 +1,8 @@
+from datetime import timedelta, datetime
 from django.db import models
 from ..projects.models import Project, Component
 from django.contrib.auth.models import User
-from datetime import timedelta, datetime
+from django.utils.timezone import utc
 
 class TicketStatus(models.Model):
     ticket_status_id = models.AutoField(primary_key=True)
@@ -104,14 +105,23 @@ class WorkManager(models.Manager):
     def get_query_set(self):
         return super(WorkManager, self).get_query_set().filter(is_deleted=False)
 
+    def pauseRunning(self, created_by):
+        other_work = Work.objects.filter(created_by=created_by, state=Work.RUNNING)
+        paused_something = False
+        for work in other_work:
+            work.pause()
+            paused_something = True
+
+        return paused_something
+
 class Work(models.Model):
+    DONE = 0
     RUNNING = 1
     PAUSED = 2
-    DONE = 3
 
     work_id = models.AutoField(primary_key=True)
     created_on = models.DateTimeField(auto_now_add=True)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
     billable = models.BooleanField(default=True)
     time = models.TimeField()
     started_on = models.DateTimeField()
@@ -119,13 +129,38 @@ class Work(models.Model):
         (RUNNING, "Running"),
         (PAUSED, "Paused"),
         (DONE, "Done"),
-    ))
+    ), default=DONE)
+    state_changed_on = models.DateTimeField(default=None, null=True, blank=True)
 
     type = models.ForeignKey(WorkType)
     ticket = models.ForeignKey(Ticket)
     created_by = models.ForeignKey(User, related_name='+')
 
     is_deleted = models.BooleanField(default=False, verbose_name="Delete?")
+
+    def duration(self):
+        if self.state == Work.DONE:
+            return self.time
+        elif self.state == Work.PAUSED:
+            return self.time
+        else:
+            start = self.state_changed_on or self.created_on
+            delta = datetime.utcnow().replace(tzinfo=utc) - start
+            return (datetime.combine(datetime.today(), self.time) + delta).time()
+
+    def pause(self):
+        self.state = Work.PAUSED
+        start = self.state_changed_on or self.created_on
+        delta = datetime.utcnow().replace(tzinfo=utc) - start
+        t = (datetime.combine(datetime.today(), self.time) + delta).time()
+        self.time = t
+        self.state_changed_on = datetime.now()
+        self.save()
+
+    def continue_(self):
+        self.state = Work.RUNNING
+        self.state_changed_on = datetime.now()
+        self.save()
 
     class Meta:
         db_table = 'work'
