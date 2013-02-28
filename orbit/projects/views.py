@@ -20,7 +20,7 @@ def all(request):
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     tickets = project.tickets()
-    components = Component.objects.withTimes(project=project)
+    components = project.components()
     work = project.latestWork(10)
     tickets_json = project.tickets(to_json=True)
     if request.POST:
@@ -100,7 +100,7 @@ def reports_grid(request, project_id):
 
 def reports_component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    components = Component.objects.withTimes(project=project)
+    components = project.components()
     return render(request, 'projects/reports_component.html', {
         'project': project,
         'components': components,

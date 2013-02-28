@@ -29,6 +29,33 @@ class Project(models.Model):
             return list(comps)[0]
         return None
 
+    def components(self):
+        rows = Component.objects.raw("""
+            SELECT 
+                component.*,
+                IFNULL(SUM(TIME_TO_SEC(`time`)), 0) AS total_time,
+                IFNULL(SUM(IF(work.billable, TIME_TO_SEC(`time`), 0)), 0) AS billable_time,
+                IFNULL(SUM(IF(work.billable = 0, TIME_TO_SEC(`time`), 0)), 0) AS non_billable_time
+            FROM
+                component
+            LEFT JOIN ticket ON ticket.component_id = component.component_id AND ticket.project_id = %s 
+            LEFT JOIN `work` ON `work`.ticket_id = ticket.ticket_id AND `work`.is_deleted = 0 AND `work`.state = %s
+            WHERE
+                component.project_id = %s AND
+                component.is_deleted = 0
+            GROUP BY 
+                component.component_id
+        """, (self.pk, Work.DONE, self.pk))
+
+        modified_rows = [] 
+        for row in rows:
+            row.total = timedelta(seconds=int(row.total_time))
+            row.billable = timedelta(seconds=int(row.billable_time))
+            row.non_billable = timedelta(seconds=int(row.non_billable_time))
+            modified_rows.append(row)
+
+        return modified_rows
+
     def latestWork(self, n):
         return Work.objects.filter(ticket__project=self, state=Work.DONE).select_related('created_by', 'type')[:n]
 
@@ -63,33 +90,6 @@ class Project(models.Model):
 class ComponentManager(models.Manager):
     def get_query_set(self):
         return super(ComponentManager, self).get_query_set().filter(is_deleted=False)
-
-    def withTimes(self, project):
-        rows = Component.objects.raw("""
-            SELECT 
-                component.*,
-                IFNULL(SUM(TIME_TO_SEC(`time`)), 0) AS total_time,
-                IFNULL(SUM(IF(work.billable, TIME_TO_SEC(`time`), 0)), 0) AS billable_time,
-                IFNULL(SUM(IF(work.billable = 0, TIME_TO_SEC(`time`), 0)), 0) AS non_billable_time
-            FROM
-                component
-            LEFT JOIN ticket ON ticket.component_id = component.component_id AND ticket.project_id = %s 
-            LEFT JOIN `work` ON `work`.ticket_id = ticket.ticket_id AND `work`.is_deleted = 0
-            WHERE
-                component.project_id = %s AND
-                component.is_deleted = 0
-            GROUP BY 
-                component.component_id
-        """, (project.pk, project.pk))
-
-        modified_rows = [] 
-        for row in rows:
-            row.total = timedelta(seconds=int(row.total_time))
-            row.billable = timedelta(seconds=int(row.billable_time))
-            row.non_billable = timedelta(seconds=int(row.non_billable_time))
-            modified_rows.append(row)
-
-        return modified_rows
 
 class Component(models.Model):
     component_id = models.AutoField(primary_key=True)

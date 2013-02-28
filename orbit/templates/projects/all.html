@@ -1,6 +1,9 @@
 {% extends "base.html" %}
-{% block content %}
 {% load url from future %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+{% endblock %}
+{% block content %}
 <h2>Projects <a class="button" href="{% url 'projects-create' %}">New Project</a></h2>
 
 <table class="table-info">

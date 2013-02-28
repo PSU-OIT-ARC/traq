@@ -1,13 +1,49 @@
 {% extends 'base.html' %}
 {% load url from future %}
+{% load permissions %}
+{% load tickets %}
 
 {% block page_title %}Welcome{% endblock %}
-
 {% block header_title %}Orbit{% endblock %}
+
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+{% endblock %}
 
 {% block content %}
 <p>Hi {{ user.username }},</p>
 <p><a href="{% url 'projects-all' %}">Move along</a>. Nothing to see here.</p>
-    
+
+<div class="left-section-wrapper">
+<h2>Tickets Assigned To or Created By You</h2>
+{% include 'tickets/_tickettable.html' %}
+</div>
+
+<div class="right-section-wrapper">
+    <div class="right-section-block">
+        <h3>Your Running Work</h3>
+        <table class="block-table">
+        {% for w in running_work %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td><a href="{% url 'tickets-detail' w.ticket.pk %}">{{ w.ticket.title }}</a></td>
+                <td>{{ w.duration|tickettime }}</td>
+                <td>
+                    {% if user|can_edit:w %}
+                        {% if w.state == w.PAUSED %}
+                            <a href="{% url 'work-continue' w.pk %}">Continue</a>
+                        {% else %}
+                            <a href="{% url 'work-pause' w.pk %}">Pause</a></td>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user|can_edit:w %}
+                        <a href="{% url 'work-edit' w.pk %}">Complete</a></td>
+                    {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
 

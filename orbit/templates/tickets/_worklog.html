@@ -1,5 +1,6 @@
 {% load tickets %}
 {% load url from future %}
+{% load permissions %}
 <h3>Work Log</h3>
 <table class="block-table">
 {% for w in work %}
@@ -20,7 +21,13 @@
             -
             {% endif %}
         </th>
-        <th><a href="{% url 'work-edit' w.pk %}" class="discrete">{{ w.time|tickettime }}</a></th>
+        <th>
+            {% if user|can_edit:w %}
+                <a href="{% url 'work-edit' w.pk %}" class="discrete">{{ w.time|tickettime }}</a>
+            {% else %}
+                {{ w.time|tickettime }}
+            {% endif %}
+        </th>
     </tr>
     <tr class="{% cycle 'odd' 'even' %}">
         <td colspan="3">{{ w.description }}</td>
