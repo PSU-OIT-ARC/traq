@@ -10,7 +10,11 @@ class ProjectForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        exclude = ("created_by",)
+        fields = (
+            'name',
+            'point_of_contact',
+            'invoice_description',
+        )
 
 class ComponentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -39,4 +43,11 @@ class ComponentForm(forms.ModelForm):
 
     class Meta:
         model = Component
-        exclude = ('project', 'created_by')
+        fields = (
+            'name',
+            'description',
+            'invoice_description',
+            'rank',
+            'is_default',
+            'is_deleted',
+        )

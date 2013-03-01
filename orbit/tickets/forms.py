@@ -66,7 +66,18 @@ class TicketForm(forms.ModelForm):
 
     class Meta:
         model = Ticket
-        exclude = ('project', 'created_by')
+        fields = (
+            'title', 
+            'body', 
+            'started_on', 
+            'estimated_time', 
+            'is_deleted',
+            'is_extra', 
+            'assigned_to', 
+            'status', 
+            'priority', 
+            'component',
+        )
         widgets = {'body': forms.Textarea(attrs={'cols': 100})}
 
 class QuickTicketForm(TicketForm):
@@ -110,7 +121,17 @@ class QuickTicketForm(TicketForm):
 
     class Meta:
         model = Ticket
-        exclude = ('project', 'created_by', 'started_on')
+        fields = (
+            'title', 
+            'body', 
+            'estimated_time', 
+            'is_deleted',
+            'is_extra', 
+            'assigned_to', 
+            'status', 
+            'priority', 
+            'component',
+        )
         widgets = {'body': forms.Textarea(attrs={'cols': 30})}
 
 class CommentForm(forms.ModelForm):
@@ -128,7 +149,10 @@ class CommentForm(forms.ModelForm):
 
     class Meta:
         model = Comment
-        exclude = ('ticket', 'created_by')
+        fields = (
+            'body',
+            'is_deleted',
+        )
 
 class WorkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -158,6 +182,13 @@ class WorkForm(forms.ModelForm):
 
     class Meta:
         model = Work
-        exclude = ('ticket', 'created_by', 'state', 'state_changed_on')
+        fields = (
+            'description',
+            'billable',
+            'time',
+            'started_on',
+            'type',
+            'is_deleted',
+        )
         widgets = {"description": forms.TextInput(attrs={"placeholder": "description"})}
 
