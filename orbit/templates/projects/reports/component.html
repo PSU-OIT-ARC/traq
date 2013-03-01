@@ -10,6 +10,12 @@
 {% block content %}
 
 <h2>{{ project.name }}</h2>
+<div class="print-hide">
+    <form method="get" action="">
+        {{ form.as_p }}
+        <input type="submit" name="submit" value="submit" />
+    </form>
+</div>
 <table class="report">
     <tr>
         <th colspan="2">&nbsp;</th>
@@ -22,12 +28,12 @@
         <th>{{ comp.total|tickettimepretty }}</th>
         <th>{{ comp.billable|tickettimepretty }}</th>
     </tr>
-    {% for ticket in comp.ticket_set.all %}
+    {% for ticket in comp.tickets %}
         <tr>
             <td>&nbsp;</td>
-            <td>{{ ticket.title }}</td>
-            <td>{{ ticket.totalTimes.total|tickettimepretty }}</td>
-            <td>{{ ticket.totalTimes.billable|tickettimepretty }}</td>
+            <td><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></td>
+            <td>{{ ticket.times.total|tickettimepretty }}</td>
+            <td>{{ ticket.times.billable|tickettimepretty }}</td>
         </tr>
     {% endfor %}
 {% endfor %}

@@ -15,9 +15,9 @@ def edit(request, work_id):
     ticket = work.ticket
     project = ticket.project
     if request.method == "POST":
-        work.state = work.DONE
         form = WorkForm(request.POST, instance=work, created_by=request.user, ticket=ticket)
         if form.is_valid():
+            work.done()
             form.save()
             return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
     else:

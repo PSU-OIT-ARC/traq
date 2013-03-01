@@ -1,3 +1,4 @@
+from itertools import chain
 from datetime import timedelta, datetime
 from django.db import models
 from ..projects.models import Project, Component
@@ -55,15 +56,20 @@ class Ticket(models.Model):
 
     objects = TicketManager()
 
-    def totalTimes(self):
+    def totalTimes(self, interval=()):
+        sql_where = "(1 = 1)"
+        if interval:
+            sql_where = "(work.done_on BETWEEN %s AND %s)"
+
+        args = tuple(chain((self.pk, Work.DONE,), interval))*3
         rows = Ticket.objects.raw("""
             SELECT ticket_id, 
-            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s) AS total_time,
-            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND billable = 1) AS billable_time,
-            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND billable = 0) AS non_billable_time
+            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND work.state = %s AND """ + sql_where + """ ) AS total_time,
+            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND work.state = %s AND """ + sql_where + """ AND billable = 1 ) AS billable_time,
+            (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND work.state = %s AND """ + sql_where + """ AND billable = 0 ) AS non_billable_time
             FROM ticket 
             WHERE ticket_id = %s
-        """, (self.pk, self.pk, self.pk, self.pk))
+        """, args + (self.pk,))
         times = list(rows)[0]
 
         total = timedelta(seconds=int(times.total_time))
@@ -72,7 +78,7 @@ class Ticket(models.Model):
         return {
             'total': total,
             'billable': billable,
-            'non_billable': non_billable
+            'non_billable': non_billable,
         }
 
     class Meta:
@@ -125,6 +131,7 @@ class Work(models.Model):
     billable = models.BooleanField(default=True)
     time = models.TimeField()
     started_on = models.DateTimeField()
+    done_on = models.DateTimeField(null=True, default=None)
     state = models.IntegerField(choices=(
         (RUNNING, "Running"),
         (PAUSED, "Paused"),
@@ -161,6 +168,13 @@ class Work(models.Model):
         self.state = Work.RUNNING
         self.state_changed_on = datetime.now()
         self.save()
+
+    def done(self):
+        self.state = Work.DONE
+        # once the done_on date is set, it should never be changed because it
+        # affects the billing reports
+        if self.done_on is None:
+            self.done_on = datetime.now()
 
     class Meta:
         db_table = 'work'
