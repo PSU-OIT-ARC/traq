@@ -2,10 +2,19 @@
 {% load url from future %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li>Create</li>
+    {% if form.instance.pk %}
+        <li><a href="{% url 'projects-detail' form.instance.pk %}">{{ form.instance.name }}</a></li>
+        <li>Edit</li>  
+    {% else %}
+        <li>Create</li>
+    {% endif %}
 {% endblock %}
 {% block content %}
-<h2>Create a new Project</h2>
+{% if form.instance.pk %}
+    <h2>Edit {{ form.instance.name }}</h2>
+{% else %}
+    <h2>Create a new Project</h2>
+{% endif %}
 <form method="post" action="">
     {% csrf_token %}
     {{ form.as_p }}
