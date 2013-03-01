@@ -1,9 +1,14 @@
 from django.conf.urls import patterns, include, url
+
 import views
+
 import projects.views
 import projects.views.components
 import projects.views.reports
+
 import tickets.views
+import tickets.views.work
+
 import accounts.views
 
 # Uncomment the next two lines to enable the admin:
@@ -40,10 +45,10 @@ urlpatterns = patterns('',
     # comments
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),
     # work
-    url(r'^work/(\d+)/edit/?$', tickets.views.work_edit, name='work-edit'),
-    url(r'^tickets/(\d+)/work/create/?$', tickets.views.work_create, name='work-create'),
-    url(r'^work/(\d+)/pause/?$', tickets.views.work_pause, name='work-pause'),
-    url(r'^work/(\d+)/continue/?$', tickets.views.work_continue, name='work-continue'),
+    url(r'^work/(\d+)/edit/?$', tickets.views.work.edit, name='work-edit'),
+    url(r'^tickets/(\d+)/work/create/?$', tickets.views.work.create, name='work-create'),
+    url(r'^work/(\d+)/pause/?$', tickets.views.work.pause, name='work-pause'),
+    url(r'^work/(\d+)/continue/?$', tickets.views.work.continue_, name='work-continue'),
 
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),
