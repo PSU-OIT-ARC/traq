@@ -9,18 +9,13 @@ class can_do(object):
     def __init__(self, model):
         self.model = model
 
-    # subclasses can implement this
-    def check(self, user, *args, **kwargs):
-        pass
+    def runCheck(*args, **kwargs):
+        user = args[0].user
+        return checkers.can_do(user)
 
     def __call__(self, f):
         def wrapper(*args, **kwargs):
-            request = args[0]
-            user = request.user
-
-            try:
-                self.check(user, *args, **kwargs)
-            except PermissionDenied:
+            if self.runCheck(*args, **kwargs) == False:
                 return HttpResponseRedirect("/")
 
             return f(*args, **kwargs)
@@ -28,7 +23,7 @@ class can_do(object):
         return wrapper
 
 
-class can_create(can_do, checkers.can_create):
+class can_create(can_do):
     pass
 
 # for the can_view and can_edit decorators, assume the second argument to the
@@ -36,16 +31,20 @@ class can_create(can_do, checkers.can_create):
 # the request object). Look up the model instance, and pass that along to the
 # super classes. The can_do decorator will ignore it, but the checker.can_*
 # function will use it.
-class can_view(can_do, checkers.can_view):
-    def check(self, user, *args, **kwargs):
+class can_view(can_do):
+    checker = checkers.can_view
+
+    def runCheck(self, *args, **kwargs):
+        user = args[0].user
         pk = args[1]
+
         try:
             instance = self.model.objects.get(pk=pk)
         except (self.model.DoesNotExist, self.model.MultipleObjectsReturned) as e:
             raise PermissionDenied("Fail")
 
-        super(can_view, self).check(user, instance)
+        return self.checker.__func__(user, instance)
 
 # use the same logic for editing, but pass the buck to checkers.can_edit
-class can_edit(can_view, checkers.can_edit):
-    pass
+class can_edit(can_view):
+    checker = checkers.can_edit
