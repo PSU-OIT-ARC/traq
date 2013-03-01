@@ -1,5 +1,5 @@
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from . import checkers
 
 # This is the base class for the can_* decorators. Subclasses can override
@@ -8,14 +8,19 @@ class can_do(object):
     def __init__(self, model=None):
         self.model = model
 
+    # return False is access is denied, True is access is allowed, or None for
+    # a 404
     def runCheck(self, *args, **kwargs):
         user = args[0].user
         return checkers.can_do(user)
 
     def __call__(self, f):
         def wrapper(*args, **kwargs):
-            if self.runCheck(*args, **kwargs) == False:
-                return HttpResponseRedirect("/")
+            can_proceed = self.runCheck(*args, **kwargs)
+            if can_proceed == False:
+                raise PermissionDenied("Access denied")
+            elif can_proceed == None:
+                raise Http404("Fail in can_do decorator")
 
             return f(*args, **kwargs)
 
@@ -39,7 +44,7 @@ class can_view(can_do):
         try:
             instance = self.model.objects.get(pk=pk)
         except (self.model.DoesNotExist, self.model.MultipleObjectsReturned) as e:
-            raise PermissionDenied("Fail")
+            return None
 
         return self.checker.__func__(user, instance)
 
