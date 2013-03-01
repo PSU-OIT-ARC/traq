@@ -1,3 +1,4 @@
+import math
 import json
 from datetime import timedelta
 from django.db import models
@@ -9,6 +10,11 @@ class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
+
+    # add all the meta fields here, make sure they aren't required
+    point_of_contact = models.TextField(blank=True, default="")
+    # displayed on the invoice
+    invoice_description = models.TextField(blank=True, default="")
 
     created_by = models.ForeignKey(User, related_name='+')
 
@@ -56,6 +62,31 @@ class Project(models.Model):
 
         return modified_rows
 
+    def totalCost(self):
+        rows = Project.objects.raw("""
+            SELECT project_id, SUM(total_cost) AS total_cost FROM (
+            SELECT
+                CEIL(SUM(TIME_TO_SEC(IFNULL(work.time, 0)))/3600.0) * IFNULL(price, 0) AS total_cost,
+                project.project_id
+            FROM
+                `work`
+            INNER JOIN
+                work_type ON work.type_id = work_type.work_type_id
+            INNER JOIN
+                ticket ON work.ticket_id = ticket.ticket_id
+            INNER JOIN
+                project ON ticket.project_id = project.project_id
+            WHERE
+                project.project_id = %s AND
+                work.billable = 1 AND
+                work.state = %s AND
+                work.is_deleted = 0 AND
+                ticket.is_deleted = 0
+            GROUP BY work.type_id
+            )k 
+        """, (self.pk, Work.DONE))
+        return rows[0].total_cost
+
     def latestWork(self, n):
         return Work.objects.filter(ticket__project=self, state=Work.DONE).select_related('created_by', 'type')[:n]
 
@@ -94,7 +125,8 @@ class ComponentManager(models.Manager):
 class Component(models.Model):
     component_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(default="", blank=True)
+    invoice_description = models.TextField(default="", blank=True)
     rank = models.IntegerField()
     is_default = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
@@ -103,6 +135,36 @@ class Component(models.Model):
     created_by = models.ForeignKey(User, related_name='+')
 
     objects = ComponentManager()
+
+    def invoiceBreakdown(self):
+        rows = Component.objects.raw("""
+            SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) AS total_time, price, component.*
+            FROM 
+                `work` 
+            INNER JOIN 
+                work_type ON work.type_id = work_type.work_type_id
+            INNER JOIN 
+                ticket ON work.ticket_id = ticket.ticket_id
+            INNER JOIN
+                component ON ticket.component_id = component.component_id
+            WHERE 
+                billable = 1 AND
+                state = 0 AND 
+                work.is_deleted = 0 AND
+                ticket.is_deleted = 0 AND
+                component.component_id = %s
+            GROUP BY work_type_id, component_id
+            ORDER BY component.rank
+        """, self.pk)
+        
+        info = []
+        for row in rows:
+            td = timedelta(seconds=int(row.total_time))
+            rate = row.price
+            hours = int(td.days * 24 + math.ceil(td.seconds / 3600.0))
+            bill = rate * hours
+            info.append({"rate": rate, "hours": hours, "bill": bill})
+        return info
 
     class Meta:
         db_table = 'component'

@@ -46,7 +46,9 @@
                     <ul>
                         <li><strong>Author:</strong> {{ comment.created_by }}</li>
                         <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
+                        {% if user|can_edit:comment %}
                         <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
+                        {% endif %}
                     </ul>
                     <div class="clear"></div>
                 </div>

@@ -121,6 +121,11 @@ p.error {
     text-align:center !important;
 }
 
+.right {
+    /* override default alignment */
+    text-align:right !important;
+}
+
 .button {
     color:inherit;
     font-size:10px;

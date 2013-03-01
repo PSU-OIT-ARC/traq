@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load permissions %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
 {% endblock %}
@@ -15,7 +16,12 @@
     <tbody>
         {% for project in projects %}
             <tr>
-                <td><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></td>
+                <td>
+                    <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> 
+                    {% if user|can_edit:project %}
+                        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </tbody>

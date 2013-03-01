@@ -44,6 +44,20 @@ def detail(request, project_id):
         'tickets_json': tickets_json,
     })
     
+@can_edit(Project)
+def edit(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    if request.method == "POST":
+        form = ProjectForm(request.POST, instance=project, created_by=project.created_by)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("projects-all"))
+    else:
+        form = ProjectForm(instance=project, created_by=project.created_by)
+
+    return render(request, 'projects/create.html', {
+        'form': form,
+    })
 
 @can_create(Project)
 def create(request):
@@ -102,6 +116,14 @@ def reports_component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     components = project.components()
     return render(request, 'projects/reports_component.html', {
+        'project': project,
+        'components': components,
+    })
+
+def reports_invoice(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    components = project.components()
+    return render(request, 'projects/reports_invoice.html', {
         'project': project,
         'components': components,
     })
