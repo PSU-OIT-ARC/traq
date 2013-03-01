@@ -19,9 +19,11 @@ def can_edit(user, instance):
     if getattr(user, 'can_edit_anything', None) is None:
         if user.groups.filter(name=STAFF).exists():
             user.can_edit_anything = True
-            return True
         else:
             user.can_edit_anything = False
+
+    if user.can_edit_anything:
+        return True
 
     # you can edit something assigned to you
     if getattr(instance, 'assigned_to_id', None) == user.pk:

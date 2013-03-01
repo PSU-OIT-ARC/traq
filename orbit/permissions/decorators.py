@@ -2,9 +2,8 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from . import checkers
 
-# This is the base class for the can_* decorators. Subclasses can mix in the
-# can_* checkers in the checkers module. They can also implement the check
-# method and do some pre or post checks
+# This is the base class for the can_* decorators. Subclasses can override
+# runCheck() and return the value of any checkers.can_* function
 class can_do(object):
     def __init__(self, model=None):
         self.model = model
@@ -29,8 +28,7 @@ class can_create(can_do):
 # for the can_view and can_edit decorators, assume the second argument to the
 # view function is the model's primary key (the first argument is of course,
 # the request object). Look up the model instance, and pass that along to the
-# super classes. The can_do decorator will ignore it, but the checker.can_*
-# function will use it.
+# designated checker function (the class variable called "checker")
 class can_view(can_do):
     checker = checkers.can_view
 
