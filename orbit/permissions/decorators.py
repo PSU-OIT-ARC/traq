@@ -6,10 +6,10 @@ from . import checkers
 # can_* checkers in the checkers module. They can also implement the check
 # method and do some pre or post checks
 class can_do(object):
-    def __init__(self, model):
+    def __init__(self, model=None):
         self.model = model
 
-    def runCheck(*args, **kwargs):
+    def runCheck(self, *args, **kwargs):
         user = args[0].user
         return checkers.can_do(user)
 

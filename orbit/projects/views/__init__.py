@@ -4,12 +4,12 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
-from .forms import ProjectForm, ComponentForm
-from .models import Project, Component
-from ..tickets.models import Ticket
-from ..tickets.forms import QuickTicketForm
-from ..permissions.decorators import can_view, can_edit, can_create
+from ..forms import ProjectForm
+from ..models import Project 
+from orbit.tickets.forms import QuickTicketForm
+from orbit.permissions.decorators import can_do, can_view, can_edit, can_create
 
+@can_do()
 def all(request):
     projects = Project.objects.all()
     return render(request, 'projects/all.html', {
@@ -72,58 +72,4 @@ def create(request):
 
     return render(request, 'projects/create.html', {
         'form': form,
-    })
-
-
-@can_create(Component)
-def components_create(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    if request.method == "POST":
-        form = ComponentForm(request.POST, project=project, created_by=request.user)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
-    else:
-        form = ComponentForm(project=project, created_by=request.user)
-
-    return render(request, 'projects/components_create.html', {
-        'project': project,
-        'form': form,
-    })
-
-@can_edit(Component)
-def components_edit(request, component_id):
-    component = get_object_or_404(Component, pk=component_id)
-    project = component.project
-    if request.method == "POST":
-        form = ComponentForm(request.POST, instance=component, project=project, created_by=component.created_by)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
-    else:
-        form = ComponentForm(instance=component, project=project, created_by=component.created_by)
-
-    return render(request, 'projects/components_create.html', {
-        'project': project,
-        'form': form,
-    })
-
-def reports_grid(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    return HttpResponse("<img src='/static/img/mharvey.gif'/>")
-
-def reports_component(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    components = project.components()
-    return render(request, 'projects/reports_component.html', {
-        'project': project,
-        'components': components,
-    })
-
-def reports_invoice(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    components = project.components()
-    return render(request, 'projects/reports_invoice.html', {
-        'project': project,
-        'components': components,
     })

@@ -21,7 +21,7 @@
 <div class="left-section-wrapper">
     <div class="ticket">
         <div class="ticket-body">
-            <div class="markdown">{{ ticket.body|tomarkdown }}</div>
+            <div class="markdown">{{ ticket.body|frommarkdown }}</div>
         </div>
         <div class="ticket-info ticket-status">
             <ul>
@@ -53,7 +53,7 @@
                     <div class="clear"></div>
                 </div>
                 <div class="ticket-body">
-                    <div class="markdown">{{ comment.body|tomarkdown }}</div>
+                    <div class="markdown">{{ comment.body|frommarkdown }}</div>
                 </div>
             </div>
         {% endfor %}

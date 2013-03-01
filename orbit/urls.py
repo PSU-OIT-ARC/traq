@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 import views
 import projects.views
+import projects.views.components
+import projects.views.reports
 import tickets.views
 import accounts.views
 
@@ -24,12 +26,12 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/?$', projects.views.detail, name='projects-detail'),
     url(r'^projects/(\d+)/edit/?$', projects.views.edit, name='projects-edit'),
     # components
-    url(r'^projects/(\d+)/components/create/?$', projects.views.components_create, name='components-create'),
-    url(r'^components/(\d+)/edit/?$', projects.views.components_edit, name='components-edit'),
+    url(r'^projects/(\d+)/components/create/?$', projects.views.components.create, name='components-create'),
+    url(r'^components/(\d+)/edit/?$', projects.views.components.edit, name='components-edit'),
     # reports
-    url(r'^projects/(\d+)/reports/grid/?$', projects.views.reports_grid, name='projects-reports-grid'),
-    url(r'^projects/(\d+)/reports/component/?$', projects.views.reports_component, name='projects-reports-component'),
-    url(r'^projects/(\d+)/reports/invoice/?$', projects.views.reports_invoice, name='projects-reports-invoice'),
+    url(r'^projects/(\d+)/reports/grid/?$', projects.views.reports.grid, name='projects-reports-grid'),
+    url(r'^projects/(\d+)/reports/component/?$', projects.views.reports.component, name='projects-reports-component'),
+    url(r'^projects/(\d+)/reports/invoice/?$', projects.views.reports.invoice, name='projects-reports-invoice'),
 
     # tickets
     url(r'^projects/(\d+)/tickets/create/?$', tickets.views.create, name='tickets-create'),
