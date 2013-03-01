@@ -15,7 +15,9 @@
 <h2>
     <span class="lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
     #{{ ticket.pk }}: {{ ticket.title }} 
+    {% if user|can_edit:ticket %}
     <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
+    {% endif %}
 </h2>
 
 <div class="left-section-wrapper">
