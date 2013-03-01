@@ -35,7 +35,12 @@ class Project(models.Model):
             return list(comps)[0]
         return None
 
-    def components(self):
+    # interval is a 2-tuple datetime start, and datetime end
+    def components(self, interval=()):
+        sql_where = "(1 = 1)"
+        if interval:
+            sql_where = "(work.done_on BETWEEN %s AND %s)"
+
         rows = Component.objects.raw("""
             SELECT 
                 component.*,
@@ -48,10 +53,11 @@ class Project(models.Model):
             LEFT JOIN `work` ON `work`.ticket_id = ticket.ticket_id AND `work`.is_deleted = 0 AND `work`.state = %s
             WHERE
                 component.project_id = %s AND
-                component.is_deleted = 0
+                component.is_deleted = 0 AND
+                """ + sql_where + """
             GROUP BY 
                 component.component_id
-        """, (self.pk, Work.DONE, self.pk))
+        """, (self.pk, Work.DONE, self.pk) + interval)
 
         modified_rows = [] 
         for row in rows:
@@ -62,7 +68,12 @@ class Project(models.Model):
 
         return modified_rows
 
-    def totalCost(self):
+    # interval is a 2-tuple datetime start, and datetime end
+    def totalCost(self, interval=()):
+        sql_where = "(1 = 1)"
+        if interval:
+            sql_where = "(work.done_on BETWEEN %s AND %s)"
+
         rows = Project.objects.raw("""
             SELECT project_id, SUM(total_cost) AS total_cost FROM (
             SELECT
@@ -81,10 +92,11 @@ class Project(models.Model):
                 work.billable = 1 AND
                 work.state = %s AND
                 work.is_deleted = 0 AND
-                ticket.is_deleted = 0
+                ticket.is_deleted = 0 AND
+                """ + sql_where + """
             GROUP BY work.type_id
             )k 
-        """, (self.pk, Work.DONE))
+        """, (self.pk, Work.DONE) + interval)
         return rows[0].total_cost
 
     def latestWork(self, n):
@@ -136,7 +148,10 @@ class Component(models.Model):
 
     objects = ComponentManager()
 
-    def invoiceBreakdown(self):
+    def invoiceBreakdown(self, interval=()):
+        sql_where = "(1 = 1)"
+        if interval:
+            sql_where = "(work.done_on BETWEEN %s AND %s)"
         rows = Component.objects.raw("""
             SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) AS total_time, price, component.*
             FROM 
@@ -152,10 +167,11 @@ class Component(models.Model):
                 state = 0 AND 
                 work.is_deleted = 0 AND
                 ticket.is_deleted = 0 AND
-                component.component_id = %s
+                component.component_id = %s AND
+                """ + sql_where + """
             GROUP BY work_type_id, component_id
             ORDER BY component.rank
-        """, self.pk)
+        """, (self.pk,) + interval)
         
         info = []
         for row in rows:

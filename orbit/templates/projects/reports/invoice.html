@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load url from future %}
+
 {% load tickets %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
@@ -8,6 +8,13 @@
     <li>Invoice</li>
 {% endblock %}
 {% block content %}
+
+<div class="print-hide">
+    <form method="get" action="">
+        {{ form.as_p }}
+        <input type="submit" name="submit" value="submit" />
+    </form>
+</div>
 
 <div class="letterhead right">
     <img src="http://www.pdx.edu/sites/www.pdx.edu.syndication/files/psulogo_horiz_std.gif" />
@@ -26,6 +33,7 @@ tel 503-725-4441 | fax 503-725-6487
 </p>
 
 <h2>Invoice for {{ project.name }}</h2>
+<p>{{ interval.0 }} to {{ interval.1 }}</p>
 
 <div class="point-of-contact">
     {{ project.point_of_contact|frommarkdown }}
@@ -40,21 +48,19 @@ tel 503-725-4441 | fax 503-725-6487
     <tr>
         <td colspan="2"><strong>{{ comp.name }}:</strong> {{ comp.invoice_description }}</td>
     </tr>
-    {% with breakdown=comp.invoiceBreakdown %}
-        {% for info in breakdown %}
-            <tr>
-                <td>{{ info.hours }} hr. @ ${{ info.rate }}</td>
-                <td class="right">${{ info.bill }}</td>
-            </tr>
-        {% endfor %}
+    {% for info in comp.breakdown %}
         <tr>
-            <td colspan="2" style="height:5px; line-height:0px"></td>
+            <td>{{ info.hours }} hr. @ ${{ info.rate }}</td>
+            <td class="right">${{ info.bill }}</td>
         </tr>
-    {% endwith %}
+    {% endfor %}
+    <tr>
+        <td colspan="2" style="height:5px; line-height:0px"></td>
+    </tr>
 {% endfor %}
     <tfoot>
         <tr>
-            <th colspan="2" class="right">Total: ${{ project.totalCost }}</th>
+            <th colspan="2" class="right">Total: ${{ total_cost }}</th>
         </tr>
     </tfoot>
 </table>

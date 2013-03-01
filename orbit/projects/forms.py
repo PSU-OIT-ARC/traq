@@ -51,3 +51,16 @@ class ComponentForm(forms.ModelForm):
             'is_default',
             'is_deleted',
         )
+
+class ReportIntervalForm(forms.Form):
+    start = forms.DateTimeField()
+    end = forms.DateTimeField()
+
+    def clean(self):
+        cleaned = super(ReportIntervalForm, self).clean()
+        end = cleaned.get('end', None)
+        start = cleaned.get('start', None)
+        if start and end:
+            if end < start:
+                raise forms.ValidationError("The start must be less than the end")
+        return cleaned
