@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
+from django.utils.timezone import utc
 from ..forms import ProjectForm, ComponentForm, ReportIntervalForm
 from ..models import Project, Component
 from orbit.tickets.models import Ticket
@@ -59,7 +60,7 @@ def _intervalHelper(request):
             interval = (form.cleaned_data['start'], form.cleaned_data['end'])
 
     if interval == ():
-        now = datetime.now()
+        now = datetime.utcnow().replace(tzinfo=utc)
         #start_of_month = datetime(year=now.year, month=now.month, day=1)
         earlier = now - timedelta(days=30)
         interval = (earlier, now)

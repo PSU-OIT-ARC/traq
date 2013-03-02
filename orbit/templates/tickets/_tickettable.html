@@ -12,7 +12,7 @@
             <tr id="t1-{{ ticket.pk }}" class="ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
                 <td colspan="4">
                     <span class="ticket-priority ticket-priority-{{ ticket.priority|slugify }} ">{{ ticket.priority }}</span> 
-                    <a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a>
+                    <a href="{% url 'tickets-detail' ticket.pk %}">#{{ ticket.pk }} {{ ticket.title }}</a>
                 </td>
             </tr>
             <tr id="t2-{{ ticket.pk }}" class="ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">

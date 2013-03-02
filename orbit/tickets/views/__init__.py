@@ -35,6 +35,7 @@ def detail(request, ticket_id):
             work_form = WorkForm(request.POST, created_by=request.user, ticket=ticket)
             if work_form.is_valid():
                 messages.success(request, 'Work Added')
+                work_form.instance.done()
                 work_form.save()
                 return HttpResponseRedirect(request.path)
 

@@ -33,7 +33,7 @@ tel 503-725-4441 | fax 503-725-6487
 </p>
 
 <h2>Invoice for {{ project.name }}</h2>
-<p>{{ interval.0 }} to {{ interval.1 }}</p>
+<p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1 }}</span></p>
 
 <div class="point-of-contact">
     {{ project.point_of_contact|frommarkdown }}

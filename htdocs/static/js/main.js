@@ -1,6 +1,8 @@
 $(document).ready(function(){
     $('.timestamp').each(function(el, i){
-        var d = new Date($(this).text());
+        // get rid of millseconds
+        var d_string = $(this).text().replace(/\.\d+/, '');
+        var d = new Date(d_string);
         var year = d.getFullYear();
         var month = d.getMonth() + 1;
         if(month < 10) month = "0" + month;
@@ -12,6 +14,7 @@ $(document).ready(function(){
         if(minutes < 10) minutes = "0" + minutes;
         var seconds = d.getSeconds();
         if(seconds < 10) seconds = "0" + seconds;
+        //$(this).text(d.toLocaleString())
         $(this).text([year, month, day].join("-") + " " + [hours, minutes, seconds].join(":"))
     });
 });

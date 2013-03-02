@@ -12,6 +12,11 @@ h2, h3, h4 {
     margin-bottom:0;
 }
 
+textarea {
+    width:100%;
+    box-sizing:border-box;
+}
+
 label {
     display:block;
 }
