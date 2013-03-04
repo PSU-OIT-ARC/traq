@@ -4,6 +4,7 @@ from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkTyp
 from ..projects.models import Component
 
 class TicketForm(forms.ModelForm):
+    """Ticket creation and editing form"""
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
         # the caller
@@ -22,6 +23,7 @@ class TicketForm(forms.ModelForm):
         self.fields['component'].empty_label = None
 
         if not self.is_bound:
+            # set some sensible default values
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
             self.fields['priority'].initial = TicketPriority.objects.get(is_default=1)
             self.fields['component'].initial = project.defaultComponent()
@@ -45,10 +47,9 @@ class TicketForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(TicketForm, self).clean()
 
-        # infer the title based on the body, if the title is not set
+        # infer the title based on the body, if the title is not set, or vis-a-vera
         body = cleaned_data.get("body", None)
         title = cleaned_data.get("title", None)
-
         if body and not title:
             # keep the title fairly short  
             max_length = min(Ticket._meta.get_field('title').max_length, 80)
@@ -78,9 +79,9 @@ class TicketForm(forms.ModelForm):
             'priority', 
             'component',
         )
-        widgets = {'body': forms.Textarea(attrs={'cols': 100})}
 
 class QuickTicketForm(TicketForm):
+    # checkbox for adding work automatically to a ticket
     add_work = forms.BooleanField(required=False)
     TIME_CHOICES = (
         ('00:30', '30m'),
@@ -132,7 +133,6 @@ class QuickTicketForm(TicketForm):
             'priority', 
             'component',
         )
-        widgets = {'body': forms.Textarea(attrs={'cols': 30})}
 
 class CommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -163,17 +163,21 @@ class WorkForm(forms.ModelForm):
 
         super(WorkForm, self).__init__(*args, **kwargs)
 
+        # set the foreign key fields specified by the caller
         self.instance.ticket = ticket
         self.instance.created_by = created_by
 
+        # get rid of the stupid ----- option on the drop downs
         self.fields['type'].empty_label = None
         self.fields['started_on'].required = False
 
         if not self.is_bound:
+            # set some nice default values
             self.fields['type'].initial = WorkType.objects.get(is_default=1)
             self.fields['started_on'].initial = datetime.now()
 
     def clean_started_on(self):
+        # if this field is empty, assume the work started now
         started_on = self.cleaned_data.get('started_on', "")
         if not started_on:
             started_on = datetime.now()
@@ -190,5 +194,6 @@ class WorkForm(forms.ModelForm):
             'type',
             'is_deleted',
         )
+        # some fancy HTML5 placeholder text
         widgets = {"description": forms.TextInput(attrs={"placeholder": "description"})}
 

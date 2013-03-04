@@ -18,6 +18,7 @@ def detail(request, ticket_id):
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
 
+    # this view has two forms on it
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
     work_form = WorkForm(initial={"time": "00:30:00"}, created_by=request.user, ticket=ticket)
 

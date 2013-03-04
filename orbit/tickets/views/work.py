@@ -21,6 +21,7 @@ def edit(request, work_id):
             form.save()
             return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
     else:
+        # dynamically set how much time has been spent on this work item
         work.time = work.duration()
         form = WorkForm(instance=work, created_by=request.user, ticket=ticket)
 

@@ -61,7 +61,6 @@ def _intervalHelper(request):
 
     if interval == ():
         now = datetime.utcnow().replace(tzinfo=utc)
-        #start_of_month = datetime(year=now.year, month=now.month, day=1)
         earlier = now - timedelta(days=30)
         interval = (earlier, now)
 

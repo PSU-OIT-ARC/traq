@@ -26,7 +26,6 @@ class can_do(object):
 
         return wrapper
 
-
 class can_create(can_do):
     pass
 

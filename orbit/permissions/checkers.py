@@ -1,6 +1,9 @@
 from django.core.exceptions import PermissionDenied
 STAFF = "arcstaff"
 
+# these can_* functions simply return true or false of a user is allowed to do
+# stuff
+
 def can_do(user):
     return user.is_authenticated()
 

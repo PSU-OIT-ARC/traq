@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta, time, datetime
 from django.db import connection
+
 def dictfetchall(cursor):
     "Returns all rows from a cursor as a dict"
     desc = cursor.description
@@ -10,6 +11,8 @@ def dictfetchall(cursor):
     ]
 
 def jsonhandler(obj):
+    """Pass this function as the "default" keyword argument to json.dumps. This
+    will handle converting dates and times to JSON"""
     if hasattr(obj, 'isoformat'):
         return obj.isoformat()
     elif isinstance(obj, time):
@@ -18,6 +21,7 @@ def jsonhandler(obj):
         raise TypeError, 'Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj))
 
 def querySetToJSON(qs):
+    """Return a json string of a queryset object as an array containing dicts"""
     cursor = connection.cursor()
     cursor.execute(str(qs.query))
     return json.dumps(dictfetchall(cursor), default=jsonhandler)

@@ -26,6 +26,7 @@ class ComponentForm(forms.ModelForm):
         self.instance.created_by = created_by
 
         if not self.is_bound:
+            # figure out the rank for this new component
             try:
                 rank = Component.objects.order_by('-rank').all()[0].rank + 1
             except IndexError:
@@ -54,6 +55,7 @@ class ComponentForm(forms.ModelForm):
         )
 
 class ReportIntervalForm(forms.Form):
+    """Simple little form to select a datetime range"""
     start = forms.DateTimeField()
     end = forms.DateTimeField()
 

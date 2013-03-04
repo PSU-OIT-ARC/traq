@@ -36,8 +36,9 @@ class TicketManager(models.Manager):
     def get_query_set(self):
         return super(TicketManager, self).get_query_set().filter(is_deleted=False)
 
-    def tickets(self, filter=None, to_json=False):
-        rows = Ticket.objects.select_related(
+    def tickets(self):
+        """Return a query set of tickets with all the useful related fields and the default ordering"""
+        queryset = Ticket.objects.select_related(
             'status', 
             'priority', 
             'assigned_to', 
@@ -54,15 +55,7 @@ class TicketManager(models.Manager):
             "component_name": "component.name",
         }).order_by("-status__importance", "-global_order", "-priority__rank")
 
-        if filter:
-            rows.filter(**filter)
-
-        if not to_json:
-            return rows
-
-        cursor = connection.cursor()
-        cursor.execute(str(rows.query))
-        return json.dumps(dictfetchall(cursor), default=jsonhandler)
+        return queryset
 
 class Ticket(models.Model):
     ticket_id = models.AutoField(primary_key=True)
@@ -85,11 +78,19 @@ class Ticket(models.Model):
     objects = TicketManager()
 
     def totalTimes(self, interval=()):
+        """Return a dict containing timedelta objects that indicate how much
+        total, billable and non_billable time has been spent on this ticket"""
+
         sql_where = "(1 = 1)"
+        # if the caller specified an interval, use it in the query
         if interval:
             sql_where = "(work.done_on BETWEEN %s AND %s)"
 
-        args = tuple(chain((self.pk, Work.DONE,), interval))*3
+        # generate the list of arguments to the query. It gets a little tricky
+        # because the arguments change if an interval is specified by the
+        # caller
+        args = tuple(chain((self.pk, Work.DONE,), interval))*3 # times 3 because the same args are used for total, billable and non_billable
+
         rows = Ticket.objects.raw("""
             SELECT ticket_id, 
             (SELECT IFNULL(SUM(TIME_TO_SEC(`time`)), 0) FROM work WHERE is_deleted = 0 AND ticket_id = %s AND work.state = %s AND """ + sql_where + """ ) AS total_time,
@@ -114,6 +115,7 @@ class Ticket(models.Model):
 
 class WorkTypeManager(models.Manager):
     def default(self):
+        """Return the default WorkType"""
         objs = WorkType.objects.filter(is_default=1).order_by('rank')
         if len(objs) > 0:
             return list(objs)[0]
@@ -140,6 +142,8 @@ class WorkManager(models.Manager):
         return super(WorkManager, self).get_query_set().filter(is_deleted=False)
 
     def pauseRunning(self, created_by):
+        """Sets the state to pause for all running work created by `created_by`.
+        Returns true is there was work that was running before, or false"""
         other_work = Work.objects.filter(created_by=created_by, state=Work.RUNNING)
         paused_something = False
         for work in other_work:
@@ -157,7 +161,7 @@ class Work(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=True)
     billable = models.BooleanField(default=True)
-    time = models.TimeField()
+    time = models.TimeField() # the amount of time spent on this work item
     started_on = models.DateTimeField()
     done_on = models.DateTimeField(null=True, default=None)
     state = models.IntegerField(choices=(
@@ -165,6 +169,7 @@ class Work(models.Model):
         (PAUSED, "Paused"),
         (DONE, "Done"),
     ), default=DONE)
+    # helps keep track of the duration of pausing and running work
     state_changed_on = models.DateTimeField(default=None, null=True, blank=True)
 
     type = models.ForeignKey(WorkType)
@@ -174,17 +179,27 @@ class Work(models.Model):
     is_deleted = models.BooleanField(default=False, verbose_name="Delete?")
 
     def duration(self):
+        """Return a time object representing the amount of time that has been
+        spent on this work item"""
         if self.state == Work.DONE:
             return self.time
         elif self.state == Work.PAUSED:
             return self.time
-        else:
+        elif state.state == Work.RUNNING:
             start = self.state_changed_on or self.created_on
             delta = datetime.utcnow().replace(tzinfo=utc) - start
             return (datetime.combine(datetime.today(), self.time) + delta).time()
+        else:
+            raise ValueError("Work object with pk=%d has an invalid work state, %d" % (self.pk, self.state))
 
     def pause(self):
+        """Pause a running work item"""
+        # you can only pause running work
+        if self.state != Work.RUNNING:
+            return
+
         self.state = Work.PAUSED
+        # calculate how much time has past since this work was last continued or created
         start = self.state_changed_on or self.created_on
         delta = datetime.utcnow().replace(tzinfo=utc) - start
         t = (datetime.combine(datetime.today(), self.time) + delta).time()
@@ -193,7 +208,10 @@ class Work(models.Model):
         self.save()
 
     def continue_(self):
+        """Continue work that was paused"""
         self.state = Work.RUNNING
+        # this is important because it is required to calculate how much time
+        # has elasped when the work is paused or set as done
         self.state_changed_on = datetime.now()
         self.save()
 

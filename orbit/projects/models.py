@@ -10,7 +10,6 @@ class ProjectManager(models.Manager):
     def get_query_set(self):
         return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
 
-
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -20,6 +19,7 @@ class Project(models.Model):
     point_of_contact = models.TextField(blank=True, default="")
     # displayed on the invoice
     invoice_description = models.TextField(blank=True, default="")
+
     is_deleted = models.BooleanField(default=0)
 
     created_by = models.ForeignKey(User, related_name='+')
@@ -27,6 +27,7 @@ class Project(models.Model):
     objects = ProjectManager()
 
     def createDefaultComponents(self):
+        """Create all the default components for a project"""
         components = [
             "Base Site", 
             "Project Management", 
@@ -38,6 +39,7 @@ class Project(models.Model):
             c.save()
 
     def defaultComponent(self):
+        """Return the default component"""
         comps = Component.objects.filter(project=self, is_default=1).order_by('rank')
         if len(comps) > 0:
             return list(comps)[0]
@@ -45,6 +47,10 @@ class Project(models.Model):
 
     # interval is a 2-tuple datetime start, and datetime end
     def components(self, interval=()):
+        """Return the list of components in this project, including the amount
+        of total, billable and non_billable time spent on the component. A
+        datetime interval can be specified by the caller to limit the total,
+        billable and non_billable time calculations"""
         sql_where = "(1 = 1)"
         if interval:
             sql_where = "(work.done_on BETWEEN %s AND %s)"
@@ -57,7 +63,7 @@ class Project(models.Model):
                 IFNULL(SUM(IF(work.billable = 0, TIME_TO_SEC(`time`), 0)), 0) AS non_billable_time
             FROM
                 component
-            LEFT JOIN ticket ON ticket.component_id = component.component_id AND ticket.project_id = %s 
+            LEFT JOIN ticket ON ticket.component_id = component.component_id AND ticket.project_id = %s AND ticket.is_deleted = 0
             LEFT JOIN `work` ON `work`.ticket_id = ticket.ticket_id AND `work`.is_deleted = 0 AND `work`.state = %s
             WHERE
                 component.project_id = %s AND
@@ -68,6 +74,7 @@ class Project(models.Model):
         """, (self.pk, Work.DONE, self.pk) + interval)
 
         modified_rows = [] 
+        # augment all the rows with timedeltas 
         for row in rows:
             row.total = timedelta(seconds=int(row.total_time))
             row.billable = timedelta(seconds=int(row.billable_time))
@@ -78,6 +85,8 @@ class Project(models.Model):
 
     # interval is a 2-tuple datetime start, and datetime end
     def totalCost(self, interval=()):
+        """Return the total cost of a project by adding up all the work on the
+        project. The caller can specify an interval to limit the calculation"""
         sql_where = "(1 = 1)"
         if interval:
             sql_where = "(work.done_on BETWEEN %s AND %s)"
@@ -111,7 +120,7 @@ class Project(models.Model):
         return Work.objects.filter(ticket__project=self, state=Work.DONE).select_related('created_by', 'type')[:n]
 
     def tickets(self):
-        rows = Ticket.objects.tickets(filter={"project": self})
+        rows = Ticket.objects.tickets().filter(project=self)
         return rows
 
     class Meta:
@@ -136,6 +145,8 @@ class Component(models.Model):
     objects = ComponentManager()
 
     def invoiceBreakdown(self, interval=()):
+        """Return a list of dicts containing the total amount of time and money
+        spent per work_type on this component"""
         sql_where = "(1 = 1)"
         if interval:
             sql_where = "(work.done_on BETWEEN %s AND %s)"

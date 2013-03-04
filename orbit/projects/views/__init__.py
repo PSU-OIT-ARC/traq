@@ -1,4 +1,3 @@
-import json
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -24,17 +23,28 @@ def detail(request, project_id):
     components = project.components()
     work = project.latestWork(10)
     tickets_json = querySetToJSON(tickets)
+
     if request.POST:
         form = QuickTicketForm(request.POST, project=project, created_by=request.user)
         if form.is_valid():
             messages.success(request, 'Ticket Created')
             form.save()
-            request.session['ticket_initial_data'] = form.cleaned_data
+            # save the ticket form data so the user doesn't have to reinput
+            # everything again, if they want to create a similar ticket in the
+            # future. Save the data on a per project basis (using the project's pk)
+            if "quick_ticket_form" not in request.session:
+                request.session['quick_ticket_form'] = {}
+            request.session['quick_ticket_form'][project.pk] = form.cleaned_data
+            # Django won't know to save the session because we are modifying a
+            # 2D dictionary
+            request.session.modified = True
+
             return HttpResponseRedirect(reverse('projects-detail', args=(project.pk,)))
     else:
-        initial_data = request.session.get("ticket_initial_data", {})
+        initial_data = request.session.get("quick_ticket_form", {}).get(project.pk, {})
         initial_data.pop("body", None)
         form = QuickTicketForm(initial=initial_data, project=project, created_by=request.user)
+
     return render(request, 'projects/detail.html', {
         'project': project,
         'tickets': tickets,
