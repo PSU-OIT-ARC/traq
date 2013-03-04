@@ -29,11 +29,11 @@ def can_edit(user, instance):
         return True
 
     # you can edit something assigned to you
-    if getattr(instance, 'assigned_to', None) == user:
+    if getattr(instance, 'assigned_to_id', None) == user.pk:
         return True
 
     # you can edit something created by you
-    if getattr(instance, 'created_by', None) == user:
+    if getattr(instance, 'created_by_id', None) == user.pk:
         return True
 
     return False

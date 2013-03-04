@@ -17,6 +17,7 @@
     #{{ ticket.pk }}: {{ ticket.title }} 
     {% if user|can_edit:ticket %}
     <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
+    <a href="{% url 'tickets-close' ticket.pk %}" class="button">Close</a>
     {% endif %}
 </h2>
 

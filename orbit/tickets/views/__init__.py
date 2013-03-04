@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from ..forms import TicketForm, CommentForm, WorkForm
-from ..models import Ticket, Comment, Work, WorkType
+from ..models import Ticket, Comment, Work, WorkType, TicketStatus
 from orbit.projects.models import Project
 from orbit.permissions.decorators import can_view, can_edit, can_create
 
@@ -51,6 +51,20 @@ def detail(request, ticket_id):
         'queries': connection.queries,
         'running_work': running_work,
     })
+
+HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
+
+@can_edit(Ticket)
+def close(request, ticket_id):
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    project = ticket.project
+    had_running_work = ticket.close()
+
+    messages.success(request, 'Ticket Closed')
+    if had_running_work:
+        messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
+
+    return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
     
 @can_create(Ticket)
 def create(request, project_id):
@@ -74,11 +88,22 @@ def edit(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
     if request.method == "POST":
+        original_status = ticket.status
         form = TicketForm(request.POST, instance=ticket, project=project, created_by=ticket.created_by)
         if form.is_valid():
             form.save()
             if not form.instance.is_deleted:
-                messages.success(request, 'Ticket Editied')
+                closed_status = TicketStatus.objects.closed()
+                # if the user just closed this ticket, call the ticket.close()
+                # method to clean up any remaining work left open on the ticket
+                if original_status != closed_status and ticket.status == closed_status:
+                    messages.success(request, 'Ticket Closed')
+                    had_running_work = ticket.close()
+                    if had_running_work:
+                        messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
+                    return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
+                else:
+                    messages.success(request, 'Ticket Editied')
                 return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
             else:
                 messages.success(request, 'Ticket Deleted')

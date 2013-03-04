@@ -5,12 +5,18 @@ from ..projects.models import Project, Component
 from django.contrib.auth.models import User
 from django.utils.timezone import utc
 
+class TicketStatusManager(models.Manager):
+    def closed(self):
+        return self.get(name="Closed")
+
 class TicketStatus(models.Model):
     ticket_status_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     rank = models.IntegerField()
     is_default = models.BooleanField(default=False)
     importance = models.IntegerField()
+
+    objects = TicketStatusManager()
 
     class Meta:
         ordering = ['rank']
@@ -76,6 +82,20 @@ class Ticket(models.Model):
     component = models.ForeignKey(Component)
 
     objects = TicketManager()
+
+    def close(self):
+        """Closes a ticket, and sets all non finished work to done"""
+        # finish all running work
+        self.status = TicketStatus.objects.closed()
+        self.save()
+        work = Work.objects.filter(ticket=self).exclude(ticket__status=Work.DONE)
+        had_running_work = False
+        for w in work:
+            w.time = w.duration()
+            w.done()
+            w.save()
+            had_running_work = True
+        return had_running_work
 
     def totalTimes(self, interval=()):
         """Return a dict containing timedelta objects that indicate how much
@@ -185,7 +205,7 @@ class Work(models.Model):
             return self.time
         elif self.state == Work.PAUSED:
             return self.time
-        elif state.state == Work.RUNNING:
+        elif self.state == Work.RUNNING:
             start = self.state_changed_on or self.created_on
             delta = datetime.utcnow().replace(tzinfo=utc) - start
             return (datetime.combine(datetime.today(), self.time) + delta).time()
