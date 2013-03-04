@@ -6,6 +6,11 @@ from django.db import connection
 from django.contrib.auth.models import User
 from ..utils import dictfetchall, jsonhandler
 
+class ProjectManager(models.Manager):
+    def get_query_set(self):
+        return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
+
+
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -15,8 +20,11 @@ class Project(models.Model):
     point_of_contact = models.TextField(blank=True, default="")
     # displayed on the invoice
     invoice_description = models.TextField(blank=True, default="")
+    is_deleted = models.BooleanField(default=0)
 
     created_by = models.ForeignKey(User, related_name='+')
+
+    objects = ProjectManager()
 
     def createDefaultComponents(self):
         components = [
@@ -102,30 +110,9 @@ class Project(models.Model):
     def latestWork(self, n):
         return Work.objects.filter(ticket__project=self, state=Work.DONE).select_related('created_by', 'type')[:n]
 
-    def tickets(self, to_json=False):
-        rows = Ticket.objects.filter(project=self).select_related(
-            'status', 
-            'priority', 
-            'assigned_to', 
-            'created_by',
-            'component',
-        ).extra(select={
-            # the sort order
-            "global_order": "IF(ticket_status.importance = 0, ticket.created_on, 0)",
-            # because the column name "name" is used in all these tables, alias
-            # each name column with something else, so when converted to a dict,
-            # the columns don't disappear
-            "status_name": "ticket_status.name",
-            "priority_name": "ticket_priority.name",
-            "component_name": "component.name",
-        }).order_by("-status__importance", "-global_order", "-priority__rank")
-
-        if not to_json:
-            return rows
-
-        cursor = connection.cursor()
-        cursor.execute(str(rows.query))
-        return json.dumps(dictfetchall(cursor), default=jsonhandler)
+    def tickets(self):
+        rows = Ticket.objects.tickets(filter={"project": self})
+        return rows
 
     class Meta:
         db_table = 'project'

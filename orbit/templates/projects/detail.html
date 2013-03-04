@@ -23,6 +23,7 @@ TICKETS = {{ tickets_json|safe }};
     {% include 'tickets/_tickettable.html' %}
 </div>
 
+{% comment %}
 <div class="right-section-wrapper">
     <div class="right-section-block">
         <h3>Add Ticket</h3>
@@ -81,5 +82,6 @@ TICKETS = {{ tickets_json|safe }};
         </div>
     </div>
 </div>
+{% endcomment %}
 {% endblock %}
 

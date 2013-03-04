@@ -8,6 +8,7 @@ from ..forms import ProjectForm
 from ..models import Project 
 from orbit.tickets.forms import QuickTicketForm
 from orbit.permissions.decorators import can_do, can_view, can_edit, can_create
+from orbit.utils import querySetToJSON
 
 @can_do()
 def all(request):
@@ -22,7 +23,7 @@ def detail(request, project_id):
     tickets = project.tickets()
     components = project.components()
     work = project.latestWork(10)
-    tickets_json = project.tickets(to_json=True)
+    tickets_json = querySetToJSON(tickets)
     if request.POST:
         form = QuickTicketForm(request.POST, project=project, created_by=request.user)
         if form.is_valid():

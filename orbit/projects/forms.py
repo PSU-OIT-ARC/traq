@@ -14,6 +14,7 @@ class ProjectForm(forms.ModelForm):
             'name',
             'point_of_contact',
             'invoice_description',
+            'is_deleted',
         )
 
 class ComponentForm(forms.ModelForm):

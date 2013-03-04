@@ -14,7 +14,14 @@
 <h1>{{ user.username }},</h2>
 
 <div class="left-section-wrapper">
-<h2>Tickets Assigned To or Created By You</h2>
+<script type="text/javascript">
+TICKETS = {{ tickets_json|safe }};
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
+<h2>
+    Tickets Assigned To or Created By You
+    <input type="text" name="search" id="ticket-search" placeholder="Search" />
+</h2>
 {% include 'tickets/_tickettable.html' %}
 </div>
 

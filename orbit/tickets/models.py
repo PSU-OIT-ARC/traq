@@ -36,6 +36,34 @@ class TicketManager(models.Manager):
     def get_query_set(self):
         return super(TicketManager, self).get_query_set().filter(is_deleted=False)
 
+    def tickets(self, filter=None, to_json=False):
+        rows = Ticket.objects.select_related(
+            'status', 
+            'priority', 
+            'assigned_to', 
+            'created_by',
+            'component',
+        ).extra(select={
+            # the sort order
+            "global_order": "IF(ticket_status.importance = 0, ticket.created_on, 0)",
+            # because the column name "name" is used in all these tables, alias
+            # each name column with something else, so when converted to a dict,
+            # the columns don't disappear
+            "status_name": "ticket_status.name",
+            "priority_name": "ticket_priority.name",
+            "component_name": "component.name",
+        }).order_by("-status__importance", "-global_order", "-priority__rank")
+
+        if filter:
+            rows.filter(**filter)
+
+        if not to_json:
+            return rows
+
+        cursor = connection.cursor()
+        cursor.execute(str(rows.query))
+        return json.dumps(dictfetchall(cursor), default=jsonhandler)
+
 class Ticket(models.Model):
     ticket_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
