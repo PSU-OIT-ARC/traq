@@ -48,7 +48,7 @@ class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=0)
+    is_deleted = models.BooleanField(default=False)
 
     # add all the meta fields here, make sure they aren't required
     point_of_contact = models.TextField(blank=True, default="", help_text="Displayed on the invoice")
