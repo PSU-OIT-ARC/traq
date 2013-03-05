@@ -19,21 +19,21 @@
 <table class="report">
     <tr>
         <th colspan="2">&nbsp;</th>
-        <th style="width:75px">Total Hours</th>
-        <th style="width:75px">Billable Hours</th>
+        <th>Total Hours</th>
+        <th>Billable Hours</th>
     </tr>
 {% for comp in components %}
     <tr>
         <th colspan="2">{{ comp.name }}</th>
-        <th>{{ comp.total|tickettimepretty }}</th>
-        <th>{{ comp.billable|tickettimepretty }}</th>
+        <th class="right">{{ comp.total|tickettimepretty }}</th>
+        <th class="right">{{ comp.billable|tickettimepretty }}</th>
     </tr>
     {% for ticket in comp.tickets %}
-        <tr>
+        <tr class="{% cycle 'odd' 'even' %}">
             <td>&nbsp;</td>
             <td><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></td>
-            <td>{{ ticket.times.total|tickettimepretty }}</td>
-            <td>{{ ticket.times.billable|tickettimepretty }}</td>
+            <td class="right">{{ ticket.times.total|tickettimepretty }}</td>
+            <td class="right">{{ ticket.times.billable|tickettimepretty }}</td>
         </tr>
     {% endfor %}
 {% endfor %}

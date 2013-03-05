@@ -50,6 +50,10 @@ p.error {
     display:inline;
 }
 
+.helptext {
+    font-size:10px;
+}
+
 .discrete {
     color:inherit;
 }
@@ -62,6 +66,12 @@ p.error {
     float:right;
 }
 
+.report {
+    background-color:#fff;
+    border-spacing:0;
+    border-collapse:collapse;
+}
+
 .report th {
     text-align:left;
 }
@@ -72,6 +82,10 @@ p.error {
 
 .report .summary {
 
+}
+
+.report tr.odd td {
+    background-color:#efefef;
 }
 
 /* these colors are from twitter bootstrap */
@@ -403,4 +417,48 @@ p.error {
 #ticket-search {
     display:inline-block;
     float:right;
+}
+
+.time-grid {
+}
+
+.time-grid th {
+    text-align:center;
+    padding-left:3px;
+    padding-right:3px;
+    border-left :1px solid black;
+    border-right:1px solid black;
+}
+
+.time-grid thead td {
+    font-size:11px;
+    text-align:center;
+    padding-left:3px;
+    padding-right:3px;
+}
+
+.time-cell {
+    text-align:center;
+    padding-left:3px;
+    padding-right:3px;
+}
+
+.border-left {
+    border-left:1px solid black;
+}
+
+.border-right {
+    border-right:1px solid black;
+}
+
+.time-cell.border-right {
+    padding-right:5px;
+}
+.time-cell.border-left {
+    padding-left:5px;
+}
+
+.report .username {
+    text-align:right;
+    padding-right:5px;
 }

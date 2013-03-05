@@ -10,17 +10,52 @@ class ProjectManager(models.Manager):
     def get_query_set(self):
         return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
 
+    def timeByUser(self, user, interval=()):
+        sql_where = "(1 = 1)"
+        if interval:
+            sql_where = "(work.done_on BETWEEN %s AND %s)"
+
+        rows = self.raw("""
+        SELECT 
+            project.*,
+            SUM(TIME_TO_SEC(IFNULL(`work`.`time`, 0))) AS total_time,
+            SUM(IF(`work`.billable, TIME_TO_SEC(IFNULL(`work`.`time`, 0)), 0)) AS billable_time,
+            SUM(IF(`work`.billable = 0, TIME_TO_SEC(IFNULL(`work`.`time`, 0)), 0)) AS non_billable_time
+        FROM 
+            ticket 
+        INNER JOIN 
+            work on work.ticket_id = ticket.ticket_id AND 
+            work.is_deleted = 0 AND
+            """ + sql_where + """ AND 
+            work.created_by_id = %s  
+        RIGHT JOIN 
+            project ON project.project_id = ticket.project_id AND ticket.is_deleted = 0
+        WHERE project.is_deleted = 0
+        GROUP BY project.project_id
+        ORDER BY project.created_on
+        """, interval + (user.pk,))
+
+        modified_rows = []
+        for row in rows:
+            row.total = timedelta(seconds=int(row.total_time))
+            row.billable = timedelta(seconds=int(row.billable_time))
+            row.non_billable = timedelta(seconds=int(row.non_billable_time))
+            modified_rows.append(row)
+
+        return modified_rows
+
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=0)
 
     # add all the meta fields here, make sure they aren't required
-    point_of_contact = models.TextField(blank=True, default="")
+    point_of_contact = models.TextField(blank=True, default="", help_text="Displayed on the invoice")
     # displayed on the invoice
-    invoice_description = models.TextField(blank=True, default="")
-
-    is_deleted = models.BooleanField(default=0)
+    invoice_description = models.TextField(blank=True, default="", help_text="Displayed on the invoice")
+    # catch all
+    catch_all = models.TextField(blank=True, default="", help_text="Anything you want to document here")
 
     created_by = models.ForeignKey(User, related_name='+')
 
@@ -123,12 +158,59 @@ class Project(models.Model):
         rows = Ticket.objects.tickets().filter(project=self)
         return rows
 
+    def users(self):
+        queryset = User.objects.raw("""
+        SELECT DISTINCT auth_user.* 
+        FROM ticket
+        INNER JOIN work on work.ticket_id = ticket.ticket_id
+        INNER JOIN auth_user ON work.created_by_id = auth_user.id
+        WHERE project_id = %s AND
+        ticket.is_deleted = 0 AND
+        work.is_deleted = 0
+        """, (self.pk,))
+        return queryset
+
     class Meta:
         db_table = 'project'
 
 class ComponentManager(models.Manager):
     def get_query_set(self):
         return super(ComponentManager, self).get_query_set().filter(is_deleted=False)
+
+    def timeByUser(self, project, user, interval=()):
+        sql_where = "(1 = 1)"
+        if interval:
+            sql_where = "(work.done_on BETWEEN %s AND %s)"
+
+        rows = self.raw("""
+        SELECT 
+            component.*,
+            SUM(TIME_TO_SEC(IFNULL(`work`.`time`, 0))) AS total_time,
+            SUM(IF(`work`.billable, TIME_TO_SEC(IFNULL(`work`.`time`, 0)), 0)) AS billable_time,
+            SUM(IF(`work`.billable = 0, TIME_TO_SEC(IFNULL(`work`.`time`, 0)), 0)) AS non_billable_time
+        FROM 
+            ticket 
+        INNER JOIN 
+            work on work.ticket_id = ticket.ticket_id AND 
+            work.is_deleted = 0 AND
+            """ + sql_where + """ AND 
+            work.created_by_id = %s  
+        RIGHT JOIN 
+            component ON component.component_id = ticket.component_id AND ticket.is_deleted = 0
+        WHERE 
+            component.project_id = %s
+        GROUP BY component.component_id
+        ORDER BY component.rank
+        """, interval + (user.pk, project.pk))
+
+        modified_rows = []
+        for row in rows:
+            row.total = timedelta(seconds=int(row.total_time))
+            row.billable = timedelta(seconds=int(row.billable_time))
+            row.non_billable = timedelta(seconds=int(row.non_billable_time))
+            modified_rows.append(row)
+
+        return modified_rows
 
 class Component(models.Model):
     component_id = models.AutoField(primary_key=True)

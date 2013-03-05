@@ -6,15 +6,55 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from django.utils.timezone import utc
+from django.contrib.auth.models import User
 from ..forms import ProjectForm, ComponentForm, ReportIntervalForm
 from ..models import Project, Component
 from orbit.tickets.models import Ticket
 from orbit.tickets.forms import QuickTicketForm
 from orbit.permissions.decorators import can_view, can_edit, can_create
 
+def mega(request):
+    form, interval = _intervalHelper(request)
+    users = list(User.objects.all())
+    projects = list(Project.objects.all())
+    for user in users:
+        user.projects = Project.objects.timeByUser(user, interval)
+        user.totals = {"total": timedelta(0), "billable": timedelta(0), "non_billable": timedelta(0)}
+        for project in user.projects:
+            user.totals['total'] += project.total
+            user.totals['billable'] += project.billable
+            user.totals['non_billable'] += project.non_billable
+
+    return render(request, 'projects/reports/mega.html', {
+        'users': users,
+        'projects': projects,
+        'interval': interval,
+        'form': form,
+    })
+
 def grid(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    return HttpResponse("<img src='/static/img/mharvey.gif'/>")
+    # get all the people who have worked on this project
+    form, interval = _intervalHelper(request)
+    users = list(project.users())
+    components = list(project.components())
+    # for each user, for each component, figure out how much work they spent
+    # query in a loop :(
+    for user in users:
+        user.components = Component.objects.timeByUser(project, user, interval=interval)
+        user.totals = {"total": timedelta(0), "billable": timedelta(0), "non_billable": timedelta(0)}
+        for comp in user.components:
+            user.totals['total'] += comp.total
+            user.totals['billable'] += comp.billable
+            user.totals['non_billable'] += comp.non_billable
+
+    return render(request, 'projects/reports/grid.html', {
+        'project': project,
+        'users': users,
+        'components': components,
+        'form': form,
+        'interval': interval,
+    })
 
 def component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)

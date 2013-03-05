@@ -8,7 +8,11 @@
 {% endblock %}
 {% block content %}
 
-<h2>{{ project.name }}</h2>
+<h2>{{ project.name }} 
+    {% if user|can_edit:project %}
+        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+    {% endif %}
+</h2>
 <script type="text/javascript">
 TICKETS = {{ tickets_json|safe }};
 </script>

@@ -28,7 +28,7 @@ def tickettime(value):
 def tickettimepretty(value):
     """Converts a time or timedelta object to a string like '11:22'"""
     if value is None:
-        return u"00:00"
+        return u"0"
     if isinstance(value, time):
         return value.strftime("%H:%M")
     if isinstance(value, timedelta):
@@ -36,4 +36,6 @@ def tickettimepretty(value):
         minutes, seconds = divmod(value.seconds, 60)
         hours, minutes = divmod(minutes, 60)
         hours = hours + days*24
-        return u'%02d:%02d' % (hours, minutes)
+        if hours == seconds == 0:
+            return u'0'
+        return u'%d:%02d' % (hours, minutes)

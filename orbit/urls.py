@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/reports/grid/?$', projects.views.reports.grid, name='projects-reports-grid'),
     url(r'^projects/(\d+)/reports/component/?$', projects.views.reports.component, name='projects-reports-component'),
     url(r'^projects/(\d+)/reports/invoice/?$', projects.views.reports.invoice, name='projects-reports-invoice'),
+    url(r'^projects/reports/mega/?$', projects.views.reports.mega, name='projects-reports-mega'),
 
     # tickets
     url(r'^projects/(\d+)/tickets/create/?$', tickets.views.create, name='tickets-create'),
