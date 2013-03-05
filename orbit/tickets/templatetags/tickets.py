@@ -36,6 +36,6 @@ def tickettimepretty(value):
         minutes, seconds = divmod(value.seconds, 60)
         hours, minutes = divmod(minutes, 60)
         hours = hours + days*24
-        if hours == seconds == 0:
+        if hours == minutes == 0:
             return u'0'
         return u'%d:%02d' % (hours, minutes)
