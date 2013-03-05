@@ -88,7 +88,7 @@ class Ticket(models.Model):
         # finish all running work
         self.status = TicketStatus.objects.closed()
         self.save()
-        work = Work.objects.filter(ticket=self).exclude(ticket__status=Work.DONE)
+        work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
         had_running_work = False
         for w in work:
             w.time = w.duration()
