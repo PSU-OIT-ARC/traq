@@ -152,7 +152,7 @@ class Project(models.Model):
         return rows[0].total_cost
 
     def latestWork(self, n):
-        return Work.objects.filter(ticket__project=self, state=Work.DONE).select_related('created_by', 'type')[:n]
+        return Work.objects.filter(ticket__project=self, state=Work.DONE, ticket__is_deleted=False).select_related('created_by', 'type')[:n]
 
     def tickets(self):
         rows = Ticket.objects.tickets().filter(project=self)
