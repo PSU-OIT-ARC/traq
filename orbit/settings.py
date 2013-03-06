@@ -1,6 +1,21 @@
 import os
+from fnmatch import fnmatch
+from django.conf import global_settings
+
 PROJECT_DIR = os.path.dirname(__file__)
 HOME_DIR = os.path.normpath(os.path.join(PROJECT_DIR, '../'))
+
+# allow the use of wildcards in the INTERAL_IPS setting
+class IPList(list):
+    # do a unix-like glob match
+    # E.g. '192.168.1.100' would match '192.*'
+    def __contains__(self, ip):
+        for ip_pattern in self:
+            if fnmatch(ip, ip_pattern):
+                return True
+        return False
+
+INTERNAL_IPS = IPList(['10.*', '192.168.*'])
 
 CAS_SERVER_URL = 'https://sso.pdx.edu/cas/login'
 # prevents CAS login on the admin pages
@@ -104,6 +119,10 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_DIR, 'templates'),
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
 )
 
 INSTALLED_APPS = (
