@@ -39,19 +39,37 @@
 
     <div class="clear"></div>
     <div class="float-left">
-    {{ form.started_on.label_tag }}
-    {{ form.started_on }}
+        {{ form.started_on.label_tag }}
+        {{ form.started_on }}
     </div>
 
     <div class="float-left">
-    {{ form.estimated_time.label_tag }}
-    {{ form.estimated_time }}
+        {{ form.estimated_time.label_tag }}
+        {{ form.estimated_time }}
+    </div>
+    <div class="float-left">
+        {{ form.due_on.label_tag }}
+        {{ form.due_on }}
+    </div>
+    <div class="float-left">
+        {{ form.milestone.label_tag }}
+        {{ form.milestone }}
     </div>
     <div class="clear"></div>
 
+    {% if not form.instance.pk %}
+        <label class="option">{{ form.add_work }} Add work-line item to ticket</label>
+    {% endif %}
+
     <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
+
     <label class="option float-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
-    <input type="submit" name="submit" value="Submit" />
+
+
+    <input type="submit" name="submit" value="Submit" class="float-left" />
+    {% if not form.instance.pk %}
+        <input type="submit" name="submit" value="Submit and Add New Ticket" class="float-left" />
+    {% endif %}
 </form>
 {% endblock %}
 

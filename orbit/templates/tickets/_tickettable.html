@@ -4,7 +4,7 @@
             <th>Ticket</th>
             <th class="center">Status</th>
             <th class="center">Assigned</th>
-            <th class="center">Created On</th>
+            <th class="center">Due On</th>
         </tr>
     </thead>
     <tbody>
@@ -16,7 +16,11 @@
                 </td>
             </tr>
             <tr id="t2-{{ ticket.pk }}" class="ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
-                <td>{{ ticket.component }}</td>
+                {% if project %}
+                    <td>{{ ticket.component }}</td>
+                {% else %}
+                <td><a href="{% url 'projects-detail' ticket.project.pk %}">{{ ticket.project.name }}</a></td>
+                {% endif %}
                 <td class="center">{{ ticket.status }}</td>
                 <td class="center">
                     {% if ticket.assigned_to == user %} 
@@ -25,7 +29,7 @@
                         {{ ticket.assigned_to }}
                     {% endif %}
                 </td>
-                <td class="center"><span class="timestamp">{{ ticket.created_on }}</span></td>
+                <td class="center {% if ticket.isOverDue %}error{% endif %}" >{{ ticket.due_on|default:"" }}</td>
             </tr>
         {% empty %}
             <tr><td class="center" colspan="4">No tickets</td></td>

@@ -30,12 +30,20 @@
             <ul>
                 <li><strong>Component:</strong> {{ ticket.component }} </li>
                 <li><strong>Status:</strong> {{ ticket.status }}</li>
+                {% if ticket.milestone %}
+                    <li><strong>Milestone:</strong> {{ ticket.milestone.name }} </li>
+                {% endif %}
+            </ul>
+            <ul>
                 <li><strong>Assigned To:</strong> {{ ticket.assigned_to }}</li>
                 <li><strong>Created:</strong> <span class="timestamp">{{ ticket.created_on }}</span> by {{ ticket.created_by }}</li>
             </ul>
             <ul>
                 <li><strong>Estimated Time:</strong> {{ ticket.estimated_time|tickettime }}</li>
                 <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li>
+                {% if ticket.due_on %}
+                    <li><strong>Due On:</strong> {{ ticket.due_on }} </li>
+                {% endif %}
             </ul>
             <div class="clear"></div>
         </div>

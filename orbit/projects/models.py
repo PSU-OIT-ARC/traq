@@ -1,9 +1,12 @@
 import math
 import json
+from pytz import timezone
+from django.conf import settings as SETTINGS
 from datetime import timedelta
 from django.db import models
 from django.db import connection
 from django.contrib.auth.models import User
+from django.utils.timezone import utc
 from ..utils import dictfetchall, jsonhandler
 
 class ProjectManager(models.Manager):
@@ -268,6 +271,31 @@ class Component(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.name)
+
+class MilestoneManager(models.Manager):
+    def get_query_set(self):
+        return super(MilestoneManager, self).get_query_set().filter(is_deleted=False)
+
+class Milestone(models.Model):
+    milestone_id = models.AutoField(primary_key=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=255)
+    due_on = models.DateTimeField()
+    is_deleted = models.BooleanField(default=False)
+
+    created_by = models.ForeignKey(User, related_name="+")
+    project = models.ForeignKey(Project)
+
+    objects = MilestoneManager()
+
+    class Meta:
+        db_table = 'milestone'
+        ordering = ['due_on']
+
+    def __unicode__(self):
+        utc_date = self.due_on.replace(tzinfo=utc)
+        tz = timezone(SETTINGS.TIME_ZONE)
+        return u'%s %s' % (self.name, utc_date.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")) 
 
 # circular dependance problem
 from ..tickets.models import Ticket, Work

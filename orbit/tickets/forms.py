@@ -4,6 +4,8 @@ from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkTyp
 from ..projects.models import Component
 
 class TicketForm(forms.ModelForm):
+    add_work = forms.BooleanField(required=False)
+
     """Ticket creation and editing form"""
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
@@ -30,10 +32,6 @@ class TicketForm(forms.ModelForm):
             self.fields['estimated_time'].initial = "1:00"
             self.fields['assigned_to'].initial = created_by
 
-        # a ticket doesn't neccessarily need to be assigned to anyone.
-        # for some reason, you can't set this in the model field
-        self.fields['assigned_to'].required = False
-        self.fields['component'].required = False
         # the QuickTicketForm inherits from this class, but exlcudes the title field,
         # hence the if statement here
         if "title" in self.fields:
@@ -65,6 +63,20 @@ class TicketForm(forms.ModelForm):
 
         return cleaned_data
 
+    def save(self, *args, **kwargs):
+        super(TicketForm, self).save(*args, **kwargs)
+        # add the work line item too
+        if self.cleaned_data.get('add_work', False):
+            w = Work()
+            w.description = "Did stuff"
+            w.time = self.instance.estimated_time
+            w.type = WorkType.objects.default()
+            w.ticket = self.instance
+            w.created_by = self.instance.created_by
+            # assume the work started w.time hours/minutes ago
+            w.started_on = datetime.now() - timedelta(hours=w.time.hour, minutes=w.time.minute)
+            w.save()
+
     class Meta:
         model = Ticket
         fields = (
@@ -78,6 +90,8 @@ class TicketForm(forms.ModelForm):
             'status', 
             'priority', 
             'component',
+            'milestone',
+            'due_on',
         )
 
 class QuickTicketForm(TicketForm):
@@ -132,6 +146,7 @@ class QuickTicketForm(TicketForm):
             'status', 
             'priority', 
             'component',
+            'milestone',
         )
 
 class CommentForm(forms.ModelForm):

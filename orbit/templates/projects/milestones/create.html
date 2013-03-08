@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>Milestones</li>
+    {% if form.instance.pk %}
+        <li>{{ form.instance.name }}</li>
+        <li>Edit</li>
+    {% else %}
+        <li>Create Milestone</li>
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+{% if form.instance.pk %}
+    <h2>Edit {{ form.instance.name }}</h2>
+{% else %}
+    <h2>Create a new Milestone</h2>
+{% endif %}
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="submit" value="Submit" />
+</form>
+{% endblock %}
+

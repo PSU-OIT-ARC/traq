@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, Component
+from .models import Project, Component, Milestone
 from ..tickets.models import Ticket
 
 class ProjectForm(forms.ModelForm):
@@ -52,6 +52,22 @@ class ComponentForm(forms.ModelForm):
             'invoice_description',
             'rank',
             'is_default',
+            'is_deleted',
+        )
+
+class MilestoneForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop('project')
+        created_by = kwargs.pop('created_by')
+        super(MilestoneForm, self).__init__(*args, **kwargs)
+        self.instance.project = project
+        self.instance.created_by = created_by
+
+    class Meta:
+        model = Milestone
+        fields = (
+            'name',
+            'due_on',
             'is_deleted',
         )
 

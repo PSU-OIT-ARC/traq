@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from ..forms import ProjectForm
-from ..models import Project 
+from ..models import Project, Milestone
 from orbit.tickets.forms import QuickTicketForm
 from orbit.permissions.decorators import can_do, can_view, can_edit, can_create
 from orbit.utils import querySetToJSON
@@ -23,6 +23,7 @@ def detail(request, project_id):
     components = project.components()
     work = project.latestWork(10)
     tickets_json = querySetToJSON(tickets)
+    milestones = Milestone.objects.filter(project=project)
 
     if request.POST:
         form = QuickTicketForm(request.POST, project=project, created_by=request.user)
@@ -53,8 +54,9 @@ def detail(request, project_id):
         'form': form,
         'work': work,
         'tickets_json': tickets_json,
+        'milestones': milestones,
     })
-    
+
 @can_edit(Project)
 def edit(request, project_id):
     project = get_object_or_404(Project, pk=project_id)

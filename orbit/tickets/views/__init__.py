@@ -74,9 +74,28 @@ def create(request, project_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Ticket Added')
-            return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
+
+            # save the ticket form data so the user doesn't have to reinput
+            # everything again, if they want to create a similar ticket in the
+            # future. Save the data on a per project basis (using the project's pk)
+            if "ticket_form" not in request.session:
+                request.session['ticket_form'] = {}
+            request.session['ticket_form'][project.pk] = form.cleaned_data
+            # Django won't know to save the session because we are modifying a
+            # 2D dictionary
+            request.session.modified = True
+
+            # if they clicked the "Save and add another ticket button, display
+            # the ticket form again
+            if request.POST.get("submit", "submit").lower() == "submit":
+                return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
+            else:
+                return HttpResponseRedirect(request.path)
     else:
-        form = TicketForm(project=project, created_by=request.user)
+        initial_data = request.session.get("ticket_form", {}).get(project.pk, {})
+        initial_data.pop("body", None)
+        initial_data.pop("title", None)
+        form = TicketForm(initial=initial_data, project=project, created_by=request.user)
 
     return render(request, 'tickets/create.html', {
         'form': form,

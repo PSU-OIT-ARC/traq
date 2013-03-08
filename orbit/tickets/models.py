@@ -1,7 +1,7 @@
 from itertools import chain
 from datetime import timedelta, datetime
 from django.db import models
-from ..projects.models import Project, Component
+from ..projects.models import Project, Component, Milestone
 from django.contrib.auth.models import User
 from django.utils.timezone import utc
 
@@ -44,12 +44,14 @@ class TicketManager(models.Manager):
 
     def tickets(self):
         """Return a query set of tickets with all the useful related fields and the default ordering"""
-        queryset = Ticket.objects.select_related(
+        queryset = Ticket.objects.filter(project__is_deleted=False).select_related(
             'status', 
             'priority', 
             'assigned_to', 
             'created_by',
             'component',
+            'milestone',
+            'project',
         ).extra(select={
             # the sort order
             "global_order": "IF(ticket_status.importance = 0, ticket.created_on, 0)",
@@ -68,20 +70,25 @@ class Ticket(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    started_on = models.DateTimeField(default=lambda:datetime.utcnow())
+    started_on = models.DateTimeField(default=lambda:datetime.now())
     edited_on = models.DateTimeField(auto_now=True)
     estimated_time = models.TimeField(null=True, default=None)
     is_deleted = models.BooleanField(default=False)
     is_extra = models.BooleanField(default=False, verbose_name="Outside scope of original proposal")
+    due_on = models.DateTimeField(null=True, default=None, blank=True)
 
     created_by = models.ForeignKey(User, related_name='+')
-    assigned_to = models.ForeignKey(User, null=True, default=None, related_name='+')
+    assigned_to = models.ForeignKey(User, null=True, default=None, related_name='+', blank=True)
     status = models.ForeignKey(TicketStatus)
     priority = models.ForeignKey(TicketPriority)
     project = models.ForeignKey(Project)
-    component = models.ForeignKey(Component)
+    component = models.ForeignKey(Component, null=True, default=None, blank=True)
+    milestone = models.ForeignKey(Milestone, null=True, default=None, blank=True)
 
     objects = TicketManager()
+
+    def isOverDue(self):
+        return self.due_on < datetime.utcnow().replace(tzinfo=utc)
 
     def close(self):
         """Closes a ticket, and sets all non finished work to done"""

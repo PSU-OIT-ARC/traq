@@ -5,6 +5,7 @@ import views
 import projects.views
 import projects.views.components
 import projects.views.reports
+import projects.views.milestones
 
 import tickets.views
 import tickets.views.work
@@ -38,6 +39,9 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/reports/component/?$', projects.views.reports.component, name='projects-reports-component'),
     url(r'^projects/(\d+)/reports/invoice/?$', projects.views.reports.invoice, name='projects-reports-invoice'),
     url(r'^projects/reports/mega/?$', projects.views.reports.mega, name='projects-reports-mega'),
+    # milestones
+    url(r'^projects/(\d+)/milestons/create/?$', projects.views.milestones.create, name='milestones-create'),
+    url(r'^milestones/(\d+)/edit/?$', projects.views.milestones.edit, name='milestones-edit'),
 
     # tickets
     url(r'^projects/(\d+)/tickets/create/?$', tickets.views.create, name='tickets-create'),

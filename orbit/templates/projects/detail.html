@@ -13,6 +13,7 @@
         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
     {% endif %}
 </h2>
+
 <script type="text/javascript">
 TICKETS = {{ tickets_json|safe }};
 </script>
@@ -29,27 +30,21 @@ TICKETS = {{ tickets_json|safe }};
 
 <div class="right-section-wrapper">
     <div class="right-section-block">
-        <h3>Add Ticket</h3>
-        <form method="post" action="" id="ticket-quick-form">
-            {% csrf_token %}
-            {% for item in form %}
-            {% if item.errors %}
-            {{ item.label_tag }} {{ item.errors }}
-            {% endif %}
+        <h3>Milestones <a href="{% url 'milestones-create' project.pk %}" class="button">Create</a></h3>
+        <table class="block-table">
+            {% for milestone in milestones %}
+                <tr class="{% cycle 'odd' 'even' %}">
+                    <td>
+                        {% if user|can_edit:milestone %}
+                            <a href="{% url 'milestones-edit' milestone.pk %}" class="discrete">{{ milestone.name }}</a></td>
+                        {% else %}
+                            {{ milestone.name }}
+                        {% endif %}
+                    <td><span class="timestamp">{{ milestone.due_on }}</span></td>
+                </tr>
             {% endfor %}
-            <label>Body</label>
-            {{ form.body }}
-            {{ form.estimated_time }}
-            {{ form.assigned_to }}
-            {{ form.status }}
-            {{ form.priority }}
-            {{ form.component }}
-            <hr />
-            <label class="option">{{ form.add_work }} Add work line-item</label>
-            <br />
+        </table>
 
-            <input type="submit" name="submit" value="Submit" />
-        </form>
     </div>
 
     <div class="right-section-block">
