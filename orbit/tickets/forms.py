@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from django import forms
-from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkType
-from ..projects.models import Component
+from django.contrib.auth.models import User
+from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkType, TicketStatusManager
+from ..projects.models import Component, Milestone
 
 class TicketForm(forms.ModelForm):
     add_work = forms.BooleanField(required=False)
@@ -211,4 +212,82 @@ class WorkForm(forms.ModelForm):
         )
         # some fancy HTML5 placeholder text
         widgets = {"description": forms.TextInput(attrs={"placeholder": "description"})}
+
+class BulkForm(forms.Form):
+    priority = forms.ModelChoiceField(queryset=TicketPriority.objects.all(), required=False, empty_label=None)
+    status = forms.ModelChoiceField(queryset=TicketStatus.objects.all(), required=False, empty_label=None)
+    due_on = forms.DateTimeField(required=False)
+    assigned_to = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+    # the queryset will get reset in __init__
+    component = forms.ModelChoiceField(queryset=Component.objects.all(), required=False, empty_label=None)
+    milestone = forms.ModelChoiceField(queryset=Milestone.objects.all(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop("project")
+
+        super(BulkForm, self).__init__(*args, **kwargs)
+
+        # base the queryset on the project
+        self.fields['component'].queryset = Component.objects.filter(project=project)
+        self.fields['milestone'].queryset = Milestone.objects.filter(project=project)
+
+        # every field needs a checkbox that says if the field should be updated
+        new_fields = {}
+        for name, field in self.fields.items():
+            new_fields[name + "_update"] = forms.BooleanField(required=False)
+            # add a function to the field that allows easy access to the
+            # corresponding update checkbox in a template
+            self.fields[name].update_field = lambda name=name: self[name + "_update"]
+        self.fields.update(new_fields)
+
+    def editableFields(self):
+        # return the list of fields that should be display on the template
+        keys = ['priority', 'status', 'due_on', 'component', 'milestone', 'assigned_to']
+        return [self[k] for k in keys]
+
+    def clean(self):
+        cleaned = super(BulkForm, self).clean()
+        # for each *_update field, check to see if it is checked
+        # if it is, make sure the corresponding field has a good value
+        # if it doesn't add an error
+        for k, field in self.fields.items():
+            if k.endswith("_update"):
+                is_being_updated = cleaned.get(k, None)
+                corresponding_name = k[:-len("_update")]
+                corresponding_data = cleaned.get(corresponding_name, None)
+                # they didn't fill out the field
+                if is_being_updated and corresponding_data == None:
+                    # if the field has an empty value specified, then it is ok
+                    empty_ok = getattr(self.fields[corresponding_name], 'empty_label', None)
+                    if not empty_ok: 
+                        self._errors[corresponding_name] = self.error_class(['Fail'])
+
+        return cleaned
+
+    def bulkUpdate(self, ticket_ids):    
+        # cached the closed_status TicketStatus
+        closed_status = TicketStatus.objects.closed()
+
+        # figure out all the fields that needs to be updated on a ticket
+        change_to = {}
+        for k, field in self.fields.items():
+            is_being_updated = self.cleaned_data.get(k, None)
+            corresponding_name = k[:-len("_update")]
+            corresponding_data = self.cleaned_data.get(corresponding_name, None)
+
+            if is_being_updated:
+                change_to[corresponding_name] = corresponding_data
+
+        # for each ticket, update all the fields specified on the form
+        for ticket_id in ticket_ids:
+            ticket = Ticket.objects.get(pk=ticket_id)
+
+            for k, v in change_to.items():
+                # special case for closing a non closed ticket
+                if k == "status" and v == closed_status and ticket.status != closed_status:
+                    ticket.close()
+                else:
+                    setattr(ticket, k, v)
+
+            ticket.save()
 

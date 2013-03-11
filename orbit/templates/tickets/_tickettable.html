@@ -1,6 +1,18 @@
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#check-all').bind('click', function(e){
+        var state = $(this).is(":checked");
+        console.log(state);
+        $('#ticket-list input[type="checkbox"]').prop("checked", state);
+    });
+});
+</script>
 <table class="table-info" id="ticket-list">
     <thead>
         <tr>
+            {% if project %}
+                <th style="width:25px;"><input type="checkbox" name="check-all" id="check-all"/></th>
+            {% endif %}
             <th>Ticket</th>
             <th class="center">Status</th>
             <th class="center">Assigned</th>
@@ -10,6 +22,9 @@
     <tbody>
         {% for ticket in tickets %}
             <tr id="t1-{{ ticket.pk }}" class="ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
+                {% if project %}
+                    <td><input type="checkbox" name="ticket" value="{{ ticket.pk }}" />
+                {% endif %}
                 <td colspan="4">
                     <span class="ticket-priority ticket-priority-{{ ticket.priority|slugify }} ">{{ ticket.priority }}</span> 
                     <a href="{% url 'tickets-detail' ticket.pk %}">#{{ ticket.pk }} {{ ticket.title }}</a>
@@ -17,9 +32,9 @@
             </tr>
             <tr id="t2-{{ ticket.pk }}" class="ticket-status-{{ ticket.status|slugify }} {% cycle 'odd' 'even' %}">
                 {% if project %}
-                    <td>{{ ticket.component }}</td>
+                    <td colspan="2">{{ ticket.component }}</td>
                 {% else %}
-                <td><a href="{% url 'projects-detail' ticket.project.pk %}">{{ ticket.project.name }}</a></td>
+                    <td colspan="2"><a href="{% url 'projects-detail' ticket.project.pk %}">{{ ticket.project.name }}</a></td>
                 {% endif %}
                 <td class="center">{{ ticket.status }}</td>
                 <td class="center">

@@ -48,6 +48,7 @@ urlpatterns = patterns('',
     url(r'^tickets/(\d+)/?$', tickets.views.detail, name='tickets-detail'),
     url(r'^tickets/(\d+)/edit/?$', tickets.views.edit, name='tickets-edit'),
     url(r'^tickets/(\d+)/close/?$', tickets.views.close, name='tickets-close'),
+    url(r'^projects/(\d+)/tickets/bulk/?$', tickets.views.bulk, name='tickets-bulk'),
     # comments
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),
     # work

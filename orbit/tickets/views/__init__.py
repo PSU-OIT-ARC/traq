@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
-from ..forms import TicketForm, CommentForm, WorkForm
+from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus
 from orbit.projects.models import Project
 from orbit.permissions.decorators import can_view, can_edit, can_create
@@ -98,6 +98,25 @@ def create(request, project_id):
         form = TicketForm(initial=initial_data, project=project, created_by=request.user)
 
     return render(request, 'tickets/create.html', {
+        'form': form,
+        'project': project,
+    })
+
+@can_edit(Project)
+def bulk(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    ticket_ids = request.GET['tickets'].split(",")
+    # TODO add permissions checking on a ticket level
+
+    if request.method == "POST":
+        form = BulkForm(request.POST, project=project)
+        if form.is_valid():
+            form.bulkUpdate(ticket_ids)
+            return HttpResponseRedirect(reverse('projects-detail', args=(project.pk,)))
+    else:
+        form = BulkForm(project=project)
+
+    return render(request, 'tickets/bulk.html', {
         'form': form,
         'project': project,
     })
