@@ -5,6 +5,9 @@ from django.conf import global_settings
 PROJECT_DIR = os.path.dirname(__file__)
 HOME_DIR = os.path.normpath(os.path.join(PROJECT_DIR, '../'))
 
+LDAP_URL = "ldap://ldap.oit.pdx.edu"
+LDAP_BASE_DN = 'dc=pdx,dc=edu'
+
 # allow the use of wildcards in the INTERAL_IPS setting
 class IPList(list):
     # do a unix-like glob match
@@ -104,7 +107,8 @@ MIDDLEWARE_CLASSES = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'django_cas.backends.CASBackend',
+    #'django_cas.backends.CASBackend',
+    'orbit.backends.PSUBackend',
 )
 
 ROOT_URLCONF = 'orbit.urls'
