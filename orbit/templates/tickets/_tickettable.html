@@ -34,7 +34,7 @@ $(document).ready(function(){
                 {% if project %}
                     <td colspan="2">{{ ticket.component }}</td>
                 {% else %}
-                    <td colspan="2"><a href="{% url 'projects-detail' ticket.project.pk %}">{{ ticket.project.name }}</a></td>
+                    <td><a href="{% url 'projects-detail' ticket.project.pk %}">{{ ticket.project.name }}</a></td>
                 {% endif %}
                 <td class="center">{{ ticket.status }}</td>
                 <td class="center">
