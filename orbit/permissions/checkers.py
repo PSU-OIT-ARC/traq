@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
-STAFF = "arcstaff"
+USER_GROUP = "arc"
+STAFF_GROUP = "arcstaff"
 
 # these can_* functions simply return true or false of a user is allowed to do
 # stuff
@@ -20,7 +21,7 @@ def can_edit(user, instance):
     # edit anything. This avoids trips to the database on
     # subsequent calls to can_edit
     if getattr(user, 'can_edit_anything', None) is None:
-        if user.groups.filter(name=STAFF).exists():
+        if user.groups.filter(name=STAFF_GROUP).exists():
             user.can_edit_anything = True
         else:
             user.can_edit_anything = False
