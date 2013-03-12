@@ -247,14 +247,14 @@ class Component(models.Model):
                 component ON ticket.component_id = component.component_id
             WHERE 
                 billable = 1 AND
-                state = 0 AND 
+                state = %s AND 
                 work.is_deleted = 0 AND
                 ticket.is_deleted = 0 AND
                 component.component_id = %s AND
                 """ + sql_where + """
             GROUP BY work_type_id, component_id
             ORDER BY component.rank
-        """, (self.pk,) + interval)
+        """, (Work.DONE, self.pk) + interval)
         
         info = []
         for row in rows:

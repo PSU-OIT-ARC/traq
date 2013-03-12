@@ -70,6 +70,7 @@ p.error {
     background-color:#fff;
     border-spacing:0;
     border-collapse:collapse;
+    width:100%;
 }
 
 .report th {
