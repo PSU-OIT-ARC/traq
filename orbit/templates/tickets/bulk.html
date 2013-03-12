@@ -3,6 +3,7 @@
 {% load tickets %}
 {% load permissions %}
 
+{% block page_title %}Bulk Edit{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>

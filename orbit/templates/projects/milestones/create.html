@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block page_title %}{% if form.instance.pk %}Edit Milestone{% else %}Create Milestone{% endif %}{% endblock %}
 
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>

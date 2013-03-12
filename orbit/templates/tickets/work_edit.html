@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% block page_title %}Edit Work{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>

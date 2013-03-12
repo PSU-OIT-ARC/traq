@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load tickets %}
+{% block page_title %}Invoice Report{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>

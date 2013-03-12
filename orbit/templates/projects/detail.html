@@ -2,6 +2,7 @@
 
 {% load tickets %}
 {% load permissions %}
+{% block page_title %}{{ project.name }}{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li>{{ project.name }}</li>
