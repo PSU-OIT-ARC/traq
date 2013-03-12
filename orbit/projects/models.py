@@ -27,12 +27,17 @@ class ProjectManager(models.Manager):
         FROM 
             ticket 
         INNER JOIN 
-            work on work.ticket_id = ticket.ticket_id AND 
+            work 
+        ON 
+            work.ticket_id = ticket.ticket_id AND 
             work.is_deleted = 0 AND
             """ + sql_where + """ AND 
             work.created_by_id = %s  
         RIGHT JOIN 
-            project ON project.project_id = ticket.project_id AND ticket.is_deleted = 0
+            project 
+        ON 
+            project.project_id = ticket.project_id AND 
+            ticket.is_deleted = 0
         WHERE project.is_deleted = 0
         GROUP BY project.project_id
         ORDER BY project.created_on

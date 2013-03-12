@@ -6,8 +6,6 @@ from django.db import connection
 from django.contrib import messages
 from ..forms import ProjectForm, ComponentForm
 from ..models import Project, Component
-from orbit.tickets.models import Ticket
-from orbit.tickets.forms import QuickTicketForm
 from orbit.permissions.decorators import can_view, can_edit, can_create
 
 @can_create(Component)

@@ -4,10 +4,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
-from ..forms import ProjectForm, MilestoneForm
+from ..forms import MilestoneForm
 from ..models import Project, Milestone
-from orbit.tickets.models import Ticket
-from orbit.tickets.forms import QuickTicketForm
 from orbit.permissions.decorators import can_view, can_edit, can_create
 
 @can_create(Milestone)

@@ -7,10 +7,9 @@ from django.db import connection
 from django.contrib import messages
 from django.utils.timezone import utc
 from django.contrib.auth.models import User
-from ..forms import ProjectForm, ComponentForm, ReportIntervalForm
+from ..forms import ReportIntervalForm
 from ..models import Project, Component
 from orbit.tickets.models import Ticket
-from orbit.tickets.forms import QuickTicketForm
 from orbit.permissions.decorators import can_view, can_edit, can_create, can_do
 
 @can_do()

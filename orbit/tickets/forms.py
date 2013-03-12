@@ -95,61 +95,6 @@ class TicketForm(forms.ModelForm):
             'due_on',
         )
 
-class QuickTicketForm(TicketForm):
-    # checkbox for adding work automatically to a ticket
-    add_work = forms.BooleanField(required=False)
-    TIME_CHOICES = (
-        ('00:30', '30m'),
-        ('01:00', '1h'),
-        ('01:30', '1h 30m'),
-        ('02:00', '2h'),
-        ('02:30', '2h 30m'),
-        ('03:00', '3h'),
-        ('03:30', '3h 30m'),
-        ('04:00', '4h'),
-        ('04:30', '4h 30m'),
-        ('05:00', '5h'),
-        ('05:30', '5h 30m'),
-        ('06:00', '6h'),
-        ('06:30', '6h 30m'),
-        ('07:00', '7h'),
-        ('07:30', '7h 30m'),
-        ('08:00', '8h'),
-    )
-    estimated_time = forms.ChoiceField(choices=TIME_CHOICES)
-
-    def __init__(self, *args, **kwargs):
-        super(QuickTicketForm, self).__init__(*args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        super(QuickTicketForm, self).save(*args, **kwargs)
-        # add the work line item too
-        if self.cleaned_data.get('add_work', False):
-            w = Work()
-            w.description = "Did stuff"
-            w.time = self.instance.estimated_time
-            w.type = WorkType.objects.default()
-            w.ticket = self.instance
-            w.created_by = self.instance.created_by
-            # assume the work started w.time hours/minutes ago
-            w.started_on = datetime.now() - timedelta(hours=w.time.hour, minutes=w.time.minute)
-            w.save()
-
-    class Meta:
-        model = Ticket
-        fields = (
-            'title', 
-            'body', 
-            'estimated_time', 
-            'is_deleted',
-            'is_extra', 
-            'assigned_to', 
-            'status', 
-            'priority', 
-            'component',
-            'milestone',
-        )
-
 class CommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
