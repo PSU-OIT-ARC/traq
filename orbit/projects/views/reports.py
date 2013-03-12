@@ -11,8 +11,9 @@ from ..forms import ProjectForm, ComponentForm, ReportIntervalForm
 from ..models import Project, Component
 from orbit.tickets.models import Ticket
 from orbit.tickets.forms import QuickTicketForm
-from orbit.permissions.decorators import can_view, can_edit, can_create
+from orbit.permissions.decorators import can_view, can_edit, can_create, can_do
 
+@can_do()
 def mega(request):
     form, interval = _intervalHelper(request)
     users = list(User.objects.all())
@@ -32,6 +33,7 @@ def mega(request):
         'form': form,
     })
 
+@can_do()
 def grid(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     # get all the people who have worked on this project
@@ -56,6 +58,7 @@ def grid(request, project_id):
         'interval': interval,
     })
 
+@can_do()
 def component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     form, interval = _intervalHelper(request)
@@ -73,6 +76,7 @@ def component(request, project_id):
         'queries': connection.queries,
     })
 
+@can_do()
 def invoice(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
