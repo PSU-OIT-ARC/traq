@@ -9,8 +9,8 @@ from django.utils.timezone import utc
 from django.contrib.auth.models import User
 from ..forms import ReportIntervalForm
 from ..models import Project, Component
-from orbit.tickets.models import Ticket
-from orbit.permissions.decorators import can_view, can_edit, can_create, can_do
+from traq.tickets.models import Ticket
+from traq.permissions.decorators import can_view, can_edit, can_create, can_do
 
 @can_do()
 def mega(request):

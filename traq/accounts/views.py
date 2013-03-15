@@ -5,9 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Q
 from ..tickets.models import Ticket, Work, TicketStatus
-from orbit.utils import querySetToJSON
-from orbit.permissions.checkers import STAFF_GROUP
-from orbit.projects.models import Project
+from traq.utils import querySetToJSON
+from traq.permissions.checkers import STAFF_GROUP
+from traq.projects.models import Project
 
 @login_required
 def profile(request):

@@ -6,7 +6,7 @@ from django.db import connection
 from django.contrib import messages
 from ..forms import ProjectForm, ComponentForm
 from ..models import Project, Component
-from orbit.permissions.decorators import can_view, can_edit, can_create
+from traq.permissions.decorators import can_view, can_edit, can_create
 
 @can_create(Component)
 def create(request, project_id):

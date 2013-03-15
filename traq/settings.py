@@ -108,13 +108,13 @@ MIDDLEWARE_CLASSES = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     #'django_cas.backends.CASBackend',
-    'orbit.backends.PSUBackend',
+    'traq.backends.PSUBackend',
 )
 
-ROOT_URLCONF = 'orbit.urls'
+ROOT_URLCONF = 'traq.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'orbit.wsgi.application'
+WSGI_APPLICATION = 'traq.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -134,10 +134,10 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'orbit.projects',
-    'orbit.tickets',
-    'orbit.accounts',
-    'orbit.permissions',
+    'traq.projects',
+    'traq.tickets',
+    'traq.accounts',
+    'traq.permissions',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:

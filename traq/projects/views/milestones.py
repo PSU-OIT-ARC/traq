@@ -6,7 +6,7 @@ from django.db import connection
 from django.contrib import messages
 from ..forms import MilestoneForm
 from ..models import Project, Milestone
-from orbit.permissions.decorators import can_view, can_edit, can_create
+from traq.permissions.decorators import can_view, can_edit, can_create
 
 @can_create(Milestone)
 def create(request, project_id):

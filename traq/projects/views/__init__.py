@@ -5,8 +5,8 @@ from django.db import connection
 from django.contrib import messages
 from ..forms import ProjectForm
 from ..models import Project, Milestone
-from orbit.permissions.decorators import can_do, can_view, can_edit, can_create
-from orbit.utils import querySetToJSON
+from traq.permissions.decorators import can_do, can_view, can_edit, can_create
+from traq.utils import querySetToJSON
 
 @can_do()
 def all(request):

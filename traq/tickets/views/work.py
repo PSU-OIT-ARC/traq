@@ -6,8 +6,8 @@ from django.db import connection
 from django.contrib import messages
 from ..forms import TicketForm, CommentForm, WorkForm
 from ..models import Ticket, Comment, Work, WorkType
-from orbit.projects.models import Project
-from orbit.permissions.decorators import can_view, can_edit, can_create
+from traq.projects.models import Project
+from traq.permissions.decorators import can_view, can_edit, can_create
 
 @can_edit(Work)
 def edit(request, work_id):
