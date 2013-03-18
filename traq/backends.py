@@ -3,14 +3,14 @@ from django_cas.backends import CASBackend
 from django.contrib.auth.models import User, Group
 from django.conf import settings as SETTINGS
 from django.core.exceptions import PermissionDenied
-from permissions.checkers import LOGIN_GROUP
+from permissions.checkers import can_login
 
 class PSUBackend(CASBackend):
     def get_or_init_user(self, username):
-        # make sure this username is in the required group
+        # make sure this user is in the required group
         groups = self.get_groups(username)
-        if LOGIN_GROUP not in groups:
-            raise PermissionDenied("You need to belong to %s" % (LOGIN_GROUP))
+        if not can_login(groups):
+            raise PermissionDenied("You need to belong to a group in LOGIN_GROUPS")
 
         try:
             user = User.objects.get(username=username)

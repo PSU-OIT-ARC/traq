@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
-LOGIN_GROUP = "arc"
+
+LOGIN_GROUPS = ("arc", "pdx09876")
 STAFF_GROUP = "arcstaff"
 
 # these can_* functions simply return true or false of a user is allowed to do
@@ -39,3 +40,5 @@ def can_edit(user, instance):
 
     return False
 
+def can_login(groups):
+    return (set(LOGIN_GROUPS) & set(groups)) != set()
