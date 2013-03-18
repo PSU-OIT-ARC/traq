@@ -19,5 +19,5 @@ Create a virtual environment, and install the required packages in it:
 ## Settings
 Create a settings file from the template, and fill in the blanks:
 
-    cp orbit/demo_settings.py orbit/local_settings.py
-    vim orbit/local_settings.py
+    cp traq/demo_settings.py traq/local_settings.py
+    vim traq/local_settings.py
