@@ -15,7 +15,7 @@ from traq.permissions.decorators import can_view, can_edit, can_create, can_do
 @can_do()
 def mega(request):
     form, interval = _intervalHelper(request)
-    users = list(User.objects.all())
+    users = list(User.objects.all().order_by("username"))
     projects = list(Project.objects.all())
     for user in users:
         user.projects = Project.objects.timeByUser(user, interval)

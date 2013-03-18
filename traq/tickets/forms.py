@@ -162,7 +162,7 @@ class BulkForm(forms.Form):
     priority = forms.ModelChoiceField(queryset=TicketPriority.objects.all(), required=False, empty_label=None)
     status = forms.ModelChoiceField(queryset=TicketStatus.objects.all(), required=False, empty_label=None)
     due_on = forms.DateTimeField(required=False)
-    assigned_to = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+    assigned_to = forms.ModelChoiceField(queryset=User.objects.all().order_by("username"), required=False)
     # the queryset will get reset in __init__
     component = forms.ModelChoiceField(queryset=Component.objects.all(), required=False, empty_label=None)
     milestone = forms.ModelChoiceField(queryset=Milestone.objects.all(), required=False)

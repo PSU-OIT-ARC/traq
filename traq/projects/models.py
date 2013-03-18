@@ -175,6 +175,7 @@ class Project(models.Model):
         WHERE project_id = %s AND
         ticket.is_deleted = 0 AND
         work.is_deleted = 0
+        ORDER BY auth_user.username
         """, (self.pk,))
         return queryset
 
