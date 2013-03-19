@@ -207,7 +207,7 @@ class ComponentManager(models.Manager):
         RIGHT JOIN 
             component ON component.component_id = ticket.component_id AND ticket.is_deleted = 0
         WHERE 
-            component.project_id = %s
+            component.project_id = %s AND component.is_deleted = 0
         GROUP BY component.component_id
         ORDER BY component.rank
         """, interval + (user.pk, project.pk))
