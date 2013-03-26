@@ -12,6 +12,7 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = (
             'name',
+            'description',
             'point_of_contact',
             'invoice_description',
             'catch_all',

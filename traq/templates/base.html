@@ -13,6 +13,10 @@
             <div id="wrapper">
                 <div id="header">
                     {% block header %}
+                        {% if show_logo %}
+                            <img src="http://www.pdx.edu/sites/all/themes/pdx_primary/logo.png" />
+
+                        {% endif %}
                         <!-- yes, I spelled breadcumbs wrong -->
                         <ul id="nav-breadcrums">
                             {% block breadcrums %}{% endblock %}

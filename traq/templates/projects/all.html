@@ -12,6 +12,7 @@
     <thead>
         <tr>
             <th>Name</th>
+            <th>Description</th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,7 @@
                         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
                     {% endif %}
                 </td>
+                <td>{{ project.description }}</td>
             </tr>
         {% endfor %}
     </tbody>

@@ -55,6 +55,7 @@ class ProjectManager(models.Manager):
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    description = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
 

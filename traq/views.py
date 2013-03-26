@@ -7,4 +7,5 @@ def home(request):
         return HttpResponseRedirect(reverse('accounts-profile'))
 
     return render(request, 'home.html', {
+        'show_logo': True,
     })
