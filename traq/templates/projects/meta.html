@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load tickets %}
+{% load permissions %}
+{% block page_title %}{{ project.name }}{% endblock %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>Meta</li>
+{% endblock %}
+{% block content %}
+
+<h2>{{ project.name }} 
+    {% if user|can_edit:project %}
+        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+    {% endif %}
+    <a href="{% url 'projects-meta' project.pk %}" class="button">Meta Info</a>
+</h2>
+
+<h3>Description</h3>
+<div class="markdown">{{ project.description|frommarkdown }}</div>
+
+<h3>Point of Contact</h3>
+<div class="markdown">{{ project.point_of_content|frommarkdown }}</div>
+
+<h3>Technical</h3>
+<div class="markdown">{{ project.technical|frommarkdown }}</div>
+
+<h3>Catch All</h3>
+<div class="markdown">{{ project.catch_all|frommarkdown }}</div>
+{% endblock %}

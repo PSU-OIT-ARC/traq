@@ -16,6 +16,13 @@ def all(request):
     })
 
 @can_view(Project)
+def meta(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    return render(request, 'projects/meta.html', {
+        'project': project,
+    })
+
+@can_view(Project)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     tickets = project.tickets()

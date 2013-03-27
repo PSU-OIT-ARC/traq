@@ -13,6 +13,7 @@
     {% if user|can_edit:project %}
         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
     {% endif %}
+    <a href="{% url 'projects-meta' project.pk %}" class="button">Meta Info</a>
 </h2>
 
 <script type="text/javascript">
