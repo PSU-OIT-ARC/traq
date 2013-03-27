@@ -65,6 +65,8 @@ class Project(models.Model):
     invoice_description = models.TextField(blank=True, default="", help_text="Displayed on the invoice")
     # catch all
     catch_all = models.TextField(blank=True, default="", help_text="Anything you want to document here")
+    # technical
+    technical = models.TextField(blank=True, default="", help_text="Technical stuff")
 
     created_by = models.ForeignKey(User, related_name='+')
 

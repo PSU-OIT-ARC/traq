@@ -15,6 +15,7 @@ class ProjectForm(forms.ModelForm):
             'description',
             'point_of_contact',
             'invoice_description',
+            'technical',
             'catch_all',
             'is_deleted',
         )
