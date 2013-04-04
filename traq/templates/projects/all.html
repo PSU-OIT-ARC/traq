@@ -17,8 +17,8 @@
     </thead>
     <tbody>
         {% for project in projects %}
-            <tr>
-                <td>
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td style="min-width:200px">
                     <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> 
                     {% if user|can_edit:project %}
                         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
