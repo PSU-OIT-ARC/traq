@@ -31,7 +31,7 @@ class ComponentForm(forms.ModelForm):
         if not self.is_bound:
             # figure out the rank for this new component
             try:
-                rank = Component.objects.order_by('-rank').all()[0].rank + 1
+                rank = Component.objects.filter(project=project).order_by('-rank')[0].rank + 1
             except IndexError:
                 rank = 1
             self.fields['rank'].initial = rank

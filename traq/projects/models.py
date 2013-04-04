@@ -184,6 +184,7 @@ class Project(models.Model):
 
     class Meta:
         db_table = 'project'
+        ordering = ['name']
 
 class ComponentManager(models.Manager):
     def get_query_set(self):
