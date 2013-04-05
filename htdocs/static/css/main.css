@@ -226,6 +226,7 @@ p.error {
 
 #nav-breadcrums li:last-child:after {
     content:"";
+    padding-left:0;
 }
 
 #content {
