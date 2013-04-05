@@ -40,8 +40,9 @@ class TicketForm(forms.ModelForm):
 
         self.fields['body'].required = False
 
-        # only display components associated with this project
+        # only display components and milestones associated with this project
         self.fields['component'].queryset = Component.objects.filter(project=project)
+        self.fields['milestone'].queryset = Milestone.objects.filter(project=project)
 
     def clean(self):
         cleaned_data = super(TicketForm, self).clean()
