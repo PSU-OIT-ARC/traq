@@ -76,6 +76,7 @@ class Ticket(models.Model):
     is_deleted = models.BooleanField(default=False)
     is_extra = models.BooleanField(default=False, verbose_name="Outside scope of original proposal")
     due_on = models.DateTimeField(null=True, default=None, blank=True)
+    is_internal = models.BooleanField(default=False, verbose_name="Mark as an internal ticket (this doesn't affect any reports yet)")
 
     created_by = models.ForeignKey(User, related_name='+')
     assigned_to = models.ForeignKey(User, null=True, default=None, related_name='+', blank=True)

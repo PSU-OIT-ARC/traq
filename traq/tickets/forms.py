@@ -87,6 +87,7 @@ class TicketForm(forms.ModelForm):
             'estimated_time', 
             'is_deleted',
             'is_extra', 
+            'is_internal',
             'assigned_to', 
             'status', 
             'priority', 

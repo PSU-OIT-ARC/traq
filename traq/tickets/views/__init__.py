@@ -141,7 +141,7 @@ def edit(request, ticket_id):
                         messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
                     return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
                 else:
-                    messages.success(request, 'Ticket Editied')
+                    messages.success(request, 'Ticket Edited')
                 return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
             else:
                 messages.success(request, 'Ticket Deleted')
