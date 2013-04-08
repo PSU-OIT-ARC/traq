@@ -1,4 +1,4 @@
-import markdown2
+import markdown
 from datetime import time, timedelta
 from django import template
 from django.utils.safestring import mark_safe
@@ -8,7 +8,7 @@ register = template.Library()
 @register.filter()
 def frommarkdown(value):
     """Converts a string from markdown to HTML"""
-    return mark_safe(markdown2.markdown(value, safe_mode='escape'))
+    return mark_safe(markdown.markdown(value, safe_mode='escape', extensions=['nl2br']))
 
 @register.filter()
 def tickettime(value):
