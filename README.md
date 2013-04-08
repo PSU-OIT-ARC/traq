@@ -6,7 +6,7 @@ To build `python-ldap` with pip on centos, you need the `openldap24-libs-devel` 
     yum install openldap24-libs-devel
 
 And when you install python-ldap with pip, you need to set these envars:
-    
+
     export CPATH=/usr/include/openldap24
     export LIBRARY_PATH=/usr/lib/openldap24/
 
@@ -17,7 +17,7 @@ Create a virtual environment, and install the required packages in it:
     pip install -r requirements.txt
 
 Create the media upload dir (for user files)
-    
+
     mkdir htdocs/media
     # make the dir world writeable
     # or make apache the owner of the dir
