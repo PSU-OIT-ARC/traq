@@ -16,6 +16,13 @@ Create a virtual environment, and install the required packages in it:
     source .env/bin/activate
     pip install -r requirements.txt
 
+Create the media upload dir (for user files)
+    
+    mkdir htdocs/media
+    # make the dir world writeable
+    # or make apache the owner of the dir
+    chown apache htdocs/media || chmod 1777 htdocs/media
+
 ## Settings
 Create a settings file from the template, and fill in the blanks:
 
