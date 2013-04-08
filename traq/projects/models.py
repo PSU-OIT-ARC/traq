@@ -40,7 +40,7 @@ class ProjectManager(models.Manager):
             ticket.is_deleted = 0
         WHERE project.is_deleted = 0
         GROUP BY project.project_id
-        ORDER BY project.created_on
+        ORDER BY project.name
         """, interval + (user.pk,))
 
         modified_rows = []
