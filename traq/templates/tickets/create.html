@@ -25,7 +25,7 @@
     {% endif %}
 {% endfor %}
 
-<form method="post" action="">
+<form method="post" action="" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.title.label_tag }}
     {{ form.title }}
@@ -64,13 +64,30 @@
     <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
     <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_internal }} {{ form.is_internal.label }}</label>
 
-    <label class="option float-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
 
+    <table class="files-table">
+        <tr>
+            <td>
+                <h3>Upload Files</h3>
+                {{ form.files }}
+            </td>
+            <td>
+                <h3>Remove Existing Files</h3>
+                <div class="django-checkbox-list">
+                    {{ form.existing_files }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <label class="option float-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
 
     <input type="submit" name="submit" value="Submit" class="float-left" />
     {% if not form.instance.pk %}
         <input type="submit" name="submit" value="Submit and Add New Ticket" class="float-left" />
     {% endif %}
+
+
 </form>
 {% endblock %}
 

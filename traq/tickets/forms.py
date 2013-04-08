@@ -1,11 +1,25 @@
+import os
+import uuid
 from datetime import datetime, timedelta
+from django.conf import settings as SETTINGS
 from django import forms
 from django.contrib.auth.models import User
-from .models import Ticket, Comment, Work, TicketStatus, TicketPriority, WorkType, TicketStatusManager
+from .models import (
+    Ticket, 
+    Comment, 
+    Work, 
+    TicketStatus, 
+    TicketPriority, 
+    WorkType, 
+    TicketStatusManager, 
+    TicketFile,
+)
 from ..projects.models import Component, Milestone
 
 class TicketForm(forms.ModelForm):
     add_work = forms.BooleanField(required=False)
+    files = forms.FileField(required=False, widget=forms.FileInput(attrs={"multiple": True}))
+    existing_files = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
 
     """Ticket creation and editing form"""
     def __init__(self, *args, **kwargs):
@@ -13,6 +27,7 @@ class TicketForm(forms.ModelForm):
         # the caller
         project = kwargs.pop("project")
         created_by = kwargs.pop("created_by")
+        self.user = kwargs.pop("user")
 
         super(TicketForm, self).__init__(*args, **kwargs)
 
@@ -43,6 +58,7 @@ class TicketForm(forms.ModelForm):
         # only display components and milestones associated with this project
         self.fields['component'].queryset = Component.objects.filter(project=project)
         self.fields['milestone'].queryset = Milestone.objects.filter(project=project)
+        self.fields['existing_files'].queryset = TicketFile.objects.filter(ticket=self.instance)
 
     def clean(self):
         cleaned_data = super(TicketForm, self).clean()
@@ -78,6 +94,17 @@ class TicketForm(forms.ModelForm):
             # assume the work started w.time hours/minutes ago
             w.started_on = datetime.now() - timedelta(hours=w.time.hour, minutes=w.time.minute)
             w.save()
+
+        # remove any files
+        for tf in self.cleaned_data.get('existing_files', []):
+            tf.delete()
+
+        # add any files
+        if self.files:
+            files = self.files.getlist("files")
+            for f in files:
+                tf = TicketFile(ticket=self.instance, file=f, uploaded_by=self.user)
+                tf.save()
 
     class Meta:
         model = Ticket

@@ -102,8 +102,9 @@
                 </td>
                 <td>
                     {% if user|can_edit:w %}
-                        <a href="{% url 'work-edit' w.pk %}">Complete</a></td>
+                        <a href="{% url 'work-edit' w.pk %}">Complete</a>
                     {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </table>
@@ -134,6 +135,18 @@
 
     <div class="right-section-block">
         {% include 'tickets/_worklog.html' %}
+    </div>
+
+    <div class="right-section-block">
+        <h3>Files</h3>
+        <table class="block-table">
+        {% for tf in files %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ tf.uploaded_by }}</td>
+                <td><a href="{{ MEDIA_URL }}{{ tf.file.name }}">{{ tf.file.name }}</a></td>
+            </tr>
+        {% endfor %}
+        </table>
     </div>
 </div>
 

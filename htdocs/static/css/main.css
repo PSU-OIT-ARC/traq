@@ -54,6 +54,16 @@ p.error {
     font-size:10px;
 }
 
+.django-checkbox-list ul {
+    list-style-type:none;
+    margin-left:0;
+    padding-left:0;
+}
+
+.django-checkbox-list input {
+    display:inline;
+}
+
 .discrete {
     color:inherit;
 }
@@ -465,3 +475,12 @@ p.error {
     text-align:right;
     padding-right:5px;
 }
+
+.files-table {
+    width:100%;
+}
+
+.files-table td {
+    vertical-align:top;
+}
+

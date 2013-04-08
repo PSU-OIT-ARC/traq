@@ -141,6 +141,21 @@ class Ticket(models.Model):
     class Meta:
         db_table = 'ticket'
 
+class TicketFile(models.Model):
+    file_id = models.AutoField(primary_key=True)
+    file = models.FileField(upload_to="%Y-%m")
+    uploaded_on = models.DateTimeField(auto_now_add=True)
+
+    uploaded_by = models.ForeignKey(User, related_name="+")
+    ticket = models.ForeignKey(Ticket)
+
+    class Meta:
+        db_table = "ticket_file"
+        ordering = ['file']
+
+    def __unicode__(self):
+        return u'%s' % (self.file.name)
+
 class WorkTypeManager(models.Manager):
     def default(self):
         """Return the default WorkType"""

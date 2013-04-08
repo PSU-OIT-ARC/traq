@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
-from ..models import Ticket, Comment, Work, WorkType, TicketStatus
+from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
 from traq.permissions.decorators import can_view, can_edit, can_create
 
@@ -13,6 +13,7 @@ from traq.permissions.decorators import can_view, can_edit, can_create
 def detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
+    files = TicketFile.objects.filter(ticket=ticket)
     comments = Comment.objects.filter(ticket=ticket).select_related('created_by')
     work = Work.objects.filter(ticket=ticket).filter(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
@@ -50,6 +51,7 @@ def detail(request, ticket_id):
         'times': times,
         'queries': connection.queries,
         'running_work': running_work,
+        'files': files,
     })
 
 HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
@@ -70,7 +72,7 @@ def close(request, ticket_id):
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
-        form = TicketForm(request.POST, project=project, created_by=request.user)
+        form = TicketForm(request.POST, request.FILES, user=request.user, project=project, created_by=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Ticket Added')
@@ -95,7 +97,7 @@ def create(request, project_id):
         initial_data = request.session.get("ticket_form", {}).get(project.pk, {})
         initial_data.pop("body", None)
         initial_data.pop("title", None)
-        form = TicketForm(initial=initial_data, project=project, created_by=request.user)
+        form = TicketForm(initial=initial_data, user=request.user, project=project, created_by=request.user)
 
     return render(request, 'tickets/create.html', {
         'form': form,
@@ -127,7 +129,7 @@ def edit(request, ticket_id):
     project = ticket.project
     if request.method == "POST":
         original_status = ticket.status
-        form = TicketForm(request.POST, instance=ticket, project=project, created_by=ticket.created_by)
+        form = TicketForm(request.POST, request.FILES, user=request.user, instance=ticket, project=project, created_by=ticket.created_by)
         if form.is_valid():
             form.save()
             if not form.instance.is_deleted:
@@ -147,7 +149,7 @@ def edit(request, ticket_id):
                 messages.success(request, 'Ticket Deleted')
                 return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
     else:
-        form = TicketForm(instance=ticket, project=project, created_by=ticket.created_by)
+        form = TicketForm(instance=ticket, user=request.user, project=project, created_by=ticket.created_by)
 
     return render(request, 'tickets/create.html', {
         'form': form,
