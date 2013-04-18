@@ -1,5 +1,5 @@
 import ldap
-from django_cas.backends import CASBackend
+from djangocas.backends import CASBackend
 from django.contrib.auth.models import User, Group
 from django.conf import settings as SETTINGS
 from django.core.exceptions import PermissionDenied

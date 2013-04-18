@@ -1,7 +1,7 @@
 Django==1.5
 Markdown==2.3.1
 MySQL-python==1.2.4
--e git+https://github.com/mdj2/django-cas.git@0f3adb699309f919049004b0ce23713bb43baf5d#egg=django_cas-2.1.1-py2.6-dev
+-e git+https://github.com/mdj2/djangocas.git#egg=djangocas
 python-ldap==2.3.13
 pytz==2012j
 wsgiref==0.1.2

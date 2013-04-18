@@ -20,8 +20,8 @@ urlpatterns = patterns('',
     url(r'^$', views.home),
 
     # auth
-    url(r'^accounts/login/$', 'django_cas.views.login', name='accounts-login'),
-    url(r'^accounts/logout/$', 'django_cas.views.logout', name='accounts-logout', kwargs={"next_page": "/"}),
+    url(r'^accounts/login/$', 'djangocas.views.login', name='accounts-login'),
+    url(r'^accounts/logout/$', 'djangocas.views.logout', name='accounts-logout', kwargs={"next_page": "/"}),
 
     # accounts
     url(r'^accounts/profile/$', accounts.views.profile, name='accounts-profile'),
