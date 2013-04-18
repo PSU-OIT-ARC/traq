@@ -1,5 +1,9 @@
+from urllib import urlencode
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, Http404
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.core.urlresolvers import reverse
+from djangocas.views import login as cas_login
 from . import checkers
 
 # This is the base class for the can_* decorators. Subclasses can override
@@ -17,8 +21,16 @@ class can_do(object):
     def __call__(self, f):
         def wrapper(*args, **kwargs):
             can_proceed = self.runCheck(*args, **kwargs)
+            request = args[0]
+            user = request.user
             if can_proceed == False:
-                raise PermissionDenied("Access denied")
+                # if their logged in, give the perm defined error.
+                # but if they are not logged in, redirect to the login page
+                if user.is_authenticated():
+                    raise PermissionDenied("Access denied")
+                else:
+                    params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})
+                    return HttpResponseRedirect(reverse(cas_login) + '?' + params)
             elif can_proceed == None:
                 raise Http404("Fail in can_do decorator")
 
