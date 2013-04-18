@@ -60,6 +60,9 @@ class TicketForm(forms.ModelForm):
         self.fields['milestone'].queryset = Milestone.objects.filter(project=project)
         self.fields['existing_files'].queryset = TicketFile.objects.filter(ticket=self.instance)
 
+    def hasFiles(self):
+        return self.fields['existing_files'].queryset.count() != 0
+
     def clean(self):
         cleaned_data = super(TicketForm, self).clean()
 
