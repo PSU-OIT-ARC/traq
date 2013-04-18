@@ -1,0 +1,9 @@
+{{ ticket_url }}
+
+{{ ticket.created_by.username }} => {{ ticket.assigned_to.username }}
+
+{{ ticket.project.name }}
+
+{{ ticket.title }}
+
+{{ ticket.body }}

@@ -1,6 +1,8 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+BASE_URL = 'http://traq.research.pdx.edu' # no trailing slash
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )

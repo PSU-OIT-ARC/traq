@@ -75,6 +75,10 @@ def create(request, project_id):
         form = TicketForm(request.POST, request.FILES, user=request.user, project=project, created_by=request.user)
         if form.is_valid():
             form.save()
+            ticket = form.instance
+
+            ticket.sendNotification()
+
             messages.success(request, 'Ticket Added')
 
             # save the ticket form data so the user doesn't have to reinput

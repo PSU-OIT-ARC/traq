@@ -1,9 +1,13 @@
 from itertools import chain
 from datetime import timedelta, datetime
+from django.conf import settings as SETTINGS
 from django.db import models
-from ..projects.models import Project, Component, Milestone
 from django.contrib.auth.models import User
 from django.utils.timezone import utc
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.core.urlresolvers import reverse
+from ..projects.models import Project, Component, Milestone
 
 class TicketStatusManager(models.Manager):
     def closed(self):
@@ -137,6 +141,18 @@ class Ticket(models.Model):
             'billable': billable,
             'non_billable': non_billable,
         }
+
+    def sendNotification(self):
+        if self.assigned_to is not None:
+            to_ = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
+            ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(self.pk,))
+            body = render_to_string('tickets/notification.txt', {
+                "ticket": self,
+                "ticket_url": ticket_url,
+                "username": self.assigned_to.username
+            })
+            subject = 'Traq Ticket #%d %s' % (self.pk, self.title)
+            send_mail(subject, body, 'traq@pdx.edu', [to_])
 
     class Meta:
         db_table = 'ticket'
