@@ -5,6 +5,13 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
+def timedeltaToHoursMinutes(value):
+    days = value.days
+    minutes, seconds = divmod(value.seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    hours = hours + days*24
+    return hours, minutes
+
 @register.filter()
 def frommarkdown(value):
     """Converts a string from markdown to HTML"""
@@ -18,10 +25,7 @@ def tickettime(value):
     if isinstance(value, time):
         return value.strftime("%Hh %Mm")
     if isinstance(value, timedelta):
-        days = value.days
-        minutes, seconds = divmod(value.seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        hours = hours + days*24
+        hours, minutes = timedeltaToHoursMinutes(value)
         return u'%dh %dm' % (hours, minutes)
 
 @register.filter()
@@ -32,10 +36,7 @@ def tickettimepretty(value):
     if isinstance(value, time):
         return value.strftime("%H:%M")
     if isinstance(value, timedelta):
-        days = value.days
-        minutes, seconds = divmod(value.seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        hours = hours + days*24
+        hours, minutes = timedeltaToHoursMinutes(value)
         if hours == minutes == 0:
             return u'0'
         return u'%d:%02d' % (hours, minutes)

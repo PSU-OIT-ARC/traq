@@ -19,9 +19,10 @@ def detail(request, ticket_id):
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
 
-    # this view has two forms on it
+    # this view has two forms on it. We multiplex between the two using a
+    # hidden form_type field on the page 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
-    work_form = WorkForm(initial={"time": "00:30:00"}, created_by=request.user, ticket=ticket)
+    work_form = WorkForm(initial={"time": "00:30:00"}, user=request.user, ticket=ticket)
 
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
@@ -34,7 +35,7 @@ def detail(request, ticket_id):
                 messages.success(request, 'Comment Added')
                 return HttpResponseRedirect(request.path)
         elif form_type == "work_form":
-            work_form = WorkForm(request.POST, created_by=request.user, ticket=ticket)
+            work_form = WorkForm(request.POST, user=request.user, ticket=ticket)
             if work_form.is_valid():
                 messages.success(request, 'Work Added')
                 work_form.instance.done()
@@ -49,7 +50,6 @@ def detail(request, ticket_id):
         'comment_form': comment_form,
         'work_form': work_form,
         'times': times,
-        'queries': connection.queries,
         'running_work': running_work,
         'files': files,
     })
@@ -72,13 +72,12 @@ def close(request, ticket_id):
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
-        form = TicketForm(request.POST, request.FILES, user=request.user, project=project, created_by=request.user)
+        form = TicketForm(request.POST, request.FILES, user=request.user, project=project)
         if form.is_valid():
             form.save()
             ticket = form.instance
 
             ticket.sendNotification()
-
             messages.success(request, 'Ticket Added')
 
             # save the ticket form data so the user doesn't have to reinput
@@ -91,17 +90,23 @@ def create(request, project_id):
             # 2D dictionary
             request.session.modified = True
 
-            # if they clicked the "Save and add another ticket button, display
-            # the ticket form again
+            # Go to the ticket detail page, or if they clicked the "Save and
+            # add another ticket button, display the ticket form again
             if request.POST.get("submit", "submit").lower() == "submit":
                 return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
             else:
                 return HttpResponseRedirect(request.path)
     else:
+        # if the user submitted a ticket for this project recently, the form
+        # data will be in their session (since we save it in the above code).
+        # Use their last submission as the initial data for the form (since in
+        # all likelyhood, most of the fields will be the same)
         initial_data = request.session.get("ticket_form", {}).get(project.pk, {})
+        # theses fields vary on every ticket, so there is no reason to include
+        # them in the initial data on the form
         initial_data.pop("body", None)
         initial_data.pop("title", None)
-        form = TicketForm(initial=initial_data, user=request.user, project=project, created_by=request.user)
+        form = TicketForm(initial=initial_data, user=request.user, project=project)
 
     return render(request, 'tickets/create.html', {
         'form': form,
@@ -112,7 +117,7 @@ def create(request, project_id):
 def bulk(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_ids = request.GET['tickets'].split(",")
-    # TODO add permissions checking on a ticket level
+    # TODO add permissions checking on a ticket level. 
 
     if request.method == "POST":
         form = BulkForm(request.POST, project=project)
@@ -132,28 +137,35 @@ def edit(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
     if request.method == "POST":
+        # cache the old info about the ticket, so we know if it got changed
         original_status = ticket.status
-        form = TicketForm(request.POST, request.FILES, user=request.user, instance=ticket, project=project, created_by=ticket.created_by)
+        original_assigned_to = ticket.assigned_to
+        # cache the closed status object (since we do a couple comparisons with
+        # it)
+        closed_status = TicketStatus.objects.closed()
+        form = TicketForm(request.POST, request.FILES, user=request.user, instance=ticket, project=ticket.project)
         if form.is_valid():
             form.save()
-            if not form.instance.is_deleted:
-                closed_status = TicketStatus.objects.closed()
-                # if the user just closed this ticket, call the ticket.close()
-                # method to clean up any remaining work left open on the ticket
-                if original_status != closed_status and ticket.status == closed_status:
-                    messages.success(request, 'Ticket Closed')
-                    had_running_work = ticket.close()
-                    if had_running_work:
-                        messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
-                    return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
-                else:
-                    messages.success(request, 'Ticket Edited')
-                return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
-            else:
+            if form.instance.is_deleted:
                 messages.success(request, 'Ticket Deleted')
                 return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
+            elif original_status != closed_status and ticket.status == closed_status: 
+                # if the user *just* closed this ticket, call the ticket.close()
+                # method to clean up any remaining work left open on the ticket
+                messages.success(request, 'Ticket Closed')
+                had_running_work = ticket.close()
+                if had_running_work:
+                    messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
+                return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
+            else:
+                # send a notification if they were just reassigned to this ticket
+                if original_assigned_to.pk != ticket.assigned_to.pk:
+                    ticket.sendNotification()
+
+                messages.success(request, 'Ticket Edited')
+                return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
     else:
-        form = TicketForm(instance=ticket, user=request.user, project=project, created_by=ticket.created_by)
+        form = TicketForm(instance=ticket, user=request.user, project=ticket.project)
 
     return render(request, 'tickets/create.html', {
         'form': form,
@@ -163,6 +175,8 @@ def edit(request, ticket_id):
 
 @can_edit(Comment)
 def comments_edit(request, comment_id):
+    # there is no corresponding comments_create view since a comment is created
+    # on the ticket detail view.
     comment = get_object_or_404(Comment, pk=comment_id)
     ticket = comment.ticket
     project = ticket.project

@@ -17,42 +17,43 @@ from .models import (
 from ..projects.models import Component, Milestone
 
 class TicketForm(forms.ModelForm):
+    """Ticket creation and editing form"""
+    # these are fields that aren't part of the Ticket model, so they need to be
+    # added here 
     add_work = forms.BooleanField(required=False)
     files = forms.FileField(required=False, widget=forms.FileInput(attrs={"multiple": True}))
     existing_files = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
 
-    """Ticket creation and editing form"""
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
         # the caller
         project = kwargs.pop("project")
-        created_by = kwargs.pop("created_by")
+        # keep this is an instance var since we need it in save()
         self.user = kwargs.pop("user")
 
         super(TicketForm, self).__init__(*args, **kwargs)
 
-        # set the foreign key fields specified by the caller
-        self.instance.project = project
-        self.instance.created_by = created_by
+        # if this is a new ticket, we need to set some additional fields
+        if self.instance.pk is None:
+            self.instance.created_by = self.user
+            self.instance.project = project
 
         # remove the blank choices from the fields
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
         self.fields['component'].empty_label = None
 
+        # set some sensible default values
         if not self.is_bound:
-            # set some sensible default values
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
             self.fields['priority'].initial = TicketPriority.objects.get(is_default=1)
             self.fields['component'].initial = project.defaultComponent()
             self.fields['estimated_time'].initial = "1:00"
-            self.fields['assigned_to'].initial = created_by
+            self.fields['assigned_to'].initial = self.user
 
-        # the QuickTicketForm inherits from this class, but exlcudes the title field,
-        # hence the if statement here
-        if "title" in self.fields:
-            self.fields['title'].required = False
-
+        # one of these fields will be required, but we handle that in the clean
+        # method
+        self.fields['title'].required = False
         self.fields['body'].required = False
 
         # only display components and milestones associated with this project
@@ -61,6 +62,7 @@ class TicketForm(forms.ModelForm):
         self.fields['existing_files'].queryset = TicketFile.objects.filter(ticket=self.instance)
 
     def hasFiles(self):
+        # does this Ticket have any files associated with it?
         return self.fields['existing_files'].queryset.count() != 0
 
     def clean(self):
@@ -152,13 +154,15 @@ class WorkForm(forms.ModelForm):
         # these fields won't appear on the form; they need to be specified by
         # the caller
         ticket = kwargs.pop("ticket")
-        created_by = kwargs.pop("created_by")
+        user = kwargs.pop("user")
 
         super(WorkForm, self).__init__(*args, **kwargs)
 
-        # set the foreign key fields specified by the caller
-        self.instance.ticket = ticket
-        self.instance.created_by = created_by
+        # set the foreign key fields specified by the caller, but only if this
+        # is a new object
+        if self.instance.pk is None:
+            self.instance.ticket = ticket
+            self.instance.created_by = user
 
         # get rid of the stupid ----- option on the drop downs
         self.fields['type'].empty_label = None

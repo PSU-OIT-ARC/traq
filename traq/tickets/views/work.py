@@ -15,7 +15,7 @@ def edit(request, work_id):
     ticket = work.ticket
     project = ticket.project
     if request.method == "POST":
-        form = WorkForm(request.POST, instance=work, created_by=request.user, ticket=ticket)
+        form = WorkForm(request.POST, instance=work, user=request.user, ticket=ticket)
         if form.is_valid():
             work.done()
             form.save()
@@ -23,7 +23,7 @@ def edit(request, work_id):
     else:
         # dynamically set how much time has been spent on this work item
         work.time = work.duration()
-        form = WorkForm(instance=work, created_by=request.user, ticket=ticket)
+        form = WorkForm(instance=work, user=request.user, ticket=ticket)
 
     return render(request, 'tickets/work_edit.html', {
         'form': form,
@@ -36,11 +36,16 @@ HAD_RUNNING_WORK_MESSAGE = """<strong>Dawg!</strong> You had other running work,
 
 @can_create(Work)
 def create(request, ticket_id):
+    # this is called when a user starts working on a ticket. There is another
+    # work create form that is handled on the ticket detail view
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
 
+    # since we are adding a new work item, we need to pause whatever work the
+    # user was working on before (they can't work on two things at once)
     had_running_work = Work.objects.pauseRunning(created_by=request.user)
 
+    # create a new work object with sensible defaults
     w = Work(
         ticket=ticket, 
         description="", 
@@ -70,6 +75,8 @@ def pause(request, work_id):
 def continue_(request, work_id):
     work = get_object_or_404(Work, pk=work_id)
     ticket = work.ticket
+    # since we are continuing a work item, we need to pause whatever work the
+    # user was working on before (they can't work on two things at once)
     had_running_work = Work.objects.pauseRunning(created_by=request.user)
     work.continue_()
     messages.success(request, 'Work Started')

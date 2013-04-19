@@ -11,6 +11,9 @@ from ..projects.models import Project, Component, Milestone
 
 class TicketStatusManager(models.Manager):
     def closed(self):
+        # the closed ticketstatus is kind of special, and is referenced
+        # throughout the code. To avoid repeating the "Closed" string (which
+        # could change), this method exists
         return self.get(name="Closed")
 
 class TicketStatus(models.Model):
@@ -47,7 +50,8 @@ class TicketManager(models.Manager):
         return super(TicketManager, self).get_query_set().filter(is_deleted=False)
 
     def tickets(self):
-        """Return a query set of tickets with all the useful related fields and the default ordering"""
+        """Return a query set of tickets with all the useful related fields and
+        the default ordering"""
         queryset = Ticket.objects.filter(project__is_deleted=False).select_related(
             'status', 
             'priority', 
@@ -61,7 +65,7 @@ class TicketManager(models.Manager):
             "global_order": "IF(ticket_status.importance = 0, ticket.created_on, 0)",
             # because the column name "name" is used in all these tables, alias
             # each name column with something else, so when converted to a dict,
-            # the columns don't disappear
+            # the columns don't collide
             "status_name": "ticket_status.name",
             "priority_name": "ticket_priority.name",
             "component_name": "component.name",
@@ -70,6 +74,7 @@ class TicketManager(models.Manager):
         return queryset
 
 class Ticket(models.Model):
+    # the horror, the horror...too many fields
     ticket_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     body = models.TextField()
@@ -143,6 +148,7 @@ class Ticket(models.Model):
         }
 
     def sendNotification(self):
+        """Send a notification email to the person assigned to this ticket"""
         if self.assigned_to is not None:
             to_ = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(self.pk,))
@@ -158,6 +164,7 @@ class Ticket(models.Model):
         db_table = 'ticket'
 
 class TicketFile(models.Model):
+    """Tickets can have associated files"""
     file_id = models.AutoField(primary_key=True)
     file = models.FileField(upload_to="%Y-%m")
     uploaded_on = models.DateTimeField(auto_now_add=True)
@@ -245,6 +252,8 @@ class Work(models.Model):
         elif self.state == Work.PAUSED:
             return self.time
         elif self.state == Work.RUNNING:
+            # since the clock is still ticking, we need to calculate the amount
+            # of time since the work was paused, or created_on
             start = self.state_changed_on or self.created_on
             delta = datetime.utcnow().replace(tzinfo=utc) - start
             return (datetime.combine(datetime.today(), self.time) + delta).time()
