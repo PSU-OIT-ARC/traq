@@ -159,7 +159,7 @@ def edit(request, ticket_id):
                 return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
             else:
                 # send a notification if they were just reassigned to this ticket
-                if original_assigned_to.pk != ticket.assigned_to.pk:
+                if original_assigned_to is None or original_assigned_to.pk != ticket.assigned_to.pk:
                     ticket.sendNotification()
 
                 messages.success(request, 'Ticket Edited')
