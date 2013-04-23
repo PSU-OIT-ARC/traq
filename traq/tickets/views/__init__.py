@@ -56,17 +56,6 @@ def detail(request, ticket_id):
 
 HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
 
-@can_edit(Ticket)
-def close(request, ticket_id):
-    ticket = get_object_or_404(Ticket, pk=ticket_id)
-    project = ticket.project
-    had_running_work = ticket.close()
-
-    messages.success(request, 'Ticket Closed')
-    if had_running_work:
-        messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
-
-    return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
     
 @can_create(Ticket)
 def create(request, project_id):
@@ -138,30 +127,13 @@ def edit(request, ticket_id):
     project = ticket.project
     if request.method == "POST":
         # cache the old info about the ticket, so we know if it got changed
-        original_status = ticket.status
-        original_assigned_to = ticket.assigned_to
-        # cache the closed status object (since we do a couple comparisons with
-        # it)
-        closed_status = TicketStatus.objects.closed()
         form = TicketForm(request.POST, request.FILES, user=request.user, instance=ticket, project=ticket.project)
         if form.is_valid():
             form.save()
             if form.instance.is_deleted:
                 messages.success(request, 'Ticket Deleted')
                 return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
-            elif original_status != closed_status and ticket.status == closed_status: 
-                # if the user *just* closed this ticket, call the ticket.close()
-                # method to clean up any remaining work left open on the ticket
-                messages.success(request, 'Ticket Closed')
-                had_running_work = ticket.close()
-                if had_running_work:
-                    messages.warning(request, HAD_RUNNING_WORK_MESSAGE)
-                return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
             else:
-                # send a notification if they were just reassigned to this ticket
-                if original_assigned_to.pk != ticket.assigned_to.pk:
-                    ticket.sendNotification()
-
                 messages.success(request, 'Ticket Edited')
                 return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
     else:

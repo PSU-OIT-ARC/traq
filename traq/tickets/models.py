@@ -9,21 +9,12 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from ..projects.models import Project, Component, Milestone
 
-class TicketStatusManager(models.Manager):
-    def closed(self):
-        # the closed ticketstatus is kind of special, and is referenced
-        # throughout the code. To avoid repeating the "Closed" string (which
-        # could change), this method exists
-        return self.get(name="Closed")
-
 class TicketStatus(models.Model):
     ticket_status_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     rank = models.IntegerField()
     is_default = models.BooleanField(default=False)
     importance = models.IntegerField()
-
-    objects = TicketStatusManager()
 
     class Meta:
         ordering = ['rank']
@@ -87,6 +78,10 @@ class Ticket(models.Model):
     due_on = models.DateTimeField(null=True, default=None, blank=True)
     is_internal = models.BooleanField(default=False, verbose_name="Mark as an internal ticket (this doesn't affect any reports yet)")
 
+    # git fields
+    release = models.CharField(max_length=255, blank=True)
+    branch = models.CharField(max_length=255, blank=True)
+
     created_by = models.ForeignKey(User, related_name='+')
     assigned_to = models.ForeignKey(User, null=True, default=None, related_name='+', blank=True)
     status = models.ForeignKey(TicketStatus)
@@ -100,11 +95,7 @@ class Ticket(models.Model):
     def isOverDue(self):
         return self.due_on < datetime.utcnow().replace(tzinfo=utc)
 
-    def close(self):
-        """Closes a ticket, and sets all non finished work to done"""
-        # finish all running work
-        self.status = TicketStatus.objects.closed()
-        self.save()
+    def finishWork(self):
         work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
         had_running_work = False
         for w in work:
@@ -114,6 +105,27 @@ class Ticket(models.Model):
             had_running_work = True
         return had_running_work
 
+    def originalState(self):
+        if self.pk is None:
+            return Ticket()
+        return Ticket.objects.get(pk=self.pk)
+
+    def save(self, *args, **kwargs):
+        original = self.originalState()
+        super(Ticket, self).save(*args, **kwargs)
+
+        # close all the running work on this ticket if it just turned to Completed or closed
+        status_changed = self.status != original.status
+        had_running_work = False
+        if status_changed and self.status:
+            status = self.status.name
+            if status in ['Completed', 'Closed']:
+                self.finishWork()
+
+        # send a notification?
+        if original.assigned_to_id != self.assigned_to_id:
+            self.sendNotification()
+            
     def totalTimes(self, interval=()):
         """Return a dict containing timedelta objects that indicate how much
         total, billable and non_billable time has been spent on this ticket"""

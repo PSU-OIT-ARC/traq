@@ -11,7 +11,6 @@ from .models import (
     TicketStatus, 
     TicketPriority, 
     WorkType, 
-    TicketStatusManager, 
     TicketFile,
 )
 from ..projects.models import Component, Milestone
@@ -127,7 +126,14 @@ class TicketForm(forms.ModelForm):
             'component',
             'milestone',
             'due_on',
+            'release',
+            'branch',
         )
+
+        widgets = {
+            "release": forms.TextInput(attrs={"placeholder": "release"}),
+            "branch": forms.TextInput(attrs={"placeholder": "branch"})
+        }
 
 class CommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -246,9 +252,6 @@ class BulkForm(forms.Form):
         return cleaned
 
     def bulkUpdate(self, ticket_ids):    
-        # cached the closed_status TicketStatus
-        closed_status = TicketStatus.objects.closed()
-
         # figure out all the fields that needs to be updated on a ticket
         change_to = {}
         for k, field in self.fields.items():
@@ -264,11 +267,7 @@ class BulkForm(forms.Form):
             ticket = Ticket.objects.get(pk=ticket_id)
 
             for k, v in change_to.items():
-                # special case for closing a non closed ticket
-                if k == "status" and v == closed_status and ticket.status != closed_status:
-                    ticket.close()
-                else:
-                    setattr(ticket, k, v)
+                setattr(ticket, k, v)
 
             ticket.save()
 

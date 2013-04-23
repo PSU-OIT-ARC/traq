@@ -29,33 +29,49 @@
     {% csrf_token %}
     {{ form.title.label_tag }}
     {{ form.title }}
-    {{ form.assigned_to }}
-    {{ form.status }}
-    {{ form.priority }}
-    {{ form.component }}
+    <table>
+        <tr>
+            <td>Assigned to</td>
+            <td>Status</td>
+            <td>Priority</td>
+            <td>Component</td>
+        </tr>
+        <tr>
+            <td>{{ form.assigned_to }}</td>
+            <td>{{ form.status }}</td>
+            <td>{{ form.priority }}</td>
+            <td>{{ form.component }}</td>
+        </tr>
+    </table>
+    <label class="roomy">Git</label>
+    <div class="float-left">
+        {{ form.branch }}
+    </div> 
 
-    {{ form.body.label_tag }}
+    <div class="float-left">
+        {{ form.release }}
+    </div> 
+
+    <div class="clear"></div>
+    
+    <label class="roomy">{{ form.body.label }}</label>
     {{ form.body }}
 
     <div class="clear"></div>
-    <div class="float-left">
-        {{ form.started_on.label_tag }}
-        {{ form.started_on }}
-    </div>
-
-    <div class="float-left">
-        {{ form.estimated_time.label_tag }}
-        {{ form.estimated_time }}
-    </div>
-    <div class="float-left">
-        {{ form.due_on.label_tag }}
-        {{ form.due_on }}
-    </div>
-    <div class="float-left">
-        {{ form.milestone.label_tag }}
-        {{ form.milestone }}
-    </div>
-    <div class="clear"></div>
+    <table>
+        <tr>
+            <td>{{ form.started_on.label }}</td>
+            <td>{{ form.estimated_time.label }}</td>
+            <td>{{ form.due_on.label }}</td>
+            <td>{{ form.milestone.label }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.started_on }}</td>
+            <td>{{ form.estimated_time }}</td>
+            <td>{{ form.due_on }}</td>
+            <td>{{ form.milestone }}</td>
+        </tr>
+    </table>
 
     {% if not form.instance.pk %}
         <label class="option">{{ form.add_work }} Add work-line item to ticket</label>

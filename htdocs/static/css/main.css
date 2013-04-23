@@ -21,6 +21,10 @@ label {
     display:block;
 }
 
+label.roomy {
+    margin-top:10px;
+}
+
 input {
     display:block;
 }
@@ -415,7 +419,8 @@ p.error {
 .ticket-status-closed {
 }
 
-.ticket-status-closed td {
+.ticket-status-closed td,
+.ticket-status-completed td {
     opacity:.3;
 }
 
