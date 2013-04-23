@@ -111,6 +111,12 @@ class Ticket(models.Model):
         return Ticket.objects.get(pk=self.pk)
 
     def save(self, *args, **kwargs):
+        # we are creating this ticket
+        if self.pk is None:
+            super(Ticket, self).save(*args, **kwargs)
+            return
+
+        # we are editing an existing ticket
         original = self.originalState()
         super(Ticket, self).save(*args, **kwargs)
 
