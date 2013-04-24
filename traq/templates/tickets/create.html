@@ -35,22 +35,18 @@
             <td>Status</td>
             <td>Priority</td>
             <td>Component</td>
+            <td>Branch</td>
+            <td>Release</td>
         </tr>
         <tr>
             <td>{{ form.assigned_to }}</td>
             <td>{{ form.status }}</td>
             <td>{{ form.priority }}</td>
             <td>{{ form.component }}</td>
+            <td>{{ form.branch }}</td>
+            <td>{{ form.release }}</td>
         </tr>
     </table>
-    <label class="roomy">Git</label>
-    <div class="float-left">
-        {{ form.branch }}
-    </div> 
-
-    <div class="float-left">
-        {{ form.release }}
-    </div> 
 
     <div class="clear"></div>
     

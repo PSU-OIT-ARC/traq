@@ -111,27 +111,23 @@ class Ticket(models.Model):
         return Ticket.objects.get(pk=self.pk)
 
     def save(self, *args, **kwargs):
-        # we are creating this ticket
-        if self.pk is None:
-            super(Ticket, self).save(*args, **kwargs)
-            return
-
-        # we are editing an existing ticket
         original = self.originalState()
         super(Ticket, self).save(*args, **kwargs)
 
-        # close all the running work on this ticket if it just turned to Completed or closed
-        status_changed = self.status != original.status
-        had_running_work = False
-        if status_changed and self.status:
-            status = self.status.name
-            if status in ['Completed', 'Closed']:
-                self.finishWork()
+        is_new = original.pk is None
 
-        # send a notification?
-        if original.assigned_to_id != self.assigned_to_id:
+        # send a notification for a new ticket, or one that was assigned
+        if is_new or original.assigned_to_id != self.assigned_to_id:
             self.sendNotification()
-            
+
+        if not is_new:
+            # close all the running work on this ticket if it just turned to Completed or closed
+            status_changed = self.status != original.status
+            if status_changed and self.status:
+                status = self.status.name
+                if status in ['Completed', 'Closed']:
+                    self.finishWork()
+
     def totalTimes(self, interval=()):
         """Return a dict containing timedelta objects that indicate how much
         total, billable and non_billable time has been spent on this ticket"""

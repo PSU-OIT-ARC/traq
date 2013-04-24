@@ -45,6 +45,12 @@
                     <li><strong>Due On:</strong> {{ ticket.due_on }} </li>
                 {% endif %}
             </ul>
+            {% if ticket.branch or ticket.release %}
+                <ul>
+                    <li><strong>Branch:</strong> {{ ticket.branch }}</li>
+                    <li><strong>Release:</strong> {{ ticket.release }}</li>
+                </ul>
+            {% endif %}
             <div class="clear"></div>
         </div>
     </div>

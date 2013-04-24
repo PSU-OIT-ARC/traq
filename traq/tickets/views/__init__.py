@@ -66,7 +66,6 @@ def create(request, project_id):
             form.save()
             ticket = form.instance
 
-            ticket.sendNotification()
             messages.success(request, 'Ticket Added')
 
             # save the ticket form data so the user doesn't have to reinput
