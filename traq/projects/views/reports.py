@@ -77,11 +77,11 @@ def component(request, project_id):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="report.csv"'
         csv = UnicodeWriter(response)
-        csv.writerow(['Component', '#', 'Ticket', 'Status', 'Assigned', 'Total Hours', 'Billable Hours'])
+        csv.writerow(['Component', '#', 'Ticket', 'Status', 'Assigned', 'Total Hours', 'Billable Hours', 'Release'])
         for comp in components:
             csv.writerow([comp.name, '','','','', tickettimepretty(comp.total), tickettimepretty(comp.billable)])
             for ticket in comp.tickets:
-                csv.writerow(['', unicode(ticket.pk), ticket.title, ticket.status.name, ticket.assigned_to.username, tickettimepretty(ticket.times['total']), tickettimepretty(ticket.times['billable']), ticket.release])
+                csv.writerow(['', unicode(ticket.pk), ticket.title, ticket.status.name, '' if ticket.assigned_to is None else ticket.assigned_to.username, tickettimepretty(ticket.times['total']), tickettimepretty(ticket.times['billable']), ticket.release])
          
         return response
 
