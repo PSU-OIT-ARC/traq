@@ -1,4 +1,5 @@
 import json
+from traq.utils import UnicodeWriter
 from datetime import datetime, timedelta
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -12,6 +13,7 @@ from ..forms import ReportIntervalForm
 from ..models import Project, Component
 from traq.tickets.models import Ticket
 from traq.permissions.decorators import can_view, can_edit, can_create, can_do
+from traq.tickets.templatetags.tickets import tickettimepretty
 
 @can_do()
 def mega(request):
@@ -69,23 +71,27 @@ def component(request, project_id):
         for t in comp.tickets:
             t.times = t.totalTimes(interval)
 
-    context = {
-        'project': project,
-        'components': components,
-        'form': form,
-        'queries': connection.queries,
-    }
 
     # render as CSV?
     if request.GET.get('format', '') == 'csv':
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="report.csv"'
-        s = render_to_string('projects/reports/component.csv', context)
-        response.write(s)
+        csv = UnicodeWriter(response)
+        csv.writerow(['Component', '#', 'Ticket', 'Status', 'Assigned', 'Total Hours', 'Billable Hours'])
+        for comp in components:
+            csv.writerow([comp.name, '','','','', tickettimepretty(comp.total), tickettimepretty(comp.billable)])
+            for ticket in comp.tickets:
+                csv.writerow(['', unicode(ticket.pk), ticket.title, ticket.status.name, ticket.assigned_to.username, tickettimepretty(ticket.times['total']), tickettimepretty(ticket.times['billable']), ticket.release])
+         
         return response
 
     # render normally
-    return render(request, 'projects/reports/component.html', context)
+    return render(request, 'projects/reports/component.html', {
+        'project': project,
+        'components': components,
+        'form': form,
+        'queries': connection.queries,
+    })
 
 @can_do()
 def invoice(request, project_id):
