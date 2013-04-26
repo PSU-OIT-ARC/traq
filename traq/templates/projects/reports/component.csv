@@ -1,0 +1,3 @@
+{% load tickets %}Component, #, Ticket, Status, Assigned, Total Hours, Billable Hours{% for comp in components %}
+{{ comp.name|addslashes }},,,,,{{ comp.total|tickettimepretty }}, {{ comp.billable|tickettimepretty }} {% for ticket in comp.tickets %}
+,{{ ticket.pk }}, {{ ticket.title|addslashes }}, {{ ticket.status.name|addslashes }}, {{ ticket.assigned_to.username|addslashes }}, {{ ticket.times.total|tickettimepretty }}, {{ ticket.times.billable|tickettimepretty }},{{ ticket.assigned_to.release|addslashes }}{% endfor %}{% endfor %}

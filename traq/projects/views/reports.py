@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
+from django.template.loader import render_to_string
 from django.utils.timezone import utc
 from django.contrib.auth.models import User
 from ..forms import ReportIntervalForm
@@ -68,12 +69,23 @@ def component(request, project_id):
         for t in comp.tickets:
             t.times = t.totalTimes(interval)
 
-    return render(request, 'projects/reports/component.html', {
+    context = {
         'project': project,
         'components': components,
         'form': form,
         'queries': connection.queries,
-    })
+    }
+
+    # render as CSV?
+    if request.GET.get('format', '') == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="report.csv"'
+        s = render_to_string('projects/reports/component.csv', context)
+        response.write(s)
+        return response
+
+    # render normally
+    return render(request, 'projects/reports/component.html', context)
 
 @can_do()
 def invoice(request, project_id):
@@ -97,7 +109,7 @@ def invoice(request, project_id):
 
 def _intervalHelper(request):
     interval = ()
-    if request.GET:
+    if request.GET.get('submit'):
         form = ReportIntervalForm(request.GET)
         if form.is_valid():
             interval = (form.cleaned_data['start'], form.cleaned_data['end'])
@@ -107,6 +119,6 @@ def _intervalHelper(request):
         earlier = now - timedelta(days=30)
         interval = (earlier, now)
 
-        if not request.GET:
+        if not request.GET.get('submit'):
             form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})
     return form, interval
