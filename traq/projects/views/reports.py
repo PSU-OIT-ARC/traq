@@ -75,10 +75,10 @@ def component(request, project_id):
     # render as CSV?
     if request.GET.get('format', '') == 'csv':
         response = HttpResponse(content_type='text/csv')
-        filename = "report-" + datetime.now().strftime("%Y-%m-%d")
+        filename = "report-" + datetime.now().strftime("%Y-%m-%d") + ".csv"
         response['Content-Disposition'] = 'attachment; filename="%s"' % (filename)
         csv = UnicodeWriter(response)
-        csv.writerow([str(interval[0]), str(interval[0])])
+        csv.writerow([interval[0].strftime("%Y-%m-%d"), interval[1].strftime("%Y-%m-%d")])
         csv.writerow(['Component', '#', 'Ticket', 'Status', 'Assigned', 'Total Hours', 'Billable Hours', 'Release'])
         for comp in components:
             csv.writerow([comp.name, '','','','', tickettimepretty(comp.total), tickettimepretty(comp.billable)])
