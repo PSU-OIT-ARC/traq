@@ -173,7 +173,7 @@ class Ticket(models.Model):
             })
             subject = 'Traq Ticket #%d %s' % (self.pk, self.title)
             send_mail(subject, body, 'traq@pdx.edu', [to_])
-
+     
     class Meta:
         db_table = 'ticket'
 
@@ -324,8 +324,32 @@ class Comment(models.Model):
     created_by = models.ForeignKey(User, related_name='+')
 
     objects = CommentManager()
+    
+
+    def sendNotification(self):
+        """Send a notification email to the person assigned to this ticket"""
+        if self.body is not None:
+            to_ = 'conwayb@pdx.edu' #self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
+            ticket = self.ticket
+            ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
+            body = render_to_string('tickets/comment_notification.txt', {
+                "ticket": ticket,
+                "ticket_url": ticket_url, 
+                "author" : self.created_by,
+                "comment_body": self.body,
+            })
+            subject = 'Traq Ticket #%d %s' % (ticket.pk, ticket.title)
+            #subject = 'traq comment ticket'
+            send_mail(subject, body, 'traq@pdx.edu', [to_])
+        
+    def save(self, *args, **kwargs):
+        is_new = self.pk
+        super(Comment, self).save(*args, **kwargs)
+        if is_new is None:
+            self.sendNotification()
 
     class Meta:
         ordering = ['created_on']
         db_table = 'comment'
+
 
