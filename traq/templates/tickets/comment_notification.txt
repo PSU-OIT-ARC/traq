@@ -1,8 +1,8 @@
 {{ ticket_url }}
 
 Project: {{ ticket.project.name }}
-
-{{ ticket.title }}
+Title: {{ ticket.title }}
+Status: {{ ticket.status }}
 
 new comment from: {{ author }}
 
