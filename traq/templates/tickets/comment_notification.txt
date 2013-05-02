@@ -1,10 +1,12 @@
 {% load tickets %}
 {{ ticket_url }}
-
+<br>
 Project: {{ ticket.project.name }}
+<br>
 Title: {{ ticket.title }}
+<br>
 Status: {{ ticket.status }}
-
+<br>
 new comment from: {{ author }}
 
 {{ comment_body|frommarkdown }}
