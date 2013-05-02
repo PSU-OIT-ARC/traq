@@ -58,6 +58,8 @@ class Project(models.Model):
     description = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
+    pm_email = models.BooleanField(default=False, help_text="Elect to receive email notifications")
+    pm = models.ForeignKey(User, null=True, default=None, related_name='+', blank=True, help_text="Project Manager")
 
     # add all the meta fields here, make sure they aren't required
     point_of_contact = models.TextField(blank=True, default="", help_text="Displayed on the invoice")

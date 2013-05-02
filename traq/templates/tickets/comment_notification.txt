@@ -1,0 +1,11 @@
+{{ ticket_url }}
+
+Project: {{ ticket.project.name }}
+
+{{ ticket.title }}
+
+new comment from: {{ author }}
+
+{{ comment_body }}
+
+

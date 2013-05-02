@@ -18,7 +18,9 @@ class ProjectForm(forms.ModelForm):
             'technical',
             'catch_all',
             'is_deleted',
-        )
+            'pm_email',
+            'pm'
+            )
 
 class ComponentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
