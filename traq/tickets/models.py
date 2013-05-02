@@ -8,6 +8,8 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from ..projects.models import Project, Component, Milestone
+from django.core.mail import EmailMultiAlternatives
+
 
 class TicketStatus(models.Model):
     ticket_status_id = models.AutoField(primary_key=True)
@@ -341,10 +343,14 @@ class Comment(models.Model):
                 "comment_body": self.body,
             })
             subject = 'Traq Ticket #%d %s' % (ticket.pk, ticket.title)
-            #subject = 'traq comment ticket'
             if project.pm_email:
-                send_mail(subject, body, 'traq@pdx.edu', [to_])
-        
+            #    send_mail(subject, body, 'traq@pdx.edu', [to_])
+                text_content = body
+                html_content = body
+                msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to_])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
     def save(self, *args, **kwargs):
         is_new = self.pk
         super(Comment, self).save(*args, **kwargs)
