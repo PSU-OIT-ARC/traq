@@ -329,8 +329,10 @@ class Comment(models.Model):
     def sendNotification(self):
         """Send a notification email to the person assigned to this ticket"""
         if self.body is not None:
-            to_ = 'conwayb@pdx.edu' #self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
+            
             ticket = self.ticket
+            project = ticket.project
+            to_ = project.pm
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
             body = render_to_string('tickets/comment_notification.txt', {
                 "ticket": ticket,
@@ -340,7 +342,8 @@ class Comment(models.Model):
             })
             subject = 'Traq Ticket #%d %s' % (ticket.pk, ticket.title)
             #subject = 'traq comment ticket'
-            send_mail(subject, body, 'traq@pdx.edu', [to_])
+            if project.pm_email:
+                send_mail(subject, body, 'traq@pdx.edu', [to_])
         
     def save(self, *args, **kwargs):
         is_new = self.pk
