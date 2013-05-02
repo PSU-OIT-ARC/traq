@@ -327,12 +327,12 @@ class Comment(models.Model):
     
 
     def sendNotification(self):
-        """Send a notification email to the person assigned to this ticket"""
+        """Send a notification email to the pm when a comment is made on  this ticket"""
         if self.body is not None:
             
             ticket = self.ticket
             project = ticket.project
-            to_ = project.pm
+            to_ = project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
             body = render_to_string('tickets/comment_notification.txt', {
                 "ticket": ticket,
