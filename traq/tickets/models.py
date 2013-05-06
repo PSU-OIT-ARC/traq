@@ -168,13 +168,18 @@ class Ticket(models.Model):
         if self.assigned_to is not None:
             to = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(self.pk,))
-            body = render_to_string('tickets/notification.txt', {
+            context = {
                 "ticket": self,
                 "ticket_url": ticket_url,
                 "username": self.assigned_to.username
-            })
+            }
+            text_content = render_to_string('tickets/notification.txt', context)
+            html_content = render_to_string('tickets/notification.html', context)
             subject = 'Traq Ticket #%d %s' % (self.pk, self.title)
-            send_mail(subject, body, 'traq@pdx.edu', [to])
+
+            msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
      
     class Meta:
         db_table = 'ticket'
