@@ -166,7 +166,7 @@ class Ticket(models.Model):
     def sendNotification(self):
         """Send a notification email to the person assigned to this ticket"""
         if self.assigned_to is not None:
-            to_ = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
+            to = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(self.pk,))
             body = render_to_string('tickets/notification.txt', {
                 "ticket": self,
@@ -174,7 +174,7 @@ class Ticket(models.Model):
                 "username": self.assigned_to.username
             })
             subject = 'Traq Ticket #%d %s' % (self.pk, self.title)
-            send_mail(subject, body, 'traq@pdx.edu', [to_])
+            send_mail(subject, body, 'traq@pdx.edu', [to])
      
     class Meta:
         db_table = 'ticket'
@@ -334,7 +334,7 @@ class Comment(models.Model):
             
             ticket = self.ticket
             project = ticket.project
-            to_ = project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN
+            to = project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
             body = render_to_string('tickets/comment_notification.txt', {
                 "ticket": ticket,
@@ -344,10 +344,10 @@ class Comment(models.Model):
             })
             subject = 'Traq Ticket #%d %s' % (ticket.pk, ticket.title)
             if project.pm_email:
-            #    send_mail(subject, body, 'traq@pdx.edu', [to_])
+            #    send_mail(subject, body, 'traq@pdx.edu', [to])
                 text_content = body
                 html_content = body
-                msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to_])
+                msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
