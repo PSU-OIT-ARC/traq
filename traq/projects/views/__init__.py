@@ -10,7 +10,9 @@ from traq.utils import querySetToJSON
 
 @can_do()
 def all(request):
-    projects = Project.objects.all()
+    projects = []
+    projects.append(Project.objects.filter(status=Project.ACTIVE))
+    projects.append(Project.objects.filter(status=Project.INACTIVE))
     return render(request, 'projects/all.html', {
         'projects': projects,
     })
