@@ -336,9 +336,11 @@ class Comment(models.Model):
     def sendNotification(self):
         """Send a notification email to the pm when a comment is made on  this ticket"""
         if self.body is not None:
-            
             ticket = self.ticket
             project = ticket.project
+            # if there is no PM, there is no place to send the email
+            if project.pm is None:
+                return
             to = project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
             body = render_to_string('tickets/comment_notification.txt', {
@@ -349,7 +351,6 @@ class Comment(models.Model):
             })
             subject = 'Traq Ticket #%d %s' % (ticket.pk, ticket.title)
             if project.pm_email:
-            #    send_mail(subject, body, 'traq@pdx.edu', [to])
                 text_content = body
                 html_content = body
                 msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
