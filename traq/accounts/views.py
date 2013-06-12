@@ -10,17 +10,22 @@ from traq.permissions.checkers import STAFF_GROUP
 from traq.projects.models import Project
 
 @login_required
-def profile(request):
+def profile(request, tickets=''):
     user = request.user
     if user.groups.filter(name=STAFF_GROUP):
-        return _tickets(request)
+        return _tickets(request, tickets)
     else:
         return _invoices(request)
 
-def _tickets(request):
+def _tickets(request, tickets=''):
     user = request.user
     # grab all the tickets created_by or assigned to this user
-    tickets = Ticket.objects.tickets().filter(Q(created_by=user) | Q(assigned_to=user))
+    if(tickets == 'created_by'):
+        tickets = Ticket.objects.tickets().filter(Q(created_by=user))
+    elif(tickets =='assigned'):
+        tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))
+    else:    
+        tickets = Ticket.objects.tickets().filter(Q(created_by=user) | Q(assigned_to=user))
     # get all the work created by this user, but isn't yet done
     running_work = Work.objects.filter(created_by=user).exclude(state=Work.DONE).select_related("created_by", "type", "ticket").order_by('-created_on')
     tickets_json = querySetToJSON(tickets)
