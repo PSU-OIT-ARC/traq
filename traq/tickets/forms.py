@@ -97,6 +97,8 @@ class TicketForm(forms.ModelForm):
             w.created_by = self.instance.created_by
             # assume the work started w.time hours/minutes ago
             w.started_on = datetime.now() - timedelta(hours=w.time.hour, minutes=w.time.minute)
+            w.done_on = datetime.now()
+            w.state = Work.DONE
             w.save()
 
         # remove any files
