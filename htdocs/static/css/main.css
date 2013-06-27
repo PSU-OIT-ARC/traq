@@ -191,6 +191,14 @@ p.error {
     background-color:#efefef;
 }
 
+.project-list {
+    margin-bottom:30px;
+}
+
+.project-list:last-of-type {
+    margin-bottom:0px;
+}
+
 #wrapper {
     width:960px;
     margin:auto;

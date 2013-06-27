@@ -18,7 +18,7 @@ TICKETS = {{ tickets_json|safe }};
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
 <h2>
-    Tickets Assigned To or Created By You
+    Tickets <a href="{% url 'accounts-profile' tickets='assigned'%}">Assigned To </a> or <a href="{% url 'accounts-profile' tickets='created_by'%}">Created By </a>You
     <input type="text" name="search" id="ticket-search" placeholder="Search" />
 </h2>
 {% include 'tickets/_tickettable.html' %}

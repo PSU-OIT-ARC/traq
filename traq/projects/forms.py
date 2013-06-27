@@ -17,6 +17,7 @@ class ProjectForm(forms.ModelForm):
             'invoice_description',
             'technical',
             'catch_all',
+            'status',
             'is_deleted',
             'pm_email',
             'pm'

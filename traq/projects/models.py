@@ -53,6 +53,8 @@ class ProjectManager(models.Manager):
         return modified_rows
 
 class Project(models.Model):
+    ACTIVE = 1
+    INACTIVE = 0
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -60,6 +62,10 @@ class Project(models.Model):
     is_deleted = models.BooleanField(default=False)
     pm_email = models.BooleanField(default=False, help_text="Elect to receive email notifications")
     pm = models.ForeignKey(User, null=True, default=None, related_name='+', blank=True, help_text="Project Manager")
+    status = models.IntegerField(choices=(
+        (ACTIVE, "Active"),
+        (INACTIVE, "Inactive"),
+    ), default=ACTIVE)
 
     # add all the meta fields here, make sure they aren't required
     point_of_contact = models.TextField(blank=True, default="", help_text="Displayed on the invoice")
