@@ -19,6 +19,7 @@
     {% if user|can_edit:ticket %}
     <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
     {% endif %}
+    <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> 
 </h2>
 
 <div class="left-section-wrapper">
