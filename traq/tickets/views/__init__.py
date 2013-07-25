@@ -25,7 +25,6 @@ def detail(request, ticket_id):
     # hidden form_type field on the page 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
     work_form = WorkForm(initial={"time": "00:30:00"}, user=request.user, ticket=ticket)
-    ticket_form = TicketForm(instance = ticket, user=request.user, project=ticket.project) 
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
         # was submitted
@@ -54,7 +53,6 @@ def detail(request, ticket_id):
         'times': times,
         'running_work': running_work,
         'files': files,
-        'ticket_form': ticket_form,
     })
 
 HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
