@@ -1,5 +1,5 @@
 from datetime import datetime, time
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.core import serializers
@@ -173,9 +173,11 @@ def comments_edit(request, comment_id):
 class UpdateTicketView(UpdateView):
     form_class = UpdateTicketForm
     model = Ticket
+    http_method_names = ['post']
 
     def get_success_url(self):
         project = self.object.project
         ticket = self.object.pk
         messages.add_message(self.request, messages.SUCCESS, 'Ticket %d Closed.' % ticket)
         return '/projects/%d' % project.pk
+ 
