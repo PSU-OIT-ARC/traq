@@ -266,10 +266,15 @@ class BulkForm(forms.Form):
 
         # for each ticket, update all the fields specified on the form
         for ticket_id in ticket_ids:
-            ticket = Ticket.objects.get(pk=ticket_id)
-
+            ticket = Ticket.objects.get(pk=ticket_id) 
             for k, v in change_to.items():
                 setattr(ticket, k, v)
 
             ticket.save()
+
+class UpdateTicketForm(forms.ModelForm):
+    class Meta: 
+        model = Ticket
+        fields = ['status']
+
 

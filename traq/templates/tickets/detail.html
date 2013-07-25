@@ -20,6 +20,11 @@
     <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
     {% endif %}
     <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> 
+    <a id='close' href='' class="button">Close Ticket</a> 
+    <form id='closeForm' action="{% url 'tickets-update' ticket.pk %}" method='post'>
+        {% csrf_token %}
+        <input type='hidden' name='status' value=4 >
+    </form>
 </h2>
 
 <div class="left-section-wrapper">
@@ -156,5 +161,13 @@
     </div>
 </div>
 
+<script type='text/javascript'>
+$(document).ready(function(){
+    $('#close').click(function(e){
+        e.preventDefault();
+        $('#closeForm').submit();
+        });
+})
+</script>
 {% endblock %}
 

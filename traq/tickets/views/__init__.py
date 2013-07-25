@@ -2,12 +2,14 @@ from datetime import datetime, time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.core import serializers
 from django.db import connection
 from django.contrib import messages
-from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
+from ..forms import TicketForm, CommentForm, WorkForm, BulkForm, UpdateTicketForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
 from traq.permissions.decorators import can_view, can_edit, can_create
+from django.views.generic.edit import UpdateView
 
 @can_view(Ticket)
 def detail(request, ticket_id):
@@ -23,7 +25,7 @@ def detail(request, ticket_id):
     # hidden form_type field on the page 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
     work_form = WorkForm(initial={"time": "00:30:00"}, user=request.user, ticket=ticket)
-
+    ticket_form = TicketForm(instance = ticket, user=request.user, project=ticket.project) 
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
         # was submitted
@@ -52,6 +54,7 @@ def detail(request, ticket_id):
         'times': times,
         'running_work': running_work,
         'files': files,
+        'ticket_form': ticket_form,
     })
 
 HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
@@ -167,3 +170,12 @@ def comments_edit(request, comment_id):
         'project': project,
     })
 
+class UpdateTicketView(UpdateView):
+    form_class = UpdateTicketForm
+    model = Ticket
+
+    def get_success_url(self):
+        project = self.object.project
+        ticket = self.object.pk
+        messages.add_message(self.request, messages.SUCCESS, 'Ticket %d Closed.' % ticket)
+        return '/projects/%d' % project.pk

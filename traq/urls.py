@@ -9,6 +9,7 @@ import projects.views.milestones
 
 import tickets.views
 import tickets.views.work
+from tickets.views import UpdateTicketView
 
 import accounts.views
 
@@ -50,6 +51,7 @@ urlpatterns = patterns('',
     url(r'^tickets/(\d+)/?$', tickets.views.detail, name='tickets-detail'),
     url(r'^tickets/(\d+)/edit/?$', tickets.views.edit, name='tickets-edit'),
     url(r'^projects/(\d+)/tickets/bulk/?$', tickets.views.bulk, name='tickets-bulk'),
+    url(r'^tickets/(?P<pk>\d+)/update/?$', UpdateTicketView.as_view(), name='tickets-update'),
     # comments
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),
     # work
