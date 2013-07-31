@@ -1,3 +1,4 @@
+import datetime
 from django import forms
 from .models import Project, Component, Milestone
 from ..tickets.models import Ticket
@@ -7,6 +8,21 @@ class ProjectForm(forms.ModelForm):
         created_by = kwargs.pop('created_by')
         super(ProjectForm, self).__init__(*args, **kwargs)
         self.instance.created_by = created_by
+
+        if self.instance.pk is None:
+            self.fields['target_completion_date'] = forms.DateTimeField(initial=datetime.datetime.now()+datetime.timedelta(days=180))
+
+    def save(self, *args, **kwargs):
+        is_new = self.instance.pk is None
+        super(ProjectForm, self).save(*args, **kwargs)
+        # add a new completion milestone to the newly created project
+        if is_new:
+            Milestone(
+                name="Target Completion Date", 
+                due_on=self.cleaned_data['target_completion_date'],
+                created_by=self.instance.created_by,
+                project=self.instance,
+            ).save()
 
     class Meta:
         model = Project
@@ -21,7 +37,7 @@ class ProjectForm(forms.ModelForm):
             'is_deleted',
             'pm_email',
             'pm'
-            )
+        )
 
 class ComponentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
