@@ -16,6 +16,11 @@
     {% endif %}
 </h2>
 
+{% if target_completion %}
+    <h3>Target Completion</h3>
+    <p>{{ target_completion }}</p>
+{% endif %}
+
 {% if project.description %}
     <h3>Description</h3>
     <div class="markdown">{{ project.description|frommarkdown }}</div>

@@ -20,8 +20,14 @@ def all(request):
 @can_view(Project)
 def meta(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    try:
+        target_completion = Milestone.objects.get(project=project, name="Target Completion Date").due_on
+    except (Milestone.DoesNotExist, Milestone.MultipleObjectsReturned) as e:
+        target_completion = None
+
     return render(request, 'projects/meta.html', {
         'project': project,
+        'target_completion': target_completion,
     })
 
 @can_view(Project)
