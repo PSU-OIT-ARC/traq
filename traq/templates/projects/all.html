@@ -27,7 +27,7 @@
                     {% endif %}
                 </td>
                 <td>{{ project.get_status_display }}</td>
-                <td>{{ project.description }}</td>
+                <td>{{ project.description|truncatechars:80 }} <a href="{% url 'projects-meta' project.pk %}">Read more</a></td>
             </tr>
         {% endfor %}
     </tbody>

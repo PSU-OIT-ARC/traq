@@ -14,18 +14,25 @@
     {% if user|can_edit:project %}
         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
     {% endif %}
-    <a href="{% url 'projects-meta' project.pk %}" class="button">Meta Info</a>
 </h2>
 
-<h3>Description</h3>
-<div class="markdown">{{ project.description|frommarkdown }}</div>
+{% if project.description %}
+    <h3>Description</h3>
+    <div class="markdown">{{ project.description|frommarkdown }}</div>
+{% endif %}
 
-<h3>Point of Contact</h3>
-<div class="markdown">{{ project.point_of_content|frommarkdown }}</div>
+{% if project.point_of_contact %}
+    <h3>Point of Contact</h3>
+    <div class="markdown">{{ project.point_of_contact|frommarkdown }}</div>
+{% endif %}
 
-<h3>Technical</h3>
-<div class="markdown">{{ project.technical|frommarkdown }}</div>
+{% if project.technical %}
+    <h3>Technical</h3>
+    <div class="markdown">{{ project.technical|frommarkdown }}</div>
+{% endif %}
 
-<h3>Catch All</h3>
-<div class="markdown">{{ project.catch_all|frommarkdown }}</div>
+{% if project.catch_all %}
+    <h3>Catch All</h3>
+    <div class="markdown">{{ project.catch_all|frommarkdown }}</div>
+{% endif %}
 {% endblock %}
