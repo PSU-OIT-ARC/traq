@@ -9,7 +9,6 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from ..projects.models import Project, Component, Milestone
 from django.core.mail import EmailMultiAlternatives
-import django_filters
 
 class TicketStatus(models.Model):
     ticket_status_id = models.AutoField(primary_key=True)
@@ -368,8 +367,3 @@ class Comment(models.Model):
         ordering = ['created_on']
         db_table = 'comment'
 
-class TicketFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(lookup_type='icontains')
-    class Meta:
-        model = Ticket
-        fields = ['title', 'status', 'assigned_to','due_on']
