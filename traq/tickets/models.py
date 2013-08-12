@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from ..projects.models import Project, Component, Milestone
 from django.core.mail import EmailMultiAlternatives
+import re
 
 class TicketStatus(models.Model):
     ticket_status_id = models.AutoField(primary_key=True)
@@ -174,7 +175,7 @@ class Ticket(models.Model):
             }
             text_content = render_to_string('tickets/notification.txt', context)
             html_content = render_to_string('tickets/notification.html', context)
-            clean_title = "; ".join(self.title.split())
+            clean_title = re.sub(r"[\r\n]+", "; ", self.title)
             subject = 'Traq Ticket #%d %s' % (self.pk, clean_title)
 
             msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
