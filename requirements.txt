@@ -3,7 +3,7 @@ Markdown==2.3.1
 MySQL-python==1.2.4
 -e git+https://github.com/mdj2/djangocas.git#egg=djangocas
 python-ldap==2.3.13
-pytz==2012j
+pytz>=2013b
 wsgiref==0.1.2
 django-extensions
 South<2.0
