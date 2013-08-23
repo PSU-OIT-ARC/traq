@@ -1,0 +1,218 @@
+#!/bin/bash
+
+ENTRY_POINT=""
+SETTINGS_MODULE=""
+
+VIRTUALENV_EXECUTABLE=`which virtualenv`
+PYTHON_EXECUTABLE=${3-`which python`}
+ENVIRONMENT_PATH=".env"
+
+ENTRY_POINT='manage'
+DRIVER_PATH='driver'
+
+
+function patch_broken_packages() {
+    echo -e "Patching broken packages ...\n"
+}
+
+function patch_environment() {
+    echo "Patching environment ..."
+}
+
+function check_system_packages() {
+    echo "Verifying required system-packages are installed ..."
+    echo "XXX: Support for Python 3.X is available on APT-based distributions."
+
+    if [[ ${OS} == 'Ubuntu' || ${OS} == 'Debian' ]]; then
+        PYTHON_DEV_PKG="python-dev"
+        if [ $PYTHON_MAJOR_VERSION -gt "2" ]; then
+            PYTHON_DEV_PKG="python3-dev"
+        fi
+        GIT_PKG="git-core"
+        HG_PKG="mercurial"
+        DEV_PKGS="libldap2-dev libsasl2-dev libssl-dev"
+
+        dpkg -s ${PYTHON_DEV_PKG} ${GIT_PKG} ${HG_PKG} ${DEV_PKGS} >& /dev/null
+        if [ $? -ne 0 ]; then
+            echo "Installing ${PYTHON_DEV_PKG} ${GIT_PKG} ${HG_PKG} ${DEV_PKGS} ..."
+            sudo apt-get install ${PYTHON_DEV_PKG} ${GIT_PKG} ${HG_PKG} ${DEV_PKGS}
+        fi
+    elif [[ ${OS} == 'CentOS' || ${OS} == 'Redhat' ]]; then
+        echo "Please verify the following development packages are installed:"
+        echo ""
+        echo "  * python (e.g., python26-devel)"
+        echo "  * postgresql (e.g., python91-devel)"
+        echo "  * mysql (e.g., mysql-devel)"
+        echo ""
+        echo "Please verify the following revision control systems are installed:"
+        echo ""
+        echo "  * git (e.g., git, git-all)"
+        echo "  * hg (e.g., mercurial)"
+
+        HAS_LDAP_DEVEL=`rpm -qa | grep `
+        if [ ! "${HAS_LDAP_DEVEL}" ]; then
+            echo "Installing openldap24-libs-devel..."
+            sudo yum install openldap24-libs-devel
+        fi
+    else
+        echo "Unsupported host operating system. Cannot verify system package requirements."
+        echo "INFO: Please ensure that the default (support/stable) versions of database development"
+        echo "      packages to be installed match those of the database services you are attempting"
+        echo "      to use."
+    fi
+}
+
+function check_environment() {
+    echo "Detected host OS: ${OS} ${VER}"
+
+    check_system_packages
+}
+
+function install_entry_point_script() {
+    echo "#!$ENVIRONMENT_PATH/bin/python
+import os
+import sys
+
+if __name__ == \"__main__\":
+    os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"traq.${SETTINGS_MODULE}\")
+    sys.path.append(\"`pwd`\")
+
+    from django.core.management import execute_from_command_line
+
+    execute_from_command_line(sys.argv)
+" > bin/${ENTRY_POINT}
+    chmod u+x bin/${ENTRY_POINT}
+}
+
+function install_other_scripts() {
+    echo "#!$ENVIRONMENT_PATH/bin/python
+import imp
+import sys
+import os
+
+
+def print_usage():
+    print \"Usage: ./bin/${DRIVER_PATH} <file>\"
+
+if __name__ == \"__main__\":
+    os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"traq.${SETTINGS_MODULE}\")
+    sys.path.append(\"`pwd`\")
+
+    if len(sys.argv) != 2:
+        print_usage()
+        sys.exit(1)
+
+    print \"Loading '%s'\" % (sys.argv[1])
+    module = imp.load_source('module', sys.argv[1])
+    module.main()
+" > bin/$DRIVER_PATH
+    chmod u+x bin/$DRIVER_PATH
+}
+
+function prepare_environment() {
+    echo "Using Python: ${PYTHON_EXECUTABLE}"
+
+    # Inspect python major version
+    PYTHON_MAJOR_VERSION_NUM=`${PYTHON_EXECUTABLE} -c 'import sys; print("%i" % (sys.hexversion<0x03000000))'`
+    PYTHON_MAJOR_VERSION=0
+
+    if [ $? -eq 0 ]; then
+      if [ ${PYTHON_MAJOR_VERSION_NUM} -eq 0 ]; then
+        PYTHON_MAJOR_VERSION=3
+        echo "Please install a version of Python >2.6,<3.0."
+        exit
+      else
+        PYTHON_MAJOR_VERSION_NUM=`${PYTHON_EXECUTABLE} -c 'import sys; print("%i" % (sys.hexversion<0x02060000))'`
+        if [ ${PYTHON_MAJOR_VERSION_NUM} -eq 0 ]; then
+            PYTHON_MAJOR_VERSION=2
+        else
+          echo "Please install a version of Python >2.6,<3.0."
+          exit
+        fi
+      fi
+    fi
+}
+
+function build_environment() {
+    # Build virtual environment
+    which virtualenv > /dev/null
+    HAS_VIRTUALENV=$?
+    if [ ${HAS_VIRTUALENV} -eq 0 ]; then
+        echo "Using virtualenv: ${VIRTUALENV_EXECUTABLE}"
+        if [[ ! -d ${ENVIRONMENT_PATH} || ! -x ${ENVIRONMENT_PATH}/bin/pip ]]; then
+            echo "Creating virtual environment at $ENVIRONMENT_PATH"
+            ${VIRTUALENV_EXECUTABLE} --setuptools --no-site-packages ${ENVIRONMENT_PATH}
+        fi
+
+        check_environment || exit
+        patch_environment || exit
+
+        echo "Updating local version of pip ..."
+        ${ENVIRONMENT_PATH}/bin/pip install --upgrade pip || exit
+        echo "Updating local version of setuptools ..."
+        ${ENVIRONMENT_PATH}/bin/pip install --upgrade setuptools || exit
+        echo "Updating local installation of Django ..."
+        ${ENVIRONMENT_PATH}/bin/pip install `grep "Django==" requirements.txt` || exit
+        echo "Updating virtual environment ..."
+        ${ENVIRONMENT_PATH}/bin/pip install --requirement=requirements.txt || exit
+
+        patch_broken_packages || exit
+        install_entry_point_script || exit
+        install_other_scripts || exit
+    else
+        echo "Could not find 'virtualenv'. Please install the 'python-virtualenv' package for Debian or RedHat-based systems. If you're using OS X, install homebrew?"
+        exit
+    fi
+}
+
+function sync_db() {
+    ./bin/${ENTRY_POINT} syncdb --no-initial-data || exit
+    ./bin/${ENTRY_POINT} migrate --no-initial-data || exit
+    ./bin/${ENTRY_POINT} loaddata initial_data
+}
+
+function validate_environment() {
+    # Validate project environment
+    if [ -e ./bin/${ENTRY_POINT} ]; then
+        echo "Validating project settings ..."
+	bin/${DRIVER_PATH} validate_settings.py || exit
+
+        # if [[ ${SETTINGS_MODULE} != 'test' ]]; then
+        #     echo "Synchronizing DB ..."
+        #     sync_db || exit
+        # fi
+
+        echo "Removing cached bytecode ..."
+        ./bin/${ENTRY_POINT} clean_pyc || exit
+    fi
+}
+
+# Get distribution information
+OS=$(lsb_release -si)
+ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+VER=$(lsb_release -sr)
+USAGE="Usage: $0 {production|development|test} [path-to-python]"
+
+# Determine build mode
+case $1 in
+    "production")
+        SETTINGS_MODULE="production"
+        ;;
+    "development")
+        SETTINGS_MODULE="development"
+        ;;
+    "test")
+        SETTINGS_MODULE="test"
+        ;;
+esac
+
+if [ -z "${SETTINGS_MODULE}" ]; then
+    echo ${USAGE};
+    exit 1
+else
+    echo "Bootstrapping project in '$1' mode and (re)constructing entry point 'bin/${ENTRY_POINT}'";
+
+    prepare_environment || exit
+    build_environment || exit
+    validate_environment || exit
+fi

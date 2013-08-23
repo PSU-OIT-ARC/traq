@@ -144,6 +144,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_extensions',
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -174,4 +176,5 @@ LOGGING = {
         },
     }
 }
-from local_settings import *
+
+SECRET_KEY = 'changeme'

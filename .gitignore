@@ -5,3 +5,5 @@ local_settings.py
 logs/*
 .*
 htdocs/media
+bin/manage
+bin/driver
