@@ -1,13 +1,19 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Q
-from ..tickets.models import Ticket, Work, TicketStatus
+
 from traq.utils import querySetToJSON
 from traq.permissions.checkers import STAFF_GROUP
 from traq.projects.models import Project
+
+from ..tickets.models import Ticket, Work, TicketStatus
+from ..tickets.constants import TICKETS_PAGINATE_BY
+from ..tickets.filters import TicketFilterSet
+
 
 @login_required
 def profile(request, tickets=''):
@@ -26,15 +32,41 @@ def _tickets(request, tickets=''):
         tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))
     else:    
         tickets = Ticket.objects.tickets().filter(Q(created_by=user) | Q(assigned_to=user))
+
+    ticket_filterset = TicketFilterSet(request.GET, queryset=tickets)
+    # XXX: not DRY, but there is no systemic way to request this ordering
+    #      from the context of a QuerySet
+    tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
+    tickets_json = querySetToJSON(tickets)
+
+    # paginate on tickets queryset
+    do_pagination = False
+    if not request.GET.get('showall', False):
+        paginator = Paginator(tickets, TICKETS_PAGINATE_BY)
+        page = request.GET.get('page')
+
+        try:
+            tickets = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            tickets = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            tickets = paginator.page(paginator.num_pages)
+        finally:
+            do_pagination = True
+
     # get all the work created by this user, but isn't yet done
     running_work = Work.objects.filter(created_by=user).exclude(state=Work.DONE).select_related("created_by", "type", "ticket").order_by('-created_on')
-    tickets_json = querySetToJSON(tickets)
 
     return render(request, "accounts/tickets.html", {
         "tickets": tickets,
         "running_work": running_work,
         "queries": connection.queries,
         "tickets_json": tickets_json,
+        "filterset": ticket_filterset,
+        "do_pagination": do_pagination,
+        "page": tickets,
     })
 
 def _invoices(request):

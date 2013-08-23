@@ -5,3 +5,7 @@ MySQL-python==1.2.4
 python-ldap==2.3.13
 pytz==2012j
 wsgiref==0.1.2
+django-extensions
+django_filter
+South<2.0
+

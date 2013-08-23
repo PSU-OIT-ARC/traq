@@ -1,0 +1,29 @@
+<div class="filterset" style="padding: 0.5em 1em; margin-top: 0.5em; background-color: #eee;">
+  <form id="id_filterset_form" method="GET" action=".">
+    <table>
+      <thead>
+	<tr>
+	  {% for filter in filterset.form %}
+	    <th>{{ filter.label }}</th>
+	    {% endfor %}
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  {% for filter in filterset.form %}
+	    <td>{{ filter }}</td>
+	  {% endfor %}
+	</tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+
+{# TODO: enable better dependency handling and loading of Javascript assets #}
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#id_filterset_form input,select").change(function() {
+      $("#id_filterset_form").submit();
+    });
+  });
+</script>
