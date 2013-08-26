@@ -7,12 +7,14 @@ from django.contrib import messages
 
 from traq.permissions.decorators import can_do, can_view, can_edit, can_create
 from traq.tickets.constants import TICKETS_PAGINATE_BY
-from traq.tickets.filters import TicketFilterSet
 from traq.utils import querySetToJSON
 
 from ..forms import ProjectForm
 from ..models import Project, Milestone
 
+# there's an annoying circular dependency between the ticket and project apps 
+# so this import needs to be after project models are imported
+from traq.tickets.filters import TicketFilterSet
 
 
 @can_do()
