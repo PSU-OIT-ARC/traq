@@ -2,6 +2,7 @@
 
 {% load tickets %}
 {% load permissions %}
+
 {% block page_title %}{{ project.name }}{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
@@ -41,13 +42,25 @@ $(document).ready(function(){
 <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
 
 <div class="left-section-wrapper">
-    <h3>Tickets 
-        <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> |
-        <a href="{% url 'tickets-bulk' project.pk %}" class="button" id="bulk-action">Bulk Action</a>
-        <input type="text" name="search" id="ticket-search" placeholder="Search" />
-    </h3>
+  <h3>Tickets 
+    <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> |
+    <a href="{% url 'tickets-bulk' project.pk %}" class="button" id="bulk-action">Bulk Action</a>
+    <input type="text" name="search" id="ticket-search" placeholder="Search" />
+  </h3>
+  
+  <div class="clear"></div>
+  {% include 'filterset.html' %}
+
+  {% if do_pagination %}
     <div class="clear"></div>
-    {% include 'tickets/_tickettable.html' %}
+    {% include 'pagination.html' %}
+  {% endif %}
+
+  {% include 'tickets/_tickettable.html' %}
+
+  {% if do_pagination %}
+    {% include 'pagination.html' %}
+  {% endif %}
 </div>
 
 <div class="right-section-wrapper">

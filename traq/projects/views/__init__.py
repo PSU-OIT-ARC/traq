@@ -1,12 +1,19 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
+
+from traq.permissions.decorators import can_do, can_view, can_edit, can_create
+from traq.tickets.constants import TICKETS_PAGINATE_BY
+from traq.tickets.filters import TicketFilterSet
+from traq.utils import querySetToJSON
+
 from ..forms import ProjectForm
 from ..models import Project, Milestone
-from traq.permissions.decorators import can_do, can_view, can_edit, can_create
-from traq.utils import querySetToJSON
+
+
 
 @can_do()
 def all(request):
@@ -33,10 +40,31 @@ def meta(request, project_id):
 @can_view(Project)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    tickets = project.tickets()
+    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
+    # XXX: not DRY, but there is no systemic way to request this ordering
+    #      from the context of a QuerySet
+    tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
+    tickets_json = querySetToJSON(tickets)
+
+    # paginate on tickets queryset
+    do_pagination = False
+    if not request.GET.get('showall', False):
+        paginator = Paginator(tickets, TICKETS_PAGINATE_BY)
+        page = request.GET.get('page')
+
+        try:
+            tickets = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            tickets = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            tickets = paginator.page(paginator.num_pages)
+        finally:
+            do_pagination = True
+
     components = project.components()
     work = project.latestWork(10)
-    tickets_json = querySetToJSON(tickets)
     milestones = Milestone.objects.filter(project=project)
 
     return render(request, 'projects/detail.html', {
@@ -47,6 +75,9 @@ def detail(request, project_id):
         'work': work,
         'tickets_json': tickets_json,
         'milestones': milestones,
+        'filterset': ticket_filterset,
+        "do_pagination": do_pagination,
+        'page': tickets,
     })
 
 @can_edit(Project)

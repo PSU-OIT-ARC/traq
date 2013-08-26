@@ -1,0 +1,34 @@
+{% load request_utils %}
+
+
+{% clone_query_dict request.GET as "params" %}
+
+<div class="pagination" style="background-color: #ccc; margin-top: 1em; padding: 0.5em 1em;">
+  <span class="current">
+    Page {{ page.number }} of {{ page.paginator.num_pages }} <em>({{ page.paginator.count }} results</em>)
+  </span>
+  <span class="step-links" style="float: right">
+    {% if page.has_previous %}
+      {% with page.previous_page_number as pnum %}
+	{% replace_key params "page" pnum %}
+      {% endwith %}
+      <a href="{{ request.path }}?{{ params.urlencode }}">previous</a>
+    {% else %}
+      previous
+    {% endif %}
+
+    {% clone_query_dict params as "all_params" %}
+    {% replace_key all_params "showall" "true" %}
+    {% delete_key all_params "page" %}
+    <a href="{{ request.path }}?{{ all_params.urlencode }}">all</a>
+
+    {% if page.has_next %}
+      {% with page.next_page_number as pnum %}
+	{% replace_key params "page" pnum %}
+      {% endwith %}
+      <a href="{{ request.path }}?{{ params.urlencode }}">next</a>
+    {% else %}
+      next
+    {% endif %}
+  </span>	
+</div>

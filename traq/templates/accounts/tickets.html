@@ -13,15 +13,28 @@
 <h1>{{ user.username }},</h2>
 
 <div class="left-section-wrapper">
-<script type="text/javascript">
-TICKETS = {{ tickets_json|safe }};
-</script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
-<h2>
+  <script type="text/javascript">
+    TICKETS = {{ tickets_json|safe }};
+  </script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
+  <h2>
     Tickets <a href="{% url 'accounts-profile' tickets='assigned'%}">Assigned To </a> or <a href="{% url 'accounts-profile' tickets='created_by'%}">Created By </a>You
     <input type="text" name="search" id="ticket-search" placeholder="Search" />
-</h2>
-{% include 'tickets/_tickettable.html' %}
+  </h2>
+
+  <div class="clear"></div>
+  {% include 'filterset.html' %}
+
+  {% if do_pagination %}
+    <div class="clear"></div>
+    {% include 'pagination.html' %}
+  {% endif %}
+
+  {% include 'tickets/_tickettable.html' %}
+
+  {% if do_pagination %}
+    {% include 'pagination.html' %}
+  {% endif %}
 </div>
 
 <div class="right-section-wrapper">

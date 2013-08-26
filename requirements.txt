@@ -6,4 +6,5 @@ python-ldap==2.3.13
 pytz>=2013b
 wsgiref==0.1.2
 django-extensions
+django_filter
 South<2.0
