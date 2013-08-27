@@ -30,7 +30,7 @@ urlpatterns = patterns('',
     # projects
     url(r'^projects/create/?$', projects.views.create, name='projects-create'),
     url(r'^projects/?$', projects.views.all, name='projects-all'),
-    url(r'^projects/(\d+)/?$', projects.views.detail, name='projects-detail'),
+    url(r'^projects/(\d+)/$', projects.views.detail, name='projects-detail'),
     url(r'^projects/(\d+)/edit/?$', projects.views.edit, name='projects-edit'),
     url(r'^projects/(\d+)/meta/?$', projects.views.meta, name='projects-meta'),
     # components
