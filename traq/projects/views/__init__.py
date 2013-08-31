@@ -45,8 +45,11 @@ def detail(request, project_id):
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
     # XXX: not DRY, but there is no systemic way to request this ordering
     #      from the context of a QuerySet
+    gets = request.GET.copy()
+    gets['due_on'] = "'%s'" % gets['due_on']
+    for_json = TicketFilterSet(gets, queryset=project.tickets()) 
     tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
-    tickets_json = querySetToJSON(tickets)
+    tickets_json = querySetToJSON(for_json.qs)
 
     # paginate on tickets queryset
     do_pagination = False
