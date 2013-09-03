@@ -4,6 +4,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
+from django.core import serializers
+
 
 from traq.permissions.decorators import can_do, can_view, can_edit, can_create
 from traq.tickets.constants import TICKETS_PAGINATE_BY
@@ -43,13 +45,17 @@ def meta(request, project_id):
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
+    # Hack for querySetToJSON's raw sql execution; must put datetime in quotes 
+    if request.GET.get('due_on') is not None:
+        gets = request.GET.copy()
+        gets['due_on'] = "'%s'" % gets['due_on']
+        for_json  = TicketFilterSet(gets, queryset=project.tickets())
+        tickets_json = querySetToJSON(for_json.qs)
+    else:
+        tickets_json = querySetToJSON(ticket_filterset.qs)
     # XXX: not DRY, but there is no systemic way to request this ordering
     #      from the context of a QuerySet
-    gets = request.GET.copy()
-    gets['due_on'] = "'%s'" % gets['due_on']
-    for_json = TicketFilterSet(gets, queryset=project.tickets()) 
     tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
-    tickets_json = querySetToJSON(for_json.qs)
 
     # paginate on tickets queryset
     do_pagination = False

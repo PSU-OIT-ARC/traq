@@ -34,10 +34,18 @@ def _tickets(request, tickets=''):
         tickets = Ticket.objects.tickets().filter(Q(created_by=user) | Q(assigned_to=user))
 
     ticket_filterset = TicketFilterSet(request.GET, queryset=tickets)
+    # Hack for querySetToJSON's raw sql execution; must put datetime in quotes 
+    if request.GET.get('due_on') is not None:
+        gets = request.GET.copy()
+        gets['due_on'] = "'%s'" % gets['due_on']
+        for_json  = TicketFilterSet(gets, queryset=tickets)
+        tickets_json = querySetToJSON(for_json.qs)
+    else:
+        tickets_json = querySetToJSON(ticket_filterset.qs)
+    
     # XXX: not DRY, but there is no systemic way to request this ordering
     #      from the context of a QuerySet
     tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
-    tickets_json = querySetToJSON(tickets)
 
     # paginate on tickets queryset
     do_pagination = False

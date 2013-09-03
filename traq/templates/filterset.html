@@ -10,10 +10,10 @@
       </thead>
       <tbody>
 	<tr>
-	  {% for filter in filterset.form %}
-	    <td>{{ filter }}</td>
-	  {% endfor %}
-	</tr>
+    {% for filter in filterset.form %}
+        <td>{{ filter }}</td>
+	{% endfor %}
+    </tr>
       </tbody>
     </table>
   </form>
@@ -21,7 +21,7 @@
 
 {# TODO: enable better dependency handling and loading of Javascript assets #}
 <script type="text/javascript">
-  $(document).ready(function() {
+    $(document).ready(function() {
     $("#id_filterset_form input,select").change(function() {
       $("#id_filterset_form").submit();
     });
