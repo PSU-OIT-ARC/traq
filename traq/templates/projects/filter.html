@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load tickets %}
+{% load permissions %}
+{% block page_title %}{{ project.name }}{% endblock %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li>{{ project.name }}</li>
+{% endblock %}
+{% block content %}
+    <form action="" method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" />
+    </form>
+    {% for obj in filter %}
+        {{obj.title }} - {{obj.due_on}}<br/>
+    {% endfor %}
+{% endblock %}
+
+

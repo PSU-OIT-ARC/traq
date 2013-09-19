@@ -178,4 +178,5 @@ LOGGING = {
     }
 }
 
-SECRET_KEY = 'changeme'
+#SECRET_KEY = 'changeme'
+from local_settings import *

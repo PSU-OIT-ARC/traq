@@ -6,6 +6,10 @@ body {
     background-color:#efefef; 
     font-family:Arial, Arial, sans-serif;
     font-size:14px;
+    background-color: rgb(106, 127, 16);
+    -webkit-background-size: 50px 50px;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, 0.2)), color-stop(.5, rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
+}
 }
 
 h2, h3, h4 {

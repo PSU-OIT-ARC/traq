@@ -40,3 +40,5 @@ def tickettimepretty(value):
         if hours == minutes == 0:
             return u'0'
         return u'%d:%02d' % (hours, minutes)
+
+

@@ -134,7 +134,8 @@ class TicketForm(forms.ModelForm):
 
         widgets = {
             "release": forms.TextInput(attrs={"placeholder": "release"}),
-            "branch": forms.TextInput(attrs={"placeholder": "branch"})
+            "branch": forms.TextInput(attrs={"placeholder": "branch"}),
+            "due_on": forms.DateTimeInput(attrs={'type':'date'})
         }
 
 class CommentForm(forms.ModelForm):

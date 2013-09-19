@@ -1,3 +1,7 @@
+{% load request_utils %}
+
+{% clone_query_dict request.GET as "params" %}
+
 <div class="filterset" style="padding: 0.5em 1em; margin-top: 0.5em; background-color: #eee;">
   <form id="id_filterset_form" method="GET">
     <table>
@@ -12,7 +16,7 @@
 	<tr>
     {% for filter in filterset.form %}
         <td>{{ filter }}</td>
-	{% endfor %}
+    {% endfor %}
     </tr>
       </tbody>
     </table>
