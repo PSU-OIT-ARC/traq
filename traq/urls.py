@@ -9,7 +9,7 @@ import projects.views.milestones
 
 import tickets.views
 import tickets.views.work
-
+import todos.views
 import accounts.views
 
 # Uncomment the next two lines to enable the admin:
@@ -50,6 +50,13 @@ urlpatterns = patterns('',
     url(r'^tickets/(\d+)/?$', tickets.views.detail, name='tickets-detail'),
     url(r'^tickets/(\d+)/edit/?$', tickets.views.edit, name='tickets-edit'),
     url(r'^projects/(\d+)/tickets/bulk/?$', tickets.views.bulk, name='tickets-bulk'),
+    
+    #to dos
+    url(r'^projects/(\d+)/todos/create/?$', todos.views.create, name='todos-create'),
+    url(r'^projects/(\d+)/todos/?$', todos.views.list, name='todos-list'),
+    url(r'^todos/(\d+)/?$', todos.views.detail, name='todos-detail'),
+    url(r'^todos/(\d+)/edit/?$', todos.views.edit, name='todos-edit'),
+
     # comments
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),
     # work

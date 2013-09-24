@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'traq.projects',
+    'traq.todos',
     'traq.tickets',
     'traq.accounts',
     'traq.permissions',

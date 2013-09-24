@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% load tickets %}
+{% load permissions %}
+
+{% block page_title %}{{ ticket.title }}{% endblock %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>To Dos</li>
+    <li>{{ ticket.title }}</li>
+{% endblock %}
+
+{% block content %}
+
+<h2>
+    <span class="lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
+    #{{ ticket.pk }}: {{ ticket.title }} 
+    {% if user|can_edit:ticket %}
+    <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
+    {% endif %}
+    <a href="{% url 'tickets-create' project.pk %}" class="button">New ToDo</a> 
+</h2>
+
+<div class="left-section-wrapper">
+    <div class="ticket">
+        <div class="ticket-body">
+            <div class="markdown">{{ ticket.body|frommarkdown }}</div>
+        </div>
+        <div class="ticket-info ticket-status">
+            <ul>
+                <li><strong>Component:</strong> {{ ticket.component }} </li>
+                <li><strong>Status:</strong> {{ ticket.status }}</li>
+                {% if ticket.milestone %}
+                    <li><strong>Milestone:</strong> {{ ticket.milestone.name }} </li>
+                {% endif %}
+            </ul>
+            <ul>
+                <li><strong>Created:</strong> <span class="timestamp">{{ ticket.created_on }}</span> by {{ ticket.created_by }}</li>
+            </ul>
+            <ul>
+                <li><strong>Estimated Time:</strong> {{ ticket.estimated_time|tickettime }}</li>
+                {% comment %} <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li> {% endcomment %}
+                {% if ticket.due_on %}
+                    <li><strong>Due On:</strong> {{ ticket.due_on }} </li>
+                {% endif %}
+            </ul>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <h3>Comments</h3>
+    <div class="ticket-comments">
+        {% for comment in comments %}
+            <div class="ticket">
+                <div class="comment-info">
+                    <ul>
+                        <li><strong>Author:</strong> {{ comment.created_by }}</li>
+                        <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
+                        {% if user|can_edit:comment %}
+                        <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
+                        {% endif %}
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="ticket-body">
+                    <div class="markdown">{{ comment.body|frommarkdown }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="ticket-add-comment">
+        <form method="post" action="">
+            <input type="hidden" name="form_type" value="comment_form" />
+            {% csrf_token %}
+            <h4>Add Comment</h4>
+            {{ comment_form.body.errors }}
+            {{ comment_form.body }}
+            <input type="submit" name="submit" value="Add" class="submit" />
+        </form>
+    </div>
+</div>
+
+<div class="right-section-wrapper">
+    <div class="right-section-block">
+        <h3>This Item's TIckets </h3>
+        <table class="block-table">
+        {% for w in running_work %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ w.created_by }}</td>
+                <td>{{ w.duration|tickettime }}</td>
+                <td>
+                    {% if user|can_edit:w %}
+                        {% if w.state == w.PAUSED %}
+                            <a href="{% url 'work-continue' w.pk %}">Continue</a>
+                        {% else %}
+                            <a href="{% url 'work-pause' w.pk %}">Pause</a></td>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user|can_edit:w %}
+                        <a href="{% url 'work-edit' w.pk %}">Complete</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    
+    <div class="right-section-block">
+        <h3>Files</h3>
+        <table class="block-table">
+        {% for tf in files %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ tf.uploaded_by }}</td>
+                <td><a href="{{ MEDIA_URL }}{{ tf.file.name }}">{{ tf.file.name }}</a></td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
