@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-
+from traq.tickets.forms import TicketForm, CommentForm
 
 
 def list(request, project_id):
@@ -61,30 +61,29 @@ def create(request, project_id):
 def detail(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
-    #files = TicketFile.objects.filter(ticket=ticket)
-    #comments = Comment.objects.filter(ticket=ticket).select_related('created_by')
+    files = TicketFile.objects.filter(todo=todo)
+    comments = Comment.objects.filter(todo=todo).select_related('created_by')
 
-    # this view has two forms on it. We multiplex between the two using a
-    # hidden form_type field on the page 
-    #comment_form = CommentForm(created_by=request.user, ticket=ticket)
-    '''
+    comment_form = CommentForm(created_by=request.user, todo=todo)
+
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
         # was submitted
         form_type = request.POST['form_type']
         if form_type == "comment_form":
-            comment_form = CommentForm(request.POST, created_by=request.user, ticket=ticket)
+            comment_form = CommentForm(request.POST, created_by=request.user, todo=todo)
             if comment_form.is_valid():
                 comment_form.save()
                 messages.success(request, 'Comment Added')
                 return HttpResponseRedirect(request.path)
-    '''
+    
+    
     return render(request, 'todos/detail.html', {
         'project': project,
-        'ticket': todo,
-        #'comments': comments,
-        #'comment_form': comment_form,
-        #'files': files,
+        'todo': todo,
+        'comments': comments,
+        'comment_form': comment_form,
+        'files': files,
     })
 
 
@@ -108,7 +107,7 @@ def edit(request, todo_id):
     return render(request, 'todos/create.html', {
         'form': form,
         'project': project,
-        'ticket': todo,
+        'todo': todo,
     })
 
 

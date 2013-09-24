@@ -188,14 +188,14 @@ class Ticket(models.Model):
         db_table = 'ticket'
 
 class TicketFile(models.Model):
-    """Tickets can have associated files"""
+    """Tickets can have associated files Note: this is also used for ToDo Item files"""
     file_id = models.AutoField(primary_key=True)
     file = models.FileField(upload_to="%Y-%m")
     uploaded_on = models.DateTimeField(auto_now_add=True)
 
     uploaded_by = models.ForeignKey(User, related_name="+")
     ticket = models.ForeignKey(Ticket)
-
+    todo = models.ForeignKey('todos.ToDo')
     class Meta:
         db_table = "ticket_file"
         ordering = ['file']
@@ -329,8 +329,8 @@ class Comment(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     edited_on = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False, verbose_name="Delete?")
-
-    ticket = models.ForeignKey(Ticket)
+    todo = models.ForeignKey('todos.ToDo', null=True)
+    ticket = models.ForeignKey(Ticket, null=True)
     created_by = models.ForeignKey(User, related_name='+')
 
     objects = CommentManager()
@@ -339,20 +339,30 @@ class Comment(models.Model):
     def sendNotification(self):
         """Send a notification email to the pm when a comment is made on  this ticket"""
         if self.body is not None:
-            ticket = self.ticket
+            if self.ticket is not None:
+                item = 'Ticket'
+                ticket = self.ticket or None
+                ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
+            else:
+                item = 'To Do'
+                #call this todo a ticket jsut for shorter code
+                ticket = self.todo or None  
+                ticket_url = SETTINGS.BASE_URL + reverse('todos-detail', args=(ticket.pk,))
+            
             project = ticket.project
-            # if there is no PM, there is no place to send the email
+           
+           # if there is no PM, there is no place to send the email
             if project.pm is None:
                 return
             to = project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN
-            ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
+            
             body = render_to_string('tickets/comment_notification.txt', {
                 "ticket": ticket,
                 "ticket_url": ticket_url, 
                 "author" : self.created_by,
                 "comment_body": self.body,
             })
-            subject = 'Traq Ticket #%d %s' % (ticket.pk, ticket.title)
+            subject = 'Traq %s #%d %s' % (item, ticket.pk, ticket.title)
             if project.pm_email:
                 text_content = body
                 html_content = body

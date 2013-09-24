@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block page_title %}{% if ticket %}Edit Request{% else %}Create a To Do Item{% endif %}{% endblock %}
+{% block page_title %}{% if todo %}Edit Request{% else %}Create a To Do Item{% endif %}{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
     <li>Request</li>
-    {% if ticket %}
-        <li><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></li>
+    {% if todo %}
+        <li><a href="{% url 'todos-detail' todo.pk %}">{{ todo.title }}</a></li>
         <li>Edit</li>
     {% else %}
         <li>Create</li>
     {% endif %}
 {% endblock %}
 {% block content %}
-{% if ticket %}
-    <h2>Edit {{ ticket.title }}</h2>
+{% if todo %}
+    <h2>Edit {{ todo.title }}</h2>
 {% else %}
     <h2>Create a new To Do Item</h2>
 {% endif %}

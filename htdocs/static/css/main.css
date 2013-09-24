@@ -2,7 +2,8 @@
  * green: #6a7f10 
  * light-gray: #ddd;
  */
-body { 
+/*
+ * body { 
     background-color:#efefef; 
     font-family:Arial, Arial, sans-serif;
     font-size:14px;
@@ -10,6 +11,11 @@ body {
     -webkit-background-size: 50px 50px;
     background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, 0.2)), color-stop(.5, rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
 }
+*/
+body {
+    background-color:#efefef; 
+    font-family:Arial, Arial, sans-serif;
+    font-size:14px;            
 }
 
 h2, h3, h4 {
@@ -501,3 +507,18 @@ p.error {
     vertical-align:top;
 }
 
+.tip {
+    display:none;
+}
+
+li.hover {
+    color:white;
+    padding: 5px;
+    list-style: none;
+}
+
+.tip-show {
+    display:block;
+    background:#87983F;
+    border-radius: 3px;
+}

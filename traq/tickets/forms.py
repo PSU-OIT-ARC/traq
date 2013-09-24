@@ -143,13 +143,16 @@ class CommentForm(forms.ModelForm):
         # these fields won't appear on the form; they need to be specified by
         # the caller
         created_by = kwargs.pop("created_by")
-        ticket = kwargs.pop("ticket")
-
+        
+        ticket = kwargs.pop("ticket", None)
+        
+        todo = kwargs.pop('todo', None)
         super(CommentForm, self).__init__(*args, **kwargs)
 
         # set the foreign key fields specified by the caller
-        self.instance.ticket = ticket
         self.instance.created_by = created_by
+        self.instance.todo = todo
+        self.instance.ticket = ticket
 
     class Meta:
         model = Comment

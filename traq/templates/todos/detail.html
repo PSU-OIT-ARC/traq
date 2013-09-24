@@ -3,46 +3,46 @@
 {% load tickets %}
 {% load permissions %}
 
-{% block page_title %}{{ ticket.title }}{% endblock %}
+{% block page_title %}{{ todo.title }}{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
     <li>To Dos</li>
-    <li>{{ ticket.title }}</li>
+    <li>{{ todo.title }}</li>
 {% endblock %}
 
 {% block content %}
 
 <h2>
-    <span class="lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
-    #{{ ticket.pk }}: {{ ticket.title }} 
-    {% if user|can_edit:ticket %}
-    <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
+    <span class="lameo ticket-priority ticket-priority-{{ todo.priority|slugify }} ticket-status-{{ todo.status|slugify }}">{{ todo.priority }}</span>
+    #{{ todo.pk }}: {{ todo.title }} 
+    {% if user|can_edit:todo %}
+    <a href="{% url 'todos-edit' todo.pk %}" class="button">Edit</a>
     {% endif %}
-    <a href="{% url 'tickets-create' project.pk %}" class="button">New ToDo</a> 
+    <a href="{% url 'todos-create' project.pk %}" class="button">New ToDo</a> 
 </h2>
 
 <div class="left-section-wrapper">
     <div class="ticket">
         <div class="ticket-body">
-            <div class="markdown">{{ ticket.body|frommarkdown }}</div>
+            <div class="markdown">{{ todo.body|frommarkdown }}</div>
         </div>
         <div class="ticket-info ticket-status">
             <ul>
-                <li><strong>Component:</strong> {{ ticket.component }} </li>
-                <li><strong>Status:</strong> {{ ticket.status }}</li>
-                {% if ticket.milestone %}
-                    <li><strong>Milestone:</strong> {{ ticket.milestone.name }} </li>
+                <li><strong>Component:</strong> {{ todo.component }} </li>
+                <li><strong>Status:</strong> {{ todo.status }}</li>
+                {% if todo.milestone %}
+                    <li><strong>Milestone:</strong> {{ todo.milestone.name }} </li>
                 {% endif %}
             </ul>
             <ul>
-                <li><strong>Created:</strong> <span class="timestamp">{{ ticket.created_on }}</span> by {{ ticket.created_by }}</li>
+                <li><strong>Created:</strong> <span class="timestamp">{{ todo.created_on }}</span> by {{ todo.created_by }}</li>
             </ul>
             <ul>
-                <li><strong>Estimated Time:</strong> {{ ticket.estimated_time|tickettime }}</li>
+                <li><strong>Estimated Time:</strong> {{ todo.estimated_time|tickettime }}</li>
                 {% comment %} <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li> {% endcomment %}
-                {% if ticket.due_on %}
-                    <li><strong>Due On:</strong> {{ ticket.due_on }} </li>
+                {% if todo.due_on %}
+                    <li><strong>Due On:</strong> {{ todo.due_on }} </li>
                 {% endif %}
             </ul>
             <div class="clear"></div>
@@ -52,7 +52,7 @@
     <h3>Comments</h3>
     <div class="ticket-comments">
         {% for comment in comments %}
-            <div class="ticket">
+            <div class="todo">
                 <div class="comment-info">
                     <ul>
                         <li><strong>Author:</strong> {{ comment.created_by }}</li>
@@ -84,28 +84,12 @@
 
 <div class="right-section-wrapper">
     <div class="right-section-block">
-        <h3>This Item's TIckets </h3>
+        <h3>This Item's Tickets (Traq#: Status)</h3>
         <table class="block-table">
-        {% for w in running_work %}
-            <tr class="{% cycle 'odd' 'even' %}">
-                <td>{{ w.created_by }}</td>
-                <td>{{ w.duration|tickettime }}</td>
-                <td>
-                    {% if user|can_edit:w %}
-                        {% if w.state == w.PAUSED %}
-                            <a href="{% url 'work-continue' w.pk %}">Continue</a>
-                        {% else %}
-                            <a href="{% url 'work-pause' w.pk %}">Pause</a></td>
-                        {% endif %}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if user|can_edit:w %}
-                        <a href="{% url 'work-edit' w.pk %}">Complete</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
+            <hr>
+            {% for ticket in todo.tickets.all %}
+                <li class='hover'>  #{{ ticket.pk }}: {{ ticket.status }}<div class='tip'>{{ ticket.title }}</div></li>
+            {% endfor %}
         </table>
     </div>
     
@@ -122,5 +106,17 @@
     </div>
 </div>
 
+<script type='text/javascript'>
+    $(document).ready(function(){
+        $('.hover').hover(
+        function(){
+            $(this).addClass('tip-show');
+            $('.tip', this).show(300);},
+        function(){
+            $('.tip', this).hide();
+            $(this).removeClass('tip-show');}
+        )
+    });
+</script>
 {% endblock %}
 
