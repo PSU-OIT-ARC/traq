@@ -92,7 +92,7 @@ class ToDoForm(forms.ModelForm):
         if self.files:
             files = self.files.getlist("files")
             for f in files:
-                tf = TicketFile(ticket=self.instance, file=f, uploaded_by=self.user)
+                tf = TicketFile(todo=self.instance, file=f, uploaded_by=self.user)
                 tf.save()
 
     class Meta:
