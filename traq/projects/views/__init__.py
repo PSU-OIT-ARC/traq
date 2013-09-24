@@ -46,13 +46,15 @@ def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
     # Hack for querySetToJSON's raw sql execution; must put datetime in quotes 
-    '''if request.GET.get('due_on') is not None:
+    #Aargh. can't make this work. can we just do a DB search?
+    '''if request.GET.get('due_range') is not None:
         gets = request.GET.copy()
-        gets['due_on'] = "'%s'" % gets['due_on']
+        gets['due_range'] = "'%s'" % gets['due_range']
         for_json  = TicketFilterSet(gets, queryset=project.tickets())
-        #tickets_json = querySetToJSON(for_json.qs)
+        tickets_json = querySetToJSON(for_json.qs)
     else:
-        tickets_json = querySetToJSON(ticket_filterset.qs)'''
+        tickets_json = querySetToJSON(ticket_filterset.qs)
+    #end date JSON hack '''
     # XXX: not DRY, but there is no systemic way to request this ordering
     #      from the context of a QuerySet
     tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
@@ -84,7 +86,7 @@ def detail(request, project_id):
         'queries': connection.queries,
         'components': components,
         'work': work,
-   #     'tickets_json': tickets_json,
+    #    'tickets_json': tickets_json,
         'milestones': milestones,
         'filterset': ticket_filterset,
         "do_pagination": do_pagination,

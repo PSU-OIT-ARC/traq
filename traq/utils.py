@@ -2,7 +2,6 @@ import json
 import csv, codecs, cStringIO
 from datetime import timedelta, time, datetime
 from django.db import connection
-from django.core import serializers
 
 def dictfetchall(cursor):
     "Returns all rows from a cursor as a dict"
@@ -25,13 +24,8 @@ def jsonhandler(obj):
 def querySetToJSON(qs):
     """Return a json string of a queryset object as an array containing dicts"""
     cursor = connection.cursor()
-    data = serializers.serialize('json', qs)
-    print '-*********---'
-    #print qs[0].project_id   
-    print data
-    print '-*********---'
+    #data = serializers.serialize('json', qs)
     cursor.execute(str(qs.query))
-    #return data
     return json.dumps(dictfetchall(cursor), default=jsonhandler)
 
 class UnicodeWriter:
