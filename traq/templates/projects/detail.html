@@ -42,12 +42,16 @@ $(document).ready(function(){
 <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
 
 <div class="left-section-wrapper">
-  <h3>Tickets 
+  <h2><a href="{% url 'projects-detail' project.pk%}">Tickets</a> 
     <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> |
     <a href="{% url 'tickets-bulk' project.pk %}" class="button" id="bulk-action">Bulk Action</a>
     <input type="text" name="search" id="ticket-search" placeholder="Search" />
-  </h3>
-  
+  </h2>
+  <h2><a href="{% url 'todos-list' project.pk%}">To Do Items</a> 
+    <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a> 
+    <a href=# id='minmax' style='font-size:12px;color:grey; padding: 2px 3px;float:right' >filter options</a>  
+  </h2>
+
   <div class="clear"></div>
   {% include 'filterset.html' %}
 

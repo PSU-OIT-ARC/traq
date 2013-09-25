@@ -2,7 +2,7 @@
 
 {% clone_query_dict request.GET as "params" %}
 
-<div class="filterset" style="padding: 0.5em 1em; margin-top: 0.5em; background-color: #eee;">
+<div class="filterset" style="padding: 0.5em 0.1em; display:none; margin-top: 0.5em; min-height: 16px;background-color: #eee;">
   <form id="id_filterset_form" method="GET">
     <table>
       <thead>
@@ -20,12 +20,14 @@
     </tr>
       </tbody>
     </table>
-  </form>
+    </form>
 </div>
 
 {# TODO: enable better dependency handling and loading of Javascript assets #}
 <script type="text/javascript">
     $(document).ready(function() {
+    $('#minmax').click(function(){
+        $('.filterset').toggle();})
     $("#id_filterset_form input,select").change(function() {
       $("#id_filterset_form").submit();
     });
