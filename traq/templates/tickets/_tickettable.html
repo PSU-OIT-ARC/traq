@@ -1,3 +1,7 @@
+{% load request_utils %}
+
+{% clone_query_dict request.GET as "params" %}
+
 <script type="text/javascript">
 $(document).ready(function(){
     $('#check-all').bind('click', function(e){
@@ -16,7 +20,13 @@ $(document).ready(function(){
             <th>Ticket</th>
             <th class="center">Status</th>
             <th class="center">Assigned</th>
-            <th class="center">Due On</th>
+            <th class="center">Due On  
+                {% replace_key params 'due_on' 'a' %}
+                <a href='{{request.url}}?{{ params.urlencode }}'>^</a>
+                {% replace_key params 'due_on' 'd' %}
+                <a href='{{request.url}}?{{ params.urlencode }}'>v</a>
+
+            </th>
         </tr>
     </thead>
     <tbody>

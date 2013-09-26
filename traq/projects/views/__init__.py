@@ -57,7 +57,12 @@ def detail(request, project_id):
     #end date JSON hack '''
     # XXX: not DRY, but there is no systemic way to request this ordering
     #      from the context of a QuerySet
-    tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
+    if request.GET.get('due_on') == 'a':
+        tickets = ticket_filterset.qs.order_by("-due_on")
+    elif request.GET.get('due_on') == 'd':
+        tickets = ticket_filterset.qs.order_by("due_on")
+    else:
+        tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
     # paginate on tickets queryset
     do_pagination = False
     if not request.GET.get('showall', False):

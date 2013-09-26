@@ -8,10 +8,12 @@ from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
 
 
-def list(request, project_id):
+def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     todos = ToDo.objects.filter(project = project)
-    return render(request, 'todos/list.html', {'todos': todos,})
+    return render(request, 'todos/list.html', {
+        'todos': todos,
+        'project': project,})
 
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)

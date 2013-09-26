@@ -39,7 +39,7 @@
                 <li><strong>Created:</strong> <span class="timestamp">{{ todo.created_on }}</span> by {{ todo.created_by }}</li>
             </ul>
             <ul>
-                <li><strong>Estimated Time:</strong> {{ todo.estimated_time|tickettime }}</li>
+                <li><strong>Estimate:</strong> {{ todo.estimate }}</li>
                 {% comment %} <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li> {% endcomment %}
                 {% if todo.due_on %}
                     <li><strong>Due On:</strong> {{ todo.due_on }} </li>
@@ -88,8 +88,9 @@
         <table class="block-table">
             <hr>
             {% for ticket in todo.tickets.all %}
-                <li class='hover'>  #{{ ticket.pk }}: {{ ticket.status }}<div class='tip'>{{ ticket.title }}</div></li>
+                <li class='hover'><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a><div class='tip'>{{ ticket.title }}</div></li>
             {% endfor %}
+            <a class='button' style='padding-left:5px' href='{% url 'tickets-todo-create' project.pk todo.pk%}'>Add New Ticket</a>
         </table>
     </div>
     

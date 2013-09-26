@@ -1,8 +1,17 @@
 {% extends 'base.html' %}
 {% block page_title %}To Do Items{% endblock %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+{% endblock %}
+
 {%block content %}
-    <h2>To Do Items</h2>
+    <div id='content-wrapper' style='min-height:400px;'>
+    <h2> {{ project.name }}</h2>
+    <h2 style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>To Do Items
+    <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a></h2>
     {% for todo in todos %}
-        <li> <a href="{% url "todos.views.detail" todo.pk %}">{{ todo.title }}</a> </li>
+        <li style='padding:5px' class='{% cycle 'odd' 'even' %}'> <a href="{% url "todos.views.detail" todo.pk %}">{{ todo.title }}</a> </li>
     {% endfor %}
+    </div>
 {% endblock %}

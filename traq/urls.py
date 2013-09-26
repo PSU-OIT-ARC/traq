@@ -52,8 +52,9 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/tickets/bulk/?$', tickets.views.bulk, name='tickets-bulk'),
     
     #to dos
+    url(r'^projects/(?P<project_id>\d+)/todos/(?P<todo_id>\d+)/tickets/create/?$', tickets.views.create, name='tickets-todo-create'),
     url(r'^projects/(\d+)/todos/create/?$', todos.views.create, name='todos-create'),
-    url(r'^projects/(\d+)/todos/?$', todos.views.list, name='todos-list'),
+    url(r'^projects/(\d+)/todos/?$', todos.views.listing, name='todos-list'),
     url(r'^todos/(\d+)/?$', todos.views.detail, name='todos-detail'),
     url(r'^todos/(\d+)/edit/?$', todos.views.edit, name='todos-edit'),
 

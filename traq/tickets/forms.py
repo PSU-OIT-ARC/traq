@@ -29,7 +29,7 @@ class TicketForm(forms.ModelForm):
         project = kwargs.pop("project")
         # keep this is an instance var since we need it in save()
         self.user = kwargs.pop("user")
-
+        self.todos = kwargs.pop('todo', None)
         super(TicketForm, self).__init__(*args, **kwargs)
 
         # if this is a new ticket, we need to set some additional fields
@@ -130,6 +130,7 @@ class TicketForm(forms.ModelForm):
             'due_on',
             'release',
             'branch',
+            
         )
 
         widgets = {

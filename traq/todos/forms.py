@@ -46,7 +46,7 @@ class ToDoForm(forms.ModelForm):
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
             self.fields['priority'].initial = TicketPriority.objects.get(is_default=1)
             self.fields['component'].initial = project.defaultComponent()
-            self.fields['estimated_time'].initial = "1:00"
+            self.fields['estimate'].initial = "1"
 
         # one of these fields will be required, but we handle that in the clean
         # method
@@ -101,7 +101,7 @@ class ToDoForm(forms.ModelForm):
             'title', 
             'body', 
             'started_on', 
-            'estimated_time', 
+            'estimate', 
             'is_deleted',
             'status', 
             'priority', 

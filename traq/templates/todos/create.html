@@ -3,7 +3,7 @@
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li>Request</li>
+    <li><a href='{% url 'todos-list' project.pk %}'>To Do Items</a></li>
     {% if todo %}
         <li><a href="{% url 'todos-detail' todo.pk %}">{{ todo.title }}</a></li>
         <li>Edit</li>
@@ -51,12 +51,12 @@
     <table>
         <tr>
             <td>{{ form.started_on.label }}</td>
-            <td>{{ form.estimated_time.label }}</td>
+            <td>{{ form.estimate.label }}</td>
             <td>{{ form.due_on.label }}</td>
         </tr>
         <tr>
             <td>{{ form.started_on }}</td>
-            <td>{{ form.estimated_time }}</td>
+            <td>{{ form.estimate }}</td>
             <td>{{ form.due_on }}</td>
         </tr>
     </table>

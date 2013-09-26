@@ -80,7 +80,6 @@ class Ticket(models.Model):
     is_extra = models.BooleanField(default=False, verbose_name="Outside scope of original proposal")
     due_on = models.DateTimeField(null=True, default=None, blank=True)
     is_internal = models.BooleanField(default=False, verbose_name="Mark as an internal ticket (this doesn't affect any reports yet)")
-    to_do_items = models.ManyToManyField('todos.ToDo') 
 
     # git fields
     release = models.CharField(max_length=255, blank=True)

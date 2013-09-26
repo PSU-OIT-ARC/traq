@@ -522,3 +522,7 @@ li.hover {
     background:#87983F;
     border-radius: 3px;
 }
+
+li.even {
+    background: rgb(239, 239, 239);
+}

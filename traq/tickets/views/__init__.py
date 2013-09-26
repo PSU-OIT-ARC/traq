@@ -8,6 +8,7 @@ from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
 from traq.permissions.decorators import can_view, can_edit, can_create
+from traq.todos.models import ToDo
 
 @can_view(Ticket)
 def detail(request, ticket_id):
@@ -58,13 +59,18 @@ HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was 
 
     
 @can_create(Ticket)
-def create(request, project_id):
+def create(request, project_id, todo_id=None):
+    if todo_id is not None:
+        todo = get_object_or_404(ToDo, pk=todo_id)
+    else: 
+        todo = None
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
-        form = TicketForm(request.POST, request.FILES, user=request.user, project=project)
+        form = TicketForm(request.POST, request.FILES, user=request.user, project=project, todo=todo)
         if form.is_valid():
             form.save()
             ticket = form.instance
+            todo.tickets.add(ticket)
 
             messages.success(request, 'Ticket Added')
 
@@ -94,11 +100,12 @@ def create(request, project_id):
         # them in the initial data on the form
         initial_data.pop("body", None)
         initial_data.pop("title", None)
-        form = TicketForm(initial=initial_data, user=request.user, project=project)
+        form = TicketForm(initial=initial_data, user=request.user, project=project, todo=todo)
 
     return render(request, 'tickets/create.html', {
         'form': form,
         'project': project,
+        'todo':todo,
     })
 
 @can_edit(Project)
