@@ -17,7 +17,7 @@ class ToDo(models.Model):
     tickets = models.ManyToManyField(Ticket, related_name='todos') 
     created_by = models.ForeignKey(User, related_name='+')
     status = models.ForeignKey(TicketStatus)
-    priority = models.ForeignKey(TicketPriority)
+    priority = models.IntegerField(default=None, blank=True, null=True)
     project = models.ForeignKey(Project)
     component = models.ForeignKey(Component)
 

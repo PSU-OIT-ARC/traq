@@ -55,7 +55,7 @@ class ToDoForm(forms.ModelForm):
 
         # only display components associated with this project
         self.fields['component'].queryset = Component.objects.filter(project=project)
-        self.fields['existing_files'].queryset = TicketFile.objects.filter(ticket=self.instance)
+        self.fields['existing_files'].queryset = TicketFile.objects.filter(todo=self.instance)
 
     def hasFiles(self):
         # does this Ticket have any files associated with it?

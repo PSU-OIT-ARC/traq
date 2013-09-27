@@ -53,7 +53,6 @@ def create(request, project_id):
         initial_data.pop("body", None)
         initial_data.pop("title", None)
         form = ToDoForm(initial=initial_data, user=request.user, project=project)
-
     return render(request, 'todos/create.html', {
         'form': form,
         'project': project,
@@ -92,6 +91,7 @@ def detail(request, todo_id):
 def edit(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
+    files = TicketFile.objects.filter(todo=todo)
     if request.method == "POST":
         # cache the old info about the ticket, so we know if it got changed
         form = ToDoForm(request.POST, request.FILES, user=request.user, instance=todo, project=todo.project)
@@ -110,6 +110,7 @@ def edit(request, todo_id):
         'form': form,
         'project': project,
         'todo': todo,
+        'files':files,
     })
 
 

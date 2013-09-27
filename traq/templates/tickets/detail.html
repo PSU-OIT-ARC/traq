@@ -52,6 +52,13 @@
                     <li><strong>Release:</strong> {{ ticket.release }}</li>
                 </ul>
             {% endif %}
+            {% if ticket.todos %}
+                <ul style='width:100%'><strong>To Do Items:</strong>
+                {% for todo in ticket.todos.all %}
+                    <li style='width:100%'>#{{ todo.pk }}{{ todo.title }}</li>
+                {% endfor %} 
+                </ul>
+            {% endif %}
             <div class="clear"></div>
         </div>
     </div>
