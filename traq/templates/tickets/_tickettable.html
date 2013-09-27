@@ -22,9 +22,9 @@ $(document).ready(function(){
             <th class="center">Assigned</th>
             <th class="center">Due On  
                 {% replace_key params 'due_on' 'a' %}
-                <a href='{{request.url}}?{{ params.urlencode }}'>^</a>
+                <a href='{{request.url}}?{{ params.urlencode }}'><span class="ui-icon ui-icon-triangle-1-n" style="display:inline-block"></span></a>
                 {% replace_key params 'due_on' 'd' %}
-                <a href='{{request.url}}?{{ params.urlencode }}'>v</a>
+                <a href='{{request.url}}?{{ params.urlencode }}'><span class="ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
 
             </th>
         </tr>

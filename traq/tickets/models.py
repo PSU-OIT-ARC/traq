@@ -182,7 +182,9 @@ class Ticket(models.Model):
             msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
-     
+    
+    def __unicode__(self):
+        return u'#%s: %s' % (self.pk, self.title) 
     class Meta:
         db_table = 'ticket'
 

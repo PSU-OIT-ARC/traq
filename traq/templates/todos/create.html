@@ -47,13 +47,6 @@
     <label class="roomy">{{ form.body.label }}</label>
     {{ form.body }}
     
-    <div class='clear'></div>
-    <table>
-        <tr>
-            <td><h3>Associated Ticketdds:</h3>
-                
-
-
     <div class="clear"></div>
     <table>
         <tr>
@@ -67,7 +60,24 @@
             <td>{{ form.due_on }}</td>
         </tr>
     </table>
-
+   <div class='clear' ></div>
+        <table class='files-table'>
+            <tr>
+                <td><h3>Attach Existing Ticket</h3>
+                    <input class='autocomplete' type='text'>
+                    <div class='suggestion-wrapper' sty;e='display:none'></div>
+                </td>
+                <td>
+                    {% if todo.tickets.all %}
+                    <h3>Remove Attached Tickets</h3>
+                    <div class='django-checkbox-list'>
+                        {{ form.existing_tickets }}
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        
     <table class="files-table">
         <tr>
             <td>
@@ -95,5 +105,16 @@
 
 
 </form>
+<script type='text/javascript'>
+    $(document).ready(function()
+    {
+    $('.autocomplete').keyup(function(){
+        var tickets = [];
+        {% for ticket in project.tickets.all %}
+            tickets.push('<div> {{ ticket|escapejs }} </div>');
+        {% endfor %}
+        });
+    });
+</script>
 {% endblock %}
 

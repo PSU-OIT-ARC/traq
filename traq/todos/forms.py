@@ -21,6 +21,7 @@ class ToDoForm(forms.ModelForm):
     """To Do Item creation and editing form--modified form ticket form"""
     files = forms.FileField(required=False, widget=forms.FileInput(attrs={"multiple": True}))
     existing_files = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
+    existing_tickets = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
 
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
@@ -53,9 +54,10 @@ class ToDoForm(forms.ModelForm):
         self.fields['title'].required = False
         self.fields['body'].required = False
 
-        # only display components associated with this project
+        # only display thingies associated with this project
         self.fields['component'].queryset = Component.objects.filter(project=project)
         self.fields['existing_files'].queryset = TicketFile.objects.filter(todo=self.instance)
+        self.fields['existing_tickets'].queryset = Ticket.objects.filter(todos=self.instance)
 
     def hasFiles(self):
         # does this Ticket have any files associated with it?
