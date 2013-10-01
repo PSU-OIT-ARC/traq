@@ -45,7 +45,7 @@ class SprintEndRangeFilter(django_filters.DateRangeFilter):
     dates = tix.values_list('due_on', flat='true').all()
     index = 1
     for due in dates:
-        if due is not None and due > now():
+        if due is not None:
             pretty_date = due.strftime('%d %b, %Y')
             my_choices[index] = (pretty_date, lambda qs, name, due=due: qs.filter(**{
                 '%s__day' % name: due.day, 
@@ -59,7 +59,7 @@ class SprintEndRangeFilter(django_filters.DateRangeFilter):
 class TicketFilterSet(django_filters.FilterSet):
     status = django_filters.ModelChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all())
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
-    sprint_end = SprintEndRangeFilter('due_on', label=_('Sprint Ending:'))
+    sprint_end = SprintEndRangeFilter('due_on', label=_('Due On:'))
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
     class Meta:
         model = Ticket

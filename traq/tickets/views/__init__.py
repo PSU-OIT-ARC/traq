@@ -9,6 +9,7 @@ from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
 from traq.permissions.decorators import can_view, can_edit, can_create
 from traq.todos.models import ToDo
+from traq.tickets.filters import TicketFilterSet
 
 @can_view(Ticket)
 def detail(request, ticket_id):
@@ -150,6 +151,17 @@ def edit(request, ticket_id):
         'project': project,
         'ticket': ticket,
     })
+
+
+def listing(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
+    tickets= ticket_filterset.qs.order_by('-priority', 'due_on')
+    return render(request, 'tickets/list.html', {
+        'tickets': tickets,
+        'project': project,
+        'filterset':ticket_filterset,})
+
 
 @can_edit(Comment)
 def comments_edit(request, comment_id):

@@ -50,6 +50,7 @@ urlpatterns = patterns('',
     url(r'^tickets/(\d+)/?$', tickets.views.detail, name='tickets-detail'),
     url(r'^tickets/(\d+)/edit/?$', tickets.views.edit, name='tickets-edit'),
     url(r'^projects/(\d+)/tickets/bulk/?$', tickets.views.bulk, name='tickets-bulk'),
+    url(r'^projects/(\d+)/tickets/?$', tickets.views.listing, name='tickets-list'),
     
     #to dos
     url(r'^projects/(?P<project_id>\d+)/todos/(?P<todo_id>\d+)/tickets/create/?$', tickets.views.create, name='tickets-todo-create'),
