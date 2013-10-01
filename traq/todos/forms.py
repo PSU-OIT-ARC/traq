@@ -22,6 +22,7 @@ class ToDoForm(forms.ModelForm):
     files = forms.FileField(required=False, widget=forms.FileInput(attrs={"multiple": True}))
     existing_files = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
     existing_tickets = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
+    add_ticket = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'autocomplete'}))
 
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
@@ -96,6 +97,15 @@ class ToDoForm(forms.ModelForm):
             for f in files:
                 tf = TicketFile(todo=self.instance, file=f, uploaded_by=self.user)
                 tf.save()
+        
+        for tick in self.cleaned_data.get('existing_tickets', []):
+            self.instance.tickets.remove(tick)
+
+        pk = self.cleaned_data.get('add_ticket', None) 
+        if pk:
+            ticket = Ticket.objects.get(pk=pk)
+            if ticket:
+                self.instance.tickets.add(ticket)
 
     class Meta:
         model = ToDo

@@ -63,10 +63,10 @@
    <div class='clear' ></div>
         <table class='files-table'>
             <tr>
-                <td><h3>Attach Existing Ticket</h3>
-                    <input class='autocomplete' type='text'>
-                    <div class='suggestion-wrapper' sty;e='display:none'></div>
+                <td><h3>Attach Existing Ticket<span style='display:inline-block' class="ui-icon ui-icon-search"></span></h3>
+                    {{ form.add_ticket }}
                 </td>
+
                 <td>
                     {% if todo.tickets.all %}
                     <h3>Remove Attached Tickets</h3>
@@ -106,11 +106,14 @@
 
 </form>
 <script type='text/javascript'>
+    var tickets = new Array();
     $(document).ready(function()
     {
-        var tickets = new Array();
         {% for ticket in project.tickets.all %}
-            tickets.push('{{ ticket | escapejs }}')
+            ticket = new Object();
+            ticket.label = '{{ticket | escapejs }}';
+            ticket.value = {{ticket.pk }};
+            tickets.push(ticket);
         {% endfor %}
         
     $('.autocomplete').autocomplete({
