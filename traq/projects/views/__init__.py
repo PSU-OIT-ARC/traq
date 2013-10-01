@@ -4,7 +4,6 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
-from django.core import serializers
 from datetime import date, timedelta
 
 from traq.permissions.decorators import can_do, can_view, can_edit, can_create
@@ -47,14 +46,13 @@ def detail(request, project_id):
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
     # Hack for querySetToJSON's raw sql execution; must put datetime in quotes 
     #Aargh. can't make this work. can we just do a DB search?
-    '''if request.GET.get('due_range') is not None:
+    if request.GET.get('due_range') is not None:
         gets = request.GET.copy()
         gets['due_range'] = "'%s'" % gets['due_range']
         for_json  = TicketFilterSet(gets, queryset=project.tickets())
         tickets_json = querySetToJSON(for_json.qs)
     else:
         tickets_json = querySetToJSON(ticket_filterset.qs)
-    #end date JSON hack '''
     # XXX: not DRY, but there is no systemic way to request this ordering
     #      from the context of a QuerySet
     if request.GET.get('due_on') == 'a':

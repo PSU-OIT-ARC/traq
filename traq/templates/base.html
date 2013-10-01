@@ -6,9 +6,10 @@
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/markdown.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/print.css" media="print">
         <link rel='stylesheet' type='text/css' href="{{ STATIC_URL }}js/jquery-ui/css/smoothness/jquery-ui-1.10.3.custom.min.css">
-        <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+        <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/main.js"></script>
+        {% block scripts %}{% endblock %}
     </head>
     <body>
         {% block body %}

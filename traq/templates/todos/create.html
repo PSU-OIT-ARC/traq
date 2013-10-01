@@ -108,11 +108,13 @@
 <script type='text/javascript'>
     $(document).ready(function()
     {
-    $('.autocomplete').keyup(function(){
-        var tickets = [];
+        var tickets = new Array();
         {% for ticket in project.tickets.all %}
-            tickets.push('<div> {{ ticket|escapejs }} </div>');
+            tickets.push('{{ ticket | escapejs }}')
         {% endfor %}
+        
+    $('.autocomplete').autocomplete({
+        source: tickets
         });
     });
 </script>

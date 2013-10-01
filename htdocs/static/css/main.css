@@ -524,3 +524,22 @@ li.hover {
     width:100%;
 }
 
+/*tablesorter css*/
+th.header { 
+    background-image: url(../img/bg.gif);     
+    cursor: pointer; 
+    font-weight: bold; 
+    background-repeat: no-repeat; 
+    background-position: center left; 
+    padding-left: 20px; 
+    border-right: 1px solid #dad9c7; 
+    margin-left: -1px; 
+}
+
+th.headerSortDown { 
+        background-image: url(../img/desc.gif); 
+}          
+
+th.headerSortUp { 
+    background-image: url(../img/asc.gif); 
+} 

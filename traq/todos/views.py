@@ -1,4 +1,5 @@
 from traq.projects.models import Project
+from traq.tickets.models import Ticket
 from traq.todos.models import ToDo
 from traq.todos.forms import *
 from django.http import HttpResponse, HttpResponseRedirect
@@ -6,6 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
+from django.core import serializers
 
 
 def listing(request, project_id):
