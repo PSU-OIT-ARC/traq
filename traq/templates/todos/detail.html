@@ -83,13 +83,13 @@
 </div>
 
 <div class="right-section-wrapper">
-    <div class="right-section-block">
+    <div id='todo-tickets-right' class="right-section-block">
         <h3>This Item's Tickets</h3>
         <hr>
         <table class="block-table">
-            <lii class='button'>Ticket#: Status</li>
+            <li class='hover button' title='hover for ticket title'>Ticket#: Status (?)</li>
             {% for ticket in todo.tickets.all %}
-                <li class='hover'><div class='tip' >{{ ticket.title }}</div><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></li>
+                <li class='hover' title="{{ ticket.title|escape }}"><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></li>
             {% endfor %}
             <a class='button' style='padding-left:5px' href='{% url 'tickets-todo-create' project.pk todo.pk%}'>Add New Ticket</a>
         </table>
@@ -110,14 +110,7 @@
 
 <script type='text/javascript'>
     $(document).ready(function(){
-        $('.hover').hover(
-        function(e){
-            $(this).addClass('tip-show');
-            $('.tip', this).show(200);},
-        function(e){
-            $('.tip', this).hide();
-            $(this).removeClass('tip-show');}
-        )
+        $('li.hover').tooltip();   
     });
 </script>
 {% endblock %}

@@ -352,6 +352,9 @@ p.error {
     margin-bottom:10px;
 }
 
+#todo-tickets-right{
+    padding:5px;
+}
 .inner {
     background-color:#fff;
     padding:3px;
