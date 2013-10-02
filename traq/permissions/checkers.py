@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from traq.projects.models import Project
 
 LOGIN_GROUPS = ("arc", "pdx09876", 'arcclient')
 STAFF_GROUP = "arcstaff"
@@ -13,13 +14,13 @@ def can_do(user):
 
 def can_create(user, model):
     if user.groups.filter(Q(name=STAFF_GROUP) | Q(name='arc')).exists():
-        return can_do(user)
+        return True
     elif model.__name__ in CLIENT_CAN_CREATE:
-        return can_do(user)
+        return True
     return False
 
 def can_view(user, instance):
-    return can_do(user)
+    return True
 
 def can_edit(user, instance):
     # If you are a member of the STAFF group, then you can edit anything.

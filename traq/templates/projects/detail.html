@@ -43,8 +43,8 @@ $(document).ready(function(){
 
 <div class="left-section-wrapper">
   <h3 class='left iblock pad5'><a href="{% url 'tickets-list' project.pk%}">Tickets</a> 
-    <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> |
-    <a href="{% url 'tickets-bulk' project.pk %}" class="button" id="bulk-action">Bulk Action</a>
+    {% if request.user|can_create:Ticket %}<a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> |
+    <a href="{% url 'tickets-bulk' project.pk %}" class="button" id="bulk-action">Bulk Action</a>{% endif %}
   </h3>
   <h3 class='iblock left pad5'><a href="{% url 'todos-list' project.pk%}">To Do Items</a> 
     <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a> 
