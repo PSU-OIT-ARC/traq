@@ -7,9 +7,9 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
-from django.core import serializers
+from traq.permissions.decorators import can_view, can_edit, can_create
 
-
+@can_view(Project)
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     todos = ToDo.objects.filter(project = project)
@@ -17,6 +17,7 @@ def listing(request, project_id):
         'todos': todos,
         'project': project,})
 
+@can_create(ToDo)
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
@@ -60,7 +61,7 @@ def create(request, project_id):
         'project': project,
     })
 
-
+@can_view(ToDo)
 def detail(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
@@ -89,7 +90,7 @@ def detail(request, todo_id):
         'files': files,
     })
 
-
+@can_edit(ToDo)
 def edit(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
@@ -115,7 +116,7 @@ def edit(request, todo_id):
         'files':files,
     })
 
-
+@can_edit(Comment)
 def comments_edit(request, comment_id):
     # there is no corresponding comments_create view since a comment is created
     # on the ticket detail view.

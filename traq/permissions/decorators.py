@@ -37,10 +37,6 @@ class can_do(object):
             return f(*args, **kwargs)
 
         return wrapper
-
-class can_create(can_do):
-    pass
-
 # for the can_view and can_edit decorators, assume the second argument to the
 # view function is the model's primary key (the first argument is of course,
 # the request object). Look up the model instance, and pass that along to the
@@ -51,7 +47,6 @@ class can_view(can_do):
     def runCheck(self, *args, **kwargs):
         user = args[0].user
         pk = args[1]
-
         try:
             instance = self.model.objects.get(pk=pk)
         except (self.model.DoesNotExist, self.model.MultipleObjectsReturned) as e:
@@ -62,3 +57,11 @@ class can_view(can_do):
 # use the same logic for editing, but pass the buck to checkers.can_edit
 class can_edit(can_view):
     checker = checkers.can_edit
+
+#check if user can create specific model
+class can_create(can_do):
+    checker = checkers.can_create
+    
+    def runCheck(self, *args, **kwargs):
+        user = args[0].user
+        return self.checker.__func__(user, self.model)

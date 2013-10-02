@@ -1,7 +1,9 @@
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 
-LOGIN_GROUPS = ("arc", "pdx09876")
+LOGIN_GROUPS = ("arc", "pdx09876", 'arcclient')
 STAFF_GROUP = "arcstaff"
+CLIENT_CAN_CREATE = ['ToDo']
 
 # these can_* functions simply return true or false of a user is allowed to do
 # stuff
@@ -10,7 +12,11 @@ def can_do(user):
     return user.is_authenticated()
 
 def can_create(user, model):
-    return can_do(user)
+    if user.groups.filter(Q(name=STAFF_GROUP) | Q(name='arc')).exists():
+        return can_do(user)
+    elif model.__name__ in CLIENT_CAN_CREATE:
+        return can_do(user)
+    return False
 
 def can_view(user, instance):
     return can_do(user)

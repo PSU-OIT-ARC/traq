@@ -152,7 +152,7 @@ def edit(request, ticket_id):
         'ticket': ticket,
     })
 
-
+@can_view(Project)
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
