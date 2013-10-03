@@ -22,7 +22,7 @@
 </h2>
 
 {% if perms.tickets.add_ticket %}
-    <h3><a href="{% url 'project-detail project.pk' %}">Project Tickets</a></h3>
+    <h3><a href="{% url 'projects-detail' project.pk %}">Project Tickets</a></h3>
 {% endif %}
 
 {% if perms.todos.add_todo %}

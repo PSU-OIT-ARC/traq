@@ -14,8 +14,7 @@ from traq.todos.filters import ToDoFilterSet
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     #hide closed by default
-    todo_qs = ToDo.objects.filter(project = project).exclude(status=4)
-    todo_filterset = ToDoFilterSet(request.GET, queryset=todo_qs)
+    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.all())
     todos = todo_filterset
     return render(request, 'todos/list.html', {
         'todos': todos,

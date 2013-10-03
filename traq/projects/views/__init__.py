@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from datetime import date, timedelta
+from django.db.models import Q
 
 from traq.permissions.decorators import can_do, can_view, can_edit, can_create, can_view_project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
@@ -53,19 +54,22 @@ def detail(request, project_id):
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
     # Hack for querySetToJSON's raw sql execution; must put datetime in quotes 
     #Aargh. can't make this work. can we just do a DB search?
-    if request.GET.get('due_range') is not None:
-        gets = request.GET.copy()
-        gets['due_range'] = "'%s'" % gets['due_range']
-        for_json  = TicketFilterSet(gets, queryset=project.tickets())
-        tickets_json = querySetToJSON(for_json.qs)
-    else:
-        tickets_json = querySetToJSON(ticket_filterset.qs)
+    #if request.GET.get('due_range') is not None:
+        #gets = request.GET.copy()
+        #gets['due_range'] = "'%s'" % gets['due_range']
+        #for_json  = TicketFilterSet(gets, queryset=project.tickets())
+        #tickets_json = querySetToJSON(for_json.qs)
+    #else:
+        #tickets_json = querySetToJSON(ticket_filterset.qs)
     # XXX: not DRY, but there is no systemic way to request this ordering
     #      from the context of a QuerySet
+    q = request.GET.get('contains', '')
     if request.GET.get('due_on') == 'a':
         tickets = ticket_filterset.qs.order_by("-due_on")
     elif request.GET.get('due_on') == 'd':
         tickets = ticket_filterset.qs.order_by("due_on")
+    elif request.GET.get('contains'):
+        tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q))
     else:
         tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
     # paginate on tickets queryset
@@ -88,7 +92,6 @@ def detail(request, project_id):
     components = project.components()
     work = project.latestWork(10)
     milestones = Milestone.objects.filter(project=project)
-    next_friday = getNextFriday()
 
     return render(request, 'projects/detail.html', {
         'project': project,
@@ -102,7 +105,6 @@ def detail(request, project_id):
         "do_pagination": do_pagination,
         'page': tickets,
         'today': date.today(),
-        'next_week': next_friday,
     })
 
 @can_edit(Project)
@@ -135,12 +137,6 @@ def create(request):
         'form': form,
     })
 
-def getNextFriday():
-    d = date.today()
-    while d.weekday() != 4:
-        d += timedelta(1)
-    d += timedelta(7) 
-    return d
 
 
 
