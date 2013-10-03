@@ -18,8 +18,8 @@ from traq.tickets.forms import TicketForm
 from traq.todos.models import ToDo
 
 class ToDoForm(forms.ModelForm):
-    """To Do Item creation and editing form--modified form ticket form"""
-    files = forms.FileField(required=False, widget=forms.FileInput(attrs={"multiple": True}))
+    """To Do Item creation and editing form--modified from ticket form"""
+    files = forms.FileField(required=False, help_text="screenshots or supplementary documents", widget=forms.FileInput(attrs={"multiple": True} ))
     existing_files = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
     existing_tickets = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
     add_ticket = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'autocomplete', 'placeholder':'autocomplete'}))
@@ -46,7 +46,6 @@ class ToDoForm(forms.ModelForm):
         # set some sensible default values
         if not self.is_bound:
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
-            self.fields['priority'].initial = TicketPriority.objects.get(is_default=1)
             self.fields['component'].initial = project.defaultComponent()
             self.fields['estimate'].initial = "1"
 
@@ -61,7 +60,7 @@ class ToDoForm(forms.ModelForm):
         self.fields['existing_tickets'].queryset = Ticket.objects.filter(todos=self.instance)
 
     def hasFiles(self):
-        # does this Ticket have any files associated with it?
+        # does this Todo have any files associated with it?
         return self.fields['existing_files'].queryset.count() != 0
 
     def clean(self):

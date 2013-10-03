@@ -18,7 +18,9 @@ from ..tickets.filters import TicketFilterSet
 @login_required
 def profile(request, tickets=''):
     user = request.user
-    if user.groups.filter(name=STAFF_GROUP):
+    if user.groups.filter(name='arcclient'):
+        return _projects(request)
+    elif user.groups.filter(name=STAFF_GROUP):
         return _tickets(request, tickets)
     else:
         return _invoices(request)
@@ -82,5 +84,12 @@ def _invoices(request):
     projects = Project.objects.all()
 
     return render(request, "accounts/invoices.html", {
+        "projects": projects,
+    })
+
+def _projects(request):
+    user = request.user
+    projects = Project.objects.filter(clients=request.user)
+    return render(request, "accounts/projects.html", {
         "projects": projects,
     })

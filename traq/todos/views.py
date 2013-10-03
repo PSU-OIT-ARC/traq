@@ -8,14 +8,20 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
 from traq.permissions.decorators import can_view, can_edit, can_create
+from traq.todos.filters import ToDoFilterSet
 
 @can_view(Project)
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    todos = ToDo.objects.filter(project = project)
+    #hide closed by default
+    todo_qs = ToDo.objects.filter(project = project).exclude(status=4)
+    todo_filterset = ToDoFilterSet(request.GET, queryset=todo_qs)
+    todos = todo_filterset
     return render(request, 'todos/list.html', {
         'todos': todos,
-        'project': project,})
+        'project': project,
+        'filterset': todo_filterset,
+        })
 
 @can_create(ToDo)
 def create(request, project_id):

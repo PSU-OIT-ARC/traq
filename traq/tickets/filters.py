@@ -59,7 +59,7 @@ class SprintEndRangeFilter(django_filters.DateRangeFilter):
 class TicketFilterSet(django_filters.FilterSet):
     status = django_filters.ModelChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all())
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
-    sprint_end = SprintEndRangeFilter('due_on', label=_('Due On:'))
+    sprint_end = SprintEndRangeFilter('due_on', label=_('Due On'))
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
     class Meta:
         model = Ticket

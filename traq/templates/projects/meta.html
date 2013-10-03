@@ -4,8 +4,13 @@
 {% load permissions %}
 {% block page_title %}{{ project.name }}{% endblock %}
 {% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    {% if perms.projects.can_view_all %}
+        <li><a href="{% url 'projects-all' %}">Projects</a></li>
+        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    {% else %}
+        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
+        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+    {% endif %}
     <li>Meta</li>
 {% endblock %}
 {% block content %}
@@ -15,6 +20,15 @@
         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
     {% endif %}
 </h2>
+
+{% if perms.tickets.add_ticket %}
+    <h3><a href="{% url 'project-detail project.pk' %}">Project Tickets</a></h3>
+{% endif %}
+
+{% if perms.todos.add_todo %}
+    <h3><a href="{% url 'todos-list' project.pk %}">Project To Do List</a></h3>
+{% endif %}
+
 
 {% if target_completion %}
     <h3>Target Completion</h3>
@@ -31,9 +45,11 @@
     <div class="markdown">{{ project.point_of_contact|frommarkdown }}</div>
 {% endif %}
 
-{% if project.technical %}
-    <h3>Technical</h3>
-    <div class="markdown">{{ project.technical|frommarkdown }}</div>
+{% if perms.projects.can_view_all %}
+    {% if project.technical %}
+        <h3>Technical</h3>
+        <div class="markdown">{{ project.technical|frommarkdown }}</div>
+    {% endif %}
 {% endif %}
 
 {% if project.catch_all %}

@@ -3,35 +3,44 @@
 {% endblock %}
 {% block page_title %}To Do Items{% endblock %}
 {% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    {% if perms.projects.can_view_all %}
+        <li><a href="{% url 'projects-all' %}">Projects</a></li>
+        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    {% else %}
+        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
+        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+     {% endif %}
+    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
 {% endblock %}
 
 {%block content %}
-    <script type='text/javascript' src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
-    <script type='text/javascript'>
-        $(document).ready(function(){
-            $('#todo-table').tablesorter();}
-            );
-    </script>
     <div id='content-wrapper' style='min-height:400px;'>
     <h2> {{ project.name }}</h2>
     <h2 >To Do Items
     <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a></h2>
+    {% include 'filterset.html' %}
     <table cellpadding='5px' id='todo-table' class='tablesorter' style='width:100%;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
-            <th>To Do Item</th><th>Status</th><th>Created On</td><th>Priority</th>
+            <th>To Do Item</th><th>Status</th><th>Due On</td><th>Priority</th>
         </thead>
     <tbody>
     {% for todo in todos %}
         <tr class='{% cycle 'odd' 'even' %}'>
             <td style='padding:5px'><a href="{% url "todos.views.detail" todo.pk %}">#{{todo.pk}} {{ todo.title }}</a> </td>
             <td style='padding:5px'>{{ todo.status }}</td>
-            <td style='padding:5px'>{{ todo.created_on |date:"M d, Y" }}</td>
+            <td style='padding:5px'>{{ todo.due_on |date:"M d, Y" }}</td>
             <td style='padding:5px;'>{{ todo.priority }}</td> 
         </tr>
     {% endfor %}
     </tbody>    
     </table>
     </div>
+    
+    <script type='text/javascript' src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
+    <script type='text/javascript'>
+        $(document).ready(function(){
+            $('#todo-table').tablesorter();}
+            );
+    </script>
+
 {% endblock %}
