@@ -10,6 +10,8 @@ from traq.projects.models import Project
 from traq.permissions.decorators import can_view, can_edit, can_create
 from traq.todos.models import ToDo
 from traq.tickets.filters import TicketFilterSet
+from django.contrib.auth.decorators import permission_required
+
 
 @can_view(Ticket)
 def detail(request, ticket_id):
@@ -152,6 +154,7 @@ def edit(request, ticket_id):
         'ticket': ticket,
     })
 
+@permission_required('projects.can_view_all', raise_exception=True)    
 @can_view(Project)
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)

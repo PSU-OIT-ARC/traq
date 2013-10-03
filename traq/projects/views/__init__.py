@@ -1,12 +1,13 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from datetime import date, timedelta
 
-from traq.permissions.decorators import can_do, can_view, can_edit, can_create
+from traq.permissions.decorators import can_do, can_view, can_edit, can_create, can_view_project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.utils import querySetToJSON
 
@@ -16,9 +17,12 @@ from ..models import Project, Milestone
 # there's an annoying circular dependency between the ticket and project apps 
 # so this import needs to be after project models are imported
 from traq.tickets.filters import TicketFilterSet
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import User
 
 
-@can_do()
+
+@permission_required('projects.can_view_all', raise_exception=True)
 def all(request):
     projects = []
     projects.append(Project.objects.filter(status=Project.ACTIVE))
@@ -27,6 +31,8 @@ def all(request):
         'projects': projects,
     })
 
+    
+@can_view_project(Project)    
 @can_view(Project)
 def meta(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -40,7 +46,8 @@ def meta(request, project_id):
         'target_completion': target_completion,
     })
 
-@can_view(Project)
+    
+@permission_required('projects.can_view_all', raise_exception=True)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())

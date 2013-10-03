@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.utils.timezone import utc
 from ..utils import dictfetchall, jsonhandler
 
+
 class ProjectManager(models.Manager):
     def get_query_set(self):
         return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
@@ -75,10 +76,9 @@ class Project(models.Model):
     catch_all = models.TextField(blank=True, default="", help_text="Anything you want to document here")
     # technical
     technical = models.TextField(blank=True, default="", help_text="Technical stuff")
-
     created_by = models.ForeignKey(User, related_name='+')
-
     objects = ProjectManager()
+    clients = models.ManyToManyField(User, blank=True, null=True)
 
     def createDefaultComponents(self):
         """Create all the default components for a project"""
@@ -193,6 +193,9 @@ class Project(models.Model):
     class Meta:
         db_table = 'project'
         ordering = ['name']
+        permissions = (
+                ('can_view_all', "Can view all projects"),
+                )
 
 class ComponentManager(models.Manager):
     def get_query_set(self):

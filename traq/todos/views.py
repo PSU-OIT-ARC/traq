@@ -67,7 +67,6 @@ def detail(request, todo_id):
     project = todo.project
     files = TicketFile.objects.filter(todo=todo)
     comments = Comment.objects.filter(todo=todo).select_related('created_by')
-
     comment_form = CommentForm(created_by=request.user, todo=todo)
 
     if request.POST:

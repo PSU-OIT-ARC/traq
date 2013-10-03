@@ -58,10 +58,20 @@ class can_view(can_do):
 class can_edit(can_view):
     checker = checkers.can_edit
 
-#check if user can create specific model
+
+#check if user can create instance of specific model
 class can_create(can_do):
     checker = checkers.can_create
     
     def runCheck(self, *args, **kwargs):
         user = args[0].user
         return self.checker.__func__(user, self.model)
+
+class can_view_project(can_do):
+    def runCheck(self, *args, **kwargs):
+        user = args[0].user
+        pk = args[1]
+        project = self.model.objects.get(pk=pk)
+        if user in project.clients.all():
+            return True
+        return False

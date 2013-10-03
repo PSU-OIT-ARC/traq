@@ -185,6 +185,7 @@ class Ticket(models.Model):
     
     def __unicode__(self):
         return u'#%s: %s' % (self.pk, self.title) 
+
     class Meta:
         db_table = 'ticket'
 

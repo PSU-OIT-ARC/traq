@@ -20,7 +20,7 @@ def can_create(user, model):
     return False
 
 def can_view(user, instance):
-    return True
+    return can_do(user)
 
 def can_edit(user, instance):
     # If you are a member of the STAFF group, then you can edit anything.
