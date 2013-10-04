@@ -4,11 +4,11 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from ..forms import ProjectForm, ComponentForm
 from ..models import Project, Component
-from traq.permissions.decorators import can_view, can_edit, can_create
 
-@can_create(Component)
+@permission_required('projects.add_component')
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
@@ -24,7 +24,7 @@ def create(request, project_id):
         'form': form,
     })
 
-@can_edit(Component)
+@permission_required('projects.change_component')
 def edit(request, component_id):
     component = get_object_or_404(Component, pk=component_id)
     project = component.project

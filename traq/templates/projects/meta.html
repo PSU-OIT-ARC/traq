@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% load tickets %}
-{% load permissions %}
 {% block page_title %}{{ project.name }}{% endblock %}
 {% block breadcrums %}
     {% if perms.projects.can_view_all %}
@@ -16,7 +15,7 @@
 {% block content %}
 
 <h2>{{ project.name }} 
-    {% if user|can_edit:project %}
+    {% if perms.projects.change_project %}
         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
     {% endif %}
 </h2>

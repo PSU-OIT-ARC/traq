@@ -7,7 +7,7 @@ from django.db import connection
 from django.db.models import Q
 
 from traq.utils import querySetToJSON
-from traq.permissions.checkers import STAFF_GROUP
+from traq.permissions import STAFF_GROUP, CLIENT_GROUP
 from traq.projects.models import Project
 
 from ..tickets.models import Ticket, Work, TicketStatus
@@ -18,7 +18,7 @@ from ..tickets.filters import TicketFilterSet
 @login_required
 def profile(request, tickets=''):
     user = request.user
-    if user.groups.filter(name='arcclient'):
+    if user.groups.filter(name=CLIENT_GROUP):
         return _projects(request)
     elif user.groups.filter(name=STAFF_GROUP):
         return _tickets(request, tickets)

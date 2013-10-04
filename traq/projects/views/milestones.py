@@ -4,11 +4,11 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from ..forms import MilestoneForm
 from ..models import Project, Milestone
-from traq.permissions.decorators import can_view, can_edit, can_create
 
-@can_create(Milestone)
+@permission_required('projects.add_milestone')
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
@@ -24,7 +24,7 @@ def create(request, project_id):
         'form': form,
     })
 
-@can_edit(Milestone)
+@permission_required('projects.change_milestone')
 def edit(request, milestone_id):
     milestone = get_object_or_404(Milestone, pk=milestone_id)
     project = milestone.project

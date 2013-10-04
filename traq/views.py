@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
-from traq.permissions.checkers import STAFF_GROUP
+from traq.permissions import STAFF_GROUP
 
 def home(request):
     if request.user.is_authenticated():

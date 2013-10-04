@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% load tickets %}
-{% load permissions %}
 
 {% block page_title %}{{ todo.title }}{% endblock %}
 {% block breadcrums %}
@@ -16,7 +15,7 @@
 <h2>
     <span class="ticket-priority-{{ todo.priority|slugify }} ticket-status-{{ todo.status|slugify }}">{{ todo.priority }}</span>
     #{{ todo.pk }}: {{ todo.title }} 
-    {% if user|can_edit:todo %}
+    {% if perms.todos.change_todo %}
     <a href="{% url 'todos-edit' todo.pk %}" class="button">Edit</a>
     {% endif %}
     <a href="{% url 'todos-create' project.pk %}" class="button">New ToDo</a> 
@@ -57,7 +56,7 @@
                     <ul>
                         <li><strong>Author:</strong> {{ comment.created_by }}</li>
                         <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
-                        {% if user|can_edit:comment %}
+                        {% if perms.todos.change_todo %}
                         <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
                         {% endif %}
                     </ul>

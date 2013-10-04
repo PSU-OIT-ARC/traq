@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-{% load permissions %}
 {% load tickets %}
 
 {% block page_title %}Your Tickets{% endblock %}
@@ -46,7 +45,7 @@
                 <td><a href="{% url 'tickets-detail' w.ticket.pk %}">{{ w.ticket.title }}</a></td>
                 <td>{{ w.duration|tickettime }}</td>
                 <td>
-                    {% if user|can_edit:w %}
+                    {% if perms.tickets.change_work %}
                         {% if w.state == w.PAUSED %}
                             <a href="{% url 'work-continue' w.pk %}">Continue</a>
                         {% else %}
@@ -55,7 +54,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if user|can_edit:w %}
+                    {% if perms.tickets.change_work %}
                         <a href="{% url 'work-edit' w.pk %}">Complete</a></td>
                     {% endif %}
             </tr>

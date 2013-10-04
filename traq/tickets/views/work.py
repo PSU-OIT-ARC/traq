@@ -7,9 +7,9 @@ from django.contrib import messages
 from ..forms import TicketForm, CommentForm, WorkForm
 from ..models import Ticket, Comment, Work, WorkType
 from traq.projects.models import Project
-from traq.permissions.decorators import can_view, can_edit, can_create
+from django.contrib.auth.decorators import permission_required
 
-@can_edit(Work)
+@permission_required('tickets.change_work')
 def edit(request, work_id):
     work = get_object_or_404(Work, pk=work_id)
     ticket = work.ticket
@@ -34,7 +34,7 @@ def edit(request, work_id):
 
 HAD_RUNNING_WORK_MESSAGE = """<strong>Dawg!</strong> You had other running work, which was paused for you. You're welcome."""
 
-@can_create(Work)
+@permission_required('tickets.add_work')
 def create(request, ticket_id):
     # this is called when a user starts working on a ticket. There is another
     # work create form that is handled on the ticket detail view
@@ -64,14 +64,14 @@ def create(request, ticket_id):
 
     return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
 
-@can_edit(Work)
+@permission_required('tickets.change_work')
 def pause(request, work_id):
     work = get_object_or_404(Work, pk=work_id)
     ticket = work.ticket
     work.pause()
     return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
 
-@can_edit(Work)
+@permission_required('tickets.change_work')
 def continue_(request, work_id):
     work = get_object_or_404(Work, pk=work_id)
     ticket = work.ticket

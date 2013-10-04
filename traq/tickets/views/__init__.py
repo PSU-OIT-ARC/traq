@@ -7,13 +7,12 @@ from django.contrib import messages
 from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
-from traq.permissions.decorators import can_view, can_edit, can_create
 from traq.todos.models import ToDo
 from traq.tickets.filters import TicketFilterSet
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 
-@can_view(Ticket)
+@permission_required('tickets.add_ticket')
 def detail(request, ticket_id):
     #check for arc group (staff and students should have this)
     if not request.user.groups.filter(name='arc'):
@@ -63,7 +62,7 @@ def detail(request, ticket_id):
 
 HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
 
-@can_create(Ticket)
+@permission_required('tickets.add_ticket')
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if "todo_id" in request.GET:
@@ -115,7 +114,7 @@ def create(request, project_id):
         'todo':todo,
     })
 
-@can_edit(Project)
+@permission_required('tickets.change_ticket')
 def bulk(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_ids = request.GET['tickets'].split(",")
@@ -134,7 +133,7 @@ def bulk(request, project_id):
         'project': project,
     })
 
-@can_edit(Ticket)
+@permission_required('tickets.change_ticket')
 def edit(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
@@ -158,8 +157,7 @@ def edit(request, ticket_id):
         'ticket': ticket,
     })
 
-@permission_required('projects.can_view_all', raise_exception=True)    
-@can_view(Project)
+@permission_required('tickets.add_ticket')
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
@@ -170,7 +168,7 @@ def listing(request, project_id):
         'filterset':ticket_filterset,})
 
 
-@can_edit(Comment)
+@permission_required('tickets.change_comment')
 def comments_edit(request, comment_id):
     # there is no corresponding comments_create view since a comment is created
     # on the ticket detail view.

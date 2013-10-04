@@ -8,7 +8,7 @@ from django.contrib import messages
 from datetime import date, timedelta
 from django.db.models import Q
 
-from traq.permissions.decorators import can_do, can_view, can_edit, can_create, can_view_project
+from traq.permissions.decorators import can_view_project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.utils import querySetToJSON
 
@@ -33,8 +33,7 @@ def all(request):
     })
 
     
-@can_view_project(Project)    
-@can_view(Project)
+@can_view_project
 def meta(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     try:
@@ -52,24 +51,13 @@ def meta(request, project_id):
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
-    # Hack for querySetToJSON's raw sql execution; must put datetime in quotes 
-    #Aargh. can't make this work. can we just do a DB search?
-    #if request.GET.get('due_range') is not None:
-        #gets = request.GET.copy()
-        #gets['due_range'] = "'%s'" % gets['due_range']
-        #for_json  = TicketFilterSet(gets, queryset=project.tickets())
-        #tickets_json = querySetToJSON(for_json.qs)
-    #else:
-        #tickets_json = querySetToJSON(ticket_filterset.qs)
-    # XXX: not DRY, but there is no systemic way to request this ordering
-    #      from the context of a QuerySet
     q = request.GET.get('contains', '')
     if request.GET.get('due_on') == 'a':
         tickets = ticket_filterset.qs.order_by("-due_on")
     elif request.GET.get('due_on') == 'd':
         tickets = ticket_filterset.qs.order_by("due_on")
     elif request.GET.get('contains'):
-        tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q))
+        tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
     else:
         tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
     # paginate on tickets queryset
@@ -99,7 +87,6 @@ def detail(request, project_id):
         'queries': connection.queries,
         'components': components,
         'work': work,
-    #    'tickets_json': tickets_json,
         'milestones': milestones,
         'filterset': ticket_filterset,
         "do_pagination": do_pagination,
@@ -107,7 +94,7 @@ def detail(request, project_id):
         'today': date.today(),
     })
 
-@can_edit(Project)
+@permission_required('projects.change_project')
 def edit(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
@@ -122,7 +109,7 @@ def edit(request, project_id):
         'form': form,
     })
 
-@can_create(Project)
+@permission_required('projects.add_project')
 def create(request):
     if request.method == "POST":
         form = ProjectForm(request.POST, created_by=request.user)
@@ -136,8 +123,4 @@ def create(request):
     return render(request, 'projects/create.html', {
         'form': form,
     })
-
-
-
-
 

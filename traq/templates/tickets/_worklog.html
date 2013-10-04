@@ -1,6 +1,5 @@
 {% load tickets %}
 
-{% load permissions %}
 <h3>Work Log</h3>
 <table class="block-table">
 {% for w in work %}
@@ -22,7 +21,7 @@
             {% endif %}
         </th>
         <th>
-            {% if user|can_edit:w %}
+            {% if perms.tickets.change_work %}
                 <a href="{% url 'work-edit' w.pk %}" class="discrete">{{ w.time|tickettime }}</a>
             {% else %}
                 {{ w.time|tickettime }}

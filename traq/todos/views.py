@@ -7,10 +7,10 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
-from traq.permissions.decorators import can_view, can_edit, can_create
 from traq.todos.filters import ToDoFilterSet
+from django.contrib.auth.decorators import permission_required
 
-@can_view(Project)
+@permission_required('todos.add_todo')
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     #hide closed by default
@@ -22,7 +22,7 @@ def listing(request, project_id):
         'filterset': todo_filterset,
         })
 
-@can_create(ToDo)
+@permission_required('todos.add_todo')
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
@@ -67,7 +67,7 @@ def create(request, project_id):
         'project': project,
     })
 
-@can_view(ToDo)
+@permission_required('todos.add_todo')
 def detail(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
@@ -95,7 +95,7 @@ def detail(request, todo_id):
         'files': files,
     })
 
-@can_edit(ToDo)
+@permission_required('todos.change_todo')
 def edit(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
@@ -121,7 +121,7 @@ def edit(request, todo_id):
         'files':files,
     })
 
-@can_edit(Comment)
+@permission_required('todos.change_todo')
 def comments_edit(request, comment_id):
     # there is no corresponding comments_create view since a comment is created
     # on the ticket detail view.

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% load tickets %}
-{% load permissions %}
 
 {% block page_title %}{{ ticket.title }}{% endblock %}
 {% block breadcrums %}
@@ -16,7 +15,7 @@
 <h2>
     <span class="lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
     #{{ ticket.pk }}: {{ ticket.title }} 
-    {% if user|can_edit:ticket %}
+    {% if perms.tickets.change_ticket %}
     <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
     {% endif %}
     <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> 
@@ -71,7 +70,7 @@
                     <ul>
                         <li><strong>Author:</strong> {{ comment.created_by }}</li>
                         <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
-                        {% if user|can_edit:comment %}
+                        {% if perms.tickets.change_comment %}
                         <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
                         {% endif %}
                     </ul>
@@ -105,7 +104,7 @@
                 <td>{{ w.created_by }}</td>
                 <td>{{ w.duration|tickettime }}</td>
                 <td>
-                    {% if user|can_edit:w %}
+                    {% if perms.tickets.change_work %}
                         {% if w.state == w.PAUSED %}
                             <a href="{% url 'work-continue' w.pk %}">Continue</a>
                         {% else %}
@@ -114,7 +113,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if user|can_edit:w %}
+                    {% if perms.tickets.change_work %}
                         <a href="{% url 'work-edit' w.pk %}">Complete</a>
                     {% endif %}
                 </td>

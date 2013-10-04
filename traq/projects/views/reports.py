@@ -12,10 +12,10 @@ from django.contrib.auth.models import User
 from ..forms import ReportIntervalForm
 from ..models import Project, Component
 from traq.tickets.models import Ticket
-from traq.permissions.decorators import can_view, can_edit, can_create, can_do
+from django.contrib.auth.decorators import permission_required
 from traq.tickets.templatetags.tickets import tickettimepretty
 
-@can_do()
+@permission_required('projects.can_view_all')
 def mega(request):
     form, interval = _intervalHelper(request)
     users = list(User.objects.all().order_by("username"))
@@ -35,7 +35,7 @@ def mega(request):
         'form': form,
     })
 
-@can_do()
+@permission_required('projects.can_view_all')
 def grid(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     # get all the people who have worked on this project
@@ -60,7 +60,7 @@ def grid(request, project_id):
         'interval': interval,
     })
 
-@can_do()
+@permission_required('projects.can_view_all')
 def component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     form, interval = _intervalHelper(request)
@@ -95,7 +95,7 @@ def component(request, project_id):
         'queries': connection.queries,
     })
 
-@can_do()
+@permission_required('projects.can_view_all')
 def invoice(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
