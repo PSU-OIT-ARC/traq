@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import permission_required
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     #hide closed by default
-    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.all())
+    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project))
     todos = todo_filterset
     return render(request, 'todos/list.html', {
         'todos': todos,
