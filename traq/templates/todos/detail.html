@@ -89,7 +89,11 @@
         <table class="block-table">
             <li class='button'>Ticket#: Status (?)</li>
             {% for ticket in todo.tickets.all %}
-                <li class='hover' title="{{ ticket.title|escape }}"><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></li>
+                {% if perms.tickets.add_ticket %}
+                    <li class='hover' title="{{ ticket.title|escape }}"><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></li>
+                {% else %}
+                    <li class='hover' title="{{ ticket.title|escape }}"><a class='button' href=#>#{{ ticket.pk }}: {{ ticket.status }}</a></li>
+                {% endif %}
             {% endfor %}
             {% if perms.tickets.add_ticket %}
                 <a class='button' style='padding-left:5px' href='{% url 'tickets-todo-create' project.pk todo.pk%}'>Add New Ticket</a>

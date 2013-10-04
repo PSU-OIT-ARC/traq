@@ -11,10 +11,13 @@ from traq.permissions.decorators import can_view, can_edit, can_create
 from traq.todos.models import ToDo
 from traq.tickets.filters import TicketFilterSet
 from django.contrib.auth.decorators import permission_required
-
+from django.core.exceptions import PermissionDenied
 
 @can_view(Ticket)
 def detail(request, ticket_id):
+    #check for arc group (staff and students should have this)
+    if not request.user.groups.filter(name='arc'):
+        raise PermissionDenied("Access Denied")
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
     files = TicketFile.objects.filter(ticket=ticket)
