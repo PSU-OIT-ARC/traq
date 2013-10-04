@@ -63,20 +63,21 @@ def detail(request, ticket_id):
 
 HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
 
-    
 @can_create(Ticket)
-def create(request, project_id, todo_id=None):
-    if todo_id is not None:
-        todo = get_object_or_404(ToDo, pk=todo_id)
+def create(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    if "todo_id" in request.GET:
+        todo = get_object_or_404(ToDo, pk=request.GET['todo_id'])
     else: 
         todo = None
-    project = get_object_or_404(Project, pk=project_id)
+
     if request.method == "POST":
         form = TicketForm(request.POST, request.FILES, user=request.user, project=project, todo=todo)
         if form.is_valid():
             form.save()
             ticket = form.instance
-            todo.tickets.add(ticket)
+            if todo:
+                todo.tickets.add(ticket)
 
             messages.success(request, 'Ticket Added')
 

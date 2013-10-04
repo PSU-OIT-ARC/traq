@@ -55,7 +55,7 @@
             {% if ticket.todos %}
                 <ul style='width:100%'><strong>To Do Items:</strong>
                 {% for todo in ticket.todos.all %}
-                    <li style='width:100%'>#{{ todo.pk }}{{ todo.title }}</li>
+                    <li style='width:100%'><a href="{% url 'todos-detail' todo.pk %}">#{{ todo.pk }} {{ todo.title }}</a></li>
                 {% endfor %} 
                 </ul>
             {% endif %}

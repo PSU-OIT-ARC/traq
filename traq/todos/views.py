@@ -60,6 +60,7 @@ def create(request, project_id):
         # them in the initial data on the form
         initial_data.pop("body", None)
         initial_data.pop("title", None)
+        initial_data.pop("add_ticket", None)
         form = ToDoForm(initial=initial_data, user=request.user, project=project)
     return render(request, 'todos/create.html', {
         'form': form,
