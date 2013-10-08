@@ -37,7 +37,8 @@ class ToDoForm(forms.ModelForm):
         if self.instance.pk is None:
             self.instance.created_by = self.user
             self.instance.project = project
-
+        
+        
         # remove the blank choices from the fields
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
@@ -58,7 +59,7 @@ class ToDoForm(forms.ModelForm):
         self.fields['component'].queryset = Component.objects.filter(project=project)
         self.fields['existing_files'].queryset = TicketFile.objects.filter(todo=self.instance)
         self.fields['existing_tickets'].queryset = Ticket.objects.filter(todos=self.instance)
-
+    
     def hasFiles(self):
         # does this Todo have any files associated with it?
         return self.fields['existing_files'].queryset.count() != 0

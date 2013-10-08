@@ -1,4 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.loading import get_model
+from django.template.defaultfilters import date
 import django_filters
 from .models import TicketStatus, TicketPriority, Ticket, Project
 from django import forms
@@ -15,6 +17,18 @@ def range_from_today(interval):
         make_aware(naive_end, get_current_timezone())
     )
 
+def get_choices(model):
+    my_choices= []
+    my_choices.append( ('',"Any ol\' Time") )
+    last_month = now() - datetime.timedelta(days=30)
+    items = model.objects.filter(project_id=9, due_on__gte=last_month).distinct()
+    dates = items.values_list('due_on', flat='true').all()
+    for due in dates:
+        if due is not None:
+            pretty_date = due.strftime('%d %b, %Y')
+            my_choices.append( (due.date(), pretty_date) )
+    return my_choices
+    
 class StartDateRangeFilter(django_filters.DateRangeFilter):
     options = {
         '': (_('Any Date'), lambda qs, name: qs.all()),
@@ -37,32 +51,27 @@ class StartDateRangeFilter(django_filters.DateRangeFilter):
         6: (_('This year'), lambda qs, name: qs.filter(**{
                     '%s__year' % name: now().year,
                     })),
+        7: (_('Within last Month'), lambda qs, name: qs.filter(**{
+                    '%s__range' % name: (now() - datetime.timedelta(days=30), now()),
+                    })),
         }
 
-class SprintEndRangeFilter(django_filters.DateRangeFilter):
-    my_choices = {'': (_('Any ol\' Time'), lambda qs, name: qs.all())}
-    tix = Ticket.objects.filter(project_id=9)
-    dates = tix.values_list('due_on', flat='true').all()
-    index = 1
-    for due in dates:
-        if due is not None:
-            pretty_date = due.strftime('%d %b, %Y')
-            my_choices[index] = (pretty_date, lambda qs, name, due=due: qs.filter(**{
-                '%s__day' % name: due.day, 
-                '%s__month' % name: due.month, 
-                '%s__year' % name: due.year 
-                }))
-            index += 1
-    options = my_choices
-
-   
+    
 class TicketFilterSet(django_filters.FilterSet):
     status = django_filters.ModelChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all())
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
-    sprint_end = SprintEndRangeFilter('due_on', label=_('Due On'))
+    sprint_end = django_filters.DateFilter('due_on', label=_('Due On')) 
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
+
+
+    def __init__(self, *args, **kwargs):
+        super(TicketFilterSet, self).__init__(*args, **kwargs)
+        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model) ) 
+
+        
     class Meta:
         model = Ticket
         fields = ('status', 'priority', 'due_range', 'sprint_end')
+
 
 
