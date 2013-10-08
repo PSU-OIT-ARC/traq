@@ -17,15 +17,16 @@ def range_from_today(interval):
         make_aware(naive_end, get_current_timezone())
     )
 
-def get_choices(model):
+
+def get_choices(model):      
     my_choices= []
     my_choices.append( ('',"Any ol\' Time") )
     last_month = now() - datetime.timedelta(days=30)
-    items = model.objects.filter(project_id=9, due_on__gte=last_month).distinct()
+    items = model.objects.filter(project_id=9, due_on__gte=last_month).order_by('due_on').distinct()
     dates = items.values_list('due_on', flat='true').all()
     for due in dates:
         if due is not None:
-            pretty_date = due.strftime('%d %b, %Y')
+            pretty_date = due.strftime('%b %d, %Y')
             my_choices.append( (due.date(), pretty_date) )
     return my_choices
     
@@ -60,13 +61,13 @@ class StartDateRangeFilter(django_filters.DateRangeFilter):
 class TicketFilterSet(django_filters.FilterSet):
     status = django_filters.ModelChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all())
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
-    sprint_end = django_filters.DateFilter('due_on', label=_('Due On')) 
+    sprint_end = django_filters.DateFilter('due_on', label=_('Due On'),) 
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
 
 
     def __init__(self, *args, **kwargs):
         super(TicketFilterSet, self).__init__(*args, **kwargs)
-        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model) ) 
+        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model) )
 
         
     class Meta:
