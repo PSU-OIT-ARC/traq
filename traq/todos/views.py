@@ -18,7 +18,7 @@ from traq.permissions.decorators import can_view_project, can_view_todo
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     #hide closed by default
-    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project))
+    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False))
     todos = todo_filterset
     return render(request, 'todos/list.html', {
         'todos': todos,
@@ -114,7 +114,7 @@ def edit(request, todo_id):
             form.save()
             if form.instance.is_deleted:
                 messages.success(request, 'To Do Item Deleted')
-                return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
+                return HttpResponseRedirect(reverse("todos-list", args=(project.pk,)))
             else:
                 messages.success(request, 'To Do Item Edited')
                 return HttpResponseRedirect(reverse("todos-detail", args=(form.instance.pk,)))
