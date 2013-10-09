@@ -9,7 +9,11 @@ from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
 from traq.todos.filters import ToDoFilterSet
 from django.contrib.auth.decorators import permission_required
+from traq.permissions.decorators import can_view_project, can_view_todo
 
+
+
+@can_view_project
 @permission_required('todos.add_todo')
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -22,6 +26,7 @@ def listing(request, project_id):
         'filterset': todo_filterset,
         })
 
+@can_view_project
 @permission_required('todos.add_todo')
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -67,6 +72,7 @@ def create(request, project_id):
         'project': project,
     })
 
+@can_view_todo    
 @permission_required('todos.add_todo')
 def detail(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
@@ -95,6 +101,7 @@ def detail(request, todo_id):
         'files': files,
     })
 
+@can_view_todo
 @permission_required('todos.change_todo')
 def edit(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
