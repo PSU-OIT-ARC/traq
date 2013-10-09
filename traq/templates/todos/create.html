@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block page_title %}{% if todo %}Edit Request{% else %}Create a To Do Item{% endif %}{% endblock %}
 {% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li><a href='{% url 'todos-list' project.pk %}'>To Do Items</a></li>
+    {% if perms.projects.can_view_all %}
+        <li><a href="{% url 'projects-all' %}">Projects</a></li>
+        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    {% else %}
+        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
+        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+     {% endif %}
+    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
     {% if todo %}
         <li><a href="{% url 'todos-detail' todo.pk %}">{{ todo.title }}</a></li>
         <li>Edit</li>
@@ -123,7 +128,20 @@
     $('.autocomplete').autocomplete({
         source: tickets
         });
+
+      /* Workaround: Chrome 20.0 and newer only support 
+                 ISO-formatted dates in value attribute. */
+  if (parseFloat(cssua.ua.chrome) > 20.0) {
+    $('input[type=date]').each(function(){
+      var d = $.trim(this.getAttribute('value'));
+      if (d){
+        d = new Date(d);
+        var dStr = d.toISOString().split('T')[0];
+        this.value = dStr; 
+      }
     });
+  }    
+ });
 </script>
 {% endblock %}
 

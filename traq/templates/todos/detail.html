@@ -4,8 +4,13 @@
 
 {% block page_title %}{{ todo.title }}{% endblock %}
 {% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+ {% if perms.projects.can_view_all %}
+        <li><a href="{% url 'projects-all' %}">Projects</a></li>
+        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    {% else %}
+        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
+        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+     {% endif %}
     <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
     <li>{{ todo.title }}</li>
 {% endblock %}
@@ -13,7 +18,6 @@
 {% block content %}
 
 <h2>
-    <span class="ticket-priority-{{ todo.priority|slugify }} ticket-status-{{ todo.status|slugify }}">{{ todo.priority }}</span>
     #{{ todo.pk }}: {{ todo.title }} 
     {% if perms.todos.change_todo %}
     <a href="{% url 'todos-edit' todo.pk %}" class="button">Edit</a>
