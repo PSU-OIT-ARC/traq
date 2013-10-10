@@ -80,6 +80,9 @@ class Project(models.Model):
     objects = ProjectManager()
     clients = models.ManyToManyField(User, blank=True, null=True)
 
+    def __unicode__(self):
+        return "%s" % self.name
+
     def createDefaultComponents(self):
         """Create all the default components for a project"""
         components = [
