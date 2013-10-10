@@ -42,3 +42,15 @@ def tickettimepretty(value):
         return u'%d:%02d' % (hours, minutes)
 
 
+@register.filter()
+def fractionsofhours(value):
+    """Converts a time or timedelta object to a string like '11:22'"""
+    if value == "":
+        return ""
+    hours, minutes = timedeltaToHoursMinutes(value)
+    if hours == minutes == 0:
+        return 0
+    else:
+        return round(hours + minutes/60.0, 2)
+
+

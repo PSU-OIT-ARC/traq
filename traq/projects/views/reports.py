@@ -1,6 +1,6 @@
 import json
 from traq.utils import UnicodeWriter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -27,6 +27,17 @@ def mega(request):
             user.totals['total'] += project.total
             user.totals['billable'] += project.billable
             user.totals['non_billable'] += project.non_billable
+
+    for project in projects:
+        project.total_time = timedelta(0)
+        for user in users:
+            for p in user.projects:
+                if project.pk == p.pk:
+                    project.total_time += p.total
+
+        if project.estimated_hours:
+            project.hours_remaining = timedelta(hours=project.estimated_hours) - project.total_time
+
 
     return render(request, 'projects/reports/mega.html', {
         'users': users,
@@ -125,8 +136,10 @@ def _intervalHelper(request):
     if interval == ():
         now = datetime.utcnow().replace(tzinfo=utc)
         earlier = now - timedelta(days=30)
-        interval = (earlier, now)
+        interval = (earlier.date(), now.date())
 
         if not request.GET.get('submit'):
             form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})
+
+    interval = (interval[0], datetime.combine(interval[1], time(hour=23, minute=59, second=59)))
     return form, interval

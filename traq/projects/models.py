@@ -62,7 +62,7 @@ class Project(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
     pm_email = models.BooleanField(default=False, help_text="Elect to receive email notifications")
-    pm = models.ForeignKey(User, null=True, default=None, related_name='+', blank=True, help_text="Project Manager")
+    pm = models.ForeignKey(User, null=True, default=None, related_name='+', blank=True, verbose_name="Project Lead")
     status = models.IntegerField(choices=(
         (ACTIVE, "Active"),
         (INACTIVE, "Inactive"),
@@ -79,6 +79,7 @@ class Project(models.Model):
     created_by = models.ForeignKey(User, related_name='+')
     objects = ProjectManager()
     clients = models.ManyToManyField(User, blank=True, null=True)
+    estimated_hours = models.IntegerField(null=True, default=None, blank=True)
 
     def __unicode__(self):
         return "%s" % self.name
