@@ -463,6 +463,10 @@ p.error {
 .time-grid {
 }
 
+.time-grid tfoot th, .time-grid tfoot td{
+    border:1px solid black;
+}
+
 .time-grid th {
     text-align:center;
     padding-left:3px;

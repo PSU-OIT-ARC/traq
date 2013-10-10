@@ -79,6 +79,7 @@ class Project(models.Model):
     created_by = models.ForeignKey(User, related_name='+')
     objects = ProjectManager()
     clients = models.ManyToManyField(User, blank=True, null=True)
+    estimated_hours = models.IntegerField(null=True, default=None, blank=True)
 
     def createDefaultComponents(self):
         """Create all the default components for a project"""

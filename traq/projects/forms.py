@@ -36,7 +36,8 @@ class ProjectForm(forms.ModelForm):
             'status',
             'is_deleted',
             'pm_email',
-            'pm'
+            'pm',
+            'estimated_hours',
         )
 
 class ComponentForm(forms.ModelForm):
@@ -94,8 +95,8 @@ class MilestoneForm(forms.ModelForm):
 
 class ReportIntervalForm(forms.Form):
     """Simple little form to select a datetime range"""
-    start = forms.DateTimeField()
-    end = forms.DateTimeField()
+    start = forms.DateField(widget=forms.widgets.DateInput(attrs={"type": "date"}))
+    end = forms.DateField(widget=forms.widgets.DateInput(attrs={"type": "date"}))
 
     def clean(self):
         cleaned = super(ReportIntervalForm, self).clean()
