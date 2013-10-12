@@ -85,7 +85,10 @@ def _invoices(request):
 
 def _projects(request):
     user = request.user
-    projects = Project.objects.filter(clients=request.user)
+    if user.groups.filter(name=STAFF_GROUP):
+	projects = Project.objects.all()
+    else:
+	projects = Project.objects.filter(clients=request.user)
     return render(request, "accounts/projects.html", {
         "projects": projects,
     })
