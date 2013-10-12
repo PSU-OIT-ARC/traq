@@ -18,10 +18,10 @@ from ..tickets.filters import TicketFilterSet
 @login_required
 def profile(request, tickets=''):
     user = request.user
-    if user.groups.filter(name=CLIENT_GROUP):
-        return _projects(request)
-    elif user.groups.filter(name=STAFF_GROUP):
+    if user.groups.filter(name='arc'):
         return _tickets(request, tickets)
+    elif user.groups.filter(name=CLIENT_GROUP):
+        return _projects(request)
     else:
         return _invoices(request)
 
