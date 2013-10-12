@@ -18,7 +18,9 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
   <h2>
     Tickets <a href="{% url 'accounts-profile' tickets='assigned'%}">Assigned To </a> or <a href="{% url 'accounts-profile' tickets='created_by'%}">Created By </a>You
-    <input type="text" name="search" id="ticket-search" placeholder="Search" />
+    <form class='iblock float-right' style='margin-top:20px;' method='GET'>
+    <input type="text" name="contains" id="ticket-contains" placeholder="Search" />
+    </form>
   </h2>
 
   <div class="clear"></div>
