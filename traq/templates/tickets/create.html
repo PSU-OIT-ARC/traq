@@ -104,5 +104,19 @@
 
 
 </form>
+<script type='text/javascript'>
+ $(document).ready(function(){
+ if (parseFloat(cssua.ua.chrome) > 20.0) {
+    $('input[type=date]').each(function(){
+      var d = $.trim(this.getAttribute('value'));
+      if (d){
+        d = new Date(d);
+        var dStr = d.toISOString().split('T')[0];
+        this.value = dStr; 
+      }
+    });
+  }    
+ });
+</script>
 {% endblock %}
 
