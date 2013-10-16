@@ -97,11 +97,16 @@ p.error {
     float:right;
 }
 
+.table-scroller {
+    overflow:scroll;
+}
+
 .report {
     background-color:#fff;
     border-spacing:0;
     border-collapse:collapse;
     width:100%;
+    overflow:scroll;
 }
 
 .report th {
@@ -119,6 +124,8 @@ p.error {
 .report tr.odd td {
     background-color:#efefef;
 }
+
+
 
 /* these colors are from twitter bootstrap */
 .label-default {
