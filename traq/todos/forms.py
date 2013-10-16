@@ -48,12 +48,12 @@ class ToDoForm(forms.ModelForm):
         if not self.is_bound:
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
             self.fields['component'].initial = project.defaultComponent()
-            self.fields['estimate'].initial = "1"
 
         # one of these fields will be required, but we handle that in the clean
         # method
         self.fields['title'].required = False
         self.fields['body'].required = False
+        self.fields['estimate'].required = False
 
         # only display thingies associated with this project
         self.fields['component'].queryset = Component.objects.filter(project=project)

@@ -11,7 +11,7 @@ class ToDo(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     started_on = models.DateTimeField(default=lambda:datetime.now())
     edited_on = models.DateTimeField(auto_now=True)
-    estimate = models.DecimalField(null=True, default=None, max_digits=5, decimal_places=2)
+    estimate = models.DecimalField(null=True, default=None, max_digits=5, decimal_places=2, blank=True)
     is_deleted = models.BooleanField(default=False, verbose_name='Delete')
     due_on = models.DateTimeField(null=True, default=None, blank=True, verbose_name='Desired due date')
     tickets = models.ManyToManyField(Ticket, related_name='todos') 
