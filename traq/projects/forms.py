@@ -38,6 +38,7 @@ class ProjectForm(forms.ModelForm):
             'pm_email',
             'pm',
             'estimated_hours',
+            'is_scrum',
         )
 
 class ComponentForm(forms.ModelForm):
