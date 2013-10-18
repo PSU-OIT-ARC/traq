@@ -17,22 +17,19 @@
     <div id='content-wrapper' style='min-height:400px;'>
     <h2> {{ project.name }}</h2>
     <h2 >To Do Items
-    <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a>
-    {% if project.is_scrum %}
-        <a href="{% url 'todos-prioritize' project.pk %}" class="button">Prioritize</a>
-    {% endif %}</h2>
+    <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a></h2>
     {% include 'filterset.html' %}
     <table cellpadding='5px' id='todo-table' class='tablesorter' style='width:100%;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
-            <th>To Do Item</th><th>Status</th><th>Due On</td><th>Priority</th>
+            <th>To Do Item</th><th>Status</th><th>Due On</td><th>Rank</th>
         </thead>
     <tbody>
     {% for todo in todos %}
-        <tr class='{% cycle 'odd' 'even' %}'>
+        <tr id='{{ todo.pk }}' class='{% cycle 'odd' 'even' %}'>
             <td style='padding:5px'><a href="{% url "todos.views.detail" todo.pk %}">#{{todo.pk}} {{ todo.title }}</a> </td>
             <td style='padding:5px'>{{ todo.status }}</td>
             <td style='padding:5px'>{{ todo.due_on |date:"M d, Y" }}</td>
-            <td style='padding:5px;'>{{ todo.priority }}</td> 
+            <td style='padding:5px;'>{{ todo.rank }}</td> 
         </tr>
     {% endfor %}
     </tbody>    
@@ -42,7 +39,10 @@
     <script type='text/javascript' src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
     <script type='text/javascript'>
         $(document).ready(function(){
-            $('#todo-table').tablesorter();}
+            $('#todo-table').tablesorter();
+            $('#todo-table').sortable();
+            }
+
             );
     </script>
 
