@@ -80,6 +80,7 @@ class Project(models.Model):
     objects = ProjectManager()
     clients = models.ManyToManyField(User, blank=True, null=True)
     estimated_hours = models.IntegerField(null=True, default=None, blank=True)
+    is_scrum = models.BooleanField(default=False, help_text='This turns on a bunch of annoying Scrum things') 
 
     def __unicode__(self):
         return "%s" % self.name
