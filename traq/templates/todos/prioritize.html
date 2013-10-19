@@ -17,7 +17,10 @@
     <div id='content-wrapper' style='min-height:400px;'>
     <h2> {{ project.name }}</h2>
     <h2 >To Do Items
-    <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a></h2>
+    <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a>
+    <button style='float:right' id='order'>Rank 'Em</button>
+    </h2>
+    <form id='rank-form' method='POST'>{% csrf_token %}<input type='hidden' name='pk' id='field'/></form>
     {% include 'filterset.html' %}
     <table cellpadding='5px' id='todo-table' class='tablesorter' style='width:100%;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
@@ -38,12 +41,26 @@
     
     <script type='text/javascript' src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
     <script type='text/javascript'>
+        var order ='';
         $(document).ready(function(){
-            $('#todo-table').tablesorter();
-            $('#todo-table').sortable();
-            }
-
-            );
+             $('#todo-table').tablesorter();
+              $('#todo-table tbody').sortable();
+              order = $('#todo-table tbody').sortable('toArray');
+              $('#todo-table tbody').sortable({
+                    update: function( event, ui ) {
+                    order = $(this).sortable('toArray');
+                    for(i = 0; i< order.length; i++){
+                        var id = order[i];
+                        $('#'+id + ' td:last').text(i);
+                        }
+                    }
+                }); 
+               $('#order').click(function(event){
+                  $('#field').val(order);
+                  $('#rank-form').submit();
+                  return false;
+                  });
+               });
     </script>
 
 {% endblock %}

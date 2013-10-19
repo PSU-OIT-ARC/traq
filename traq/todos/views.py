@@ -154,9 +154,19 @@ def comments_edit(request, comment_id):
 @can_view_project
 @permission_required('todos.change_todo')
 def prioritize(request, project_id):
+    if request.method == 'POST':
+        rank_list = request.POST['pk'].split(',')
+        for index, pk in enumerate(rank_list):
+            todo = get_object_or_404(ToDo, pk=pk)
+            print "%s %s" % (todo.title, index)
+            todo.rank = index
+            todo.save()
+
+    
+    
     project = get_object_or_404(Project, pk=project_id)
     #hide deleted by default
-    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1))
+    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'))
     todos = todo_filterset
     return render(request, 'todos/prioritize.html', {
         'todos': todos,
