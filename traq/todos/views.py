@@ -158,7 +158,6 @@ def prioritize(request, project_id):
         rank_list = request.POST['pk'].split(',')
         for index, pk in enumerate(rank_list):
             todo = get_object_or_404(ToDo, pk=pk)
-            print "%s %s" % (todo.title, index)
             todo.rank = index
             todo.save()
 
