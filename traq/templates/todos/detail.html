@@ -24,7 +24,7 @@
     #{{ todo.pk }}: {{ todo.title }} 
     {% if perms.todos.change_todo %}
         {% if return_to %}
-        <a href="{% url 'todos-edit' todo.pk 'prioritize' %}" class="button">Edit</a>
+        <a href="{% url 'todos-edit' todo.pk %}?return_to=prioritize" class="button">Edit</a>
         {% else %}
         <a href="{% url 'todos-edit' todo.pk %}" class="button">Edit</a>
         {% endif %}

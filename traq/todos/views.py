@@ -74,7 +74,7 @@ def create(request, project_id):
 
 @can_view_todo    
 @permission_required('todos.add_todo')
-def detail(request, todo_id, return_to=None):
+def detail(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
     files = TicketFile.objects.filter(todo=todo)
@@ -91,7 +91,7 @@ def detail(request, todo_id, return_to=None):
                 messages.success(request, 'Comment Added')
                 return HttpResponseRedirect(request.path)
     
-    
+    return_to = request.GET.get('return_to', '')
     return render(request, 'todos/detail.html', {
         'project': project,
         'todo': todo,
@@ -103,8 +103,9 @@ def detail(request, todo_id, return_to=None):
 
 @can_view_todo
 @permission_required('todos.change_todo')
-def edit(request, todo_id, return_to=None):
+def edit(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
+    return_to = request.GET.get('return_to','')
     project = todo.project
     files = TicketFile.objects.filter(todo=todo)
     if request.method == "POST":
@@ -114,13 +115,16 @@ def edit(request, todo_id, return_to=None):
             form.save()
             if form.instance.is_deleted:
                 messages.success(request, 'To Do Item Deleted')
-                if return_to is 'prioritize':
+                if return_to == 'prioritize':
                     return HttpResponseRedirect(reverse("todos-prioritize", args=(project.pk,)))
                 else:
                     return HttpResponseRedirect(reverse("todos-list", args=(project.pk,)))
             else:
                 messages.success(request, 'To Do Item Edited')
-                return HttpResponseRedirect(reverse("todos-detail", args=(form.instance.pk, 'prioritize')))
+                if return_to == 'prioritize':
+                    return HttpResponseRedirect('%s?return_to=prioritize' % reverse("todos-detail", args=(project.pk,)))
+                else:
+                    return HttpResponseRedirect(reverse("todos-detail", args=(form.instance.pk, )))
     else:
         form = ToDoForm(instance=todo, user=request.user, project=todo.project)
 
