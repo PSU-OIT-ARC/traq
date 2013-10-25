@@ -11,6 +11,7 @@
         <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
      {% endif %}
     <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
+    <li><a href="{% url 'todos-prioritize' project.pk %}">Prioritize</a></li>
 {% endblock %}
 
 {%block content %}
@@ -24,14 +25,15 @@
     {% include 'filterset.html' %}
     <table cellpadding='5px' id='todo-table' class='tablesorter' style='width:100%;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
-            <th>To Do Item</th><th>Status</th><th>Due On</td><th>Rank</th>
+            <th>To Do Item</th><th>Status</th><th>Due On</td><th>Estimate</td><th>Rank</th>
         </thead>
     <tbody>
     {% for todo in todos %}
         <tr id='{{ todo.pk }}' class='{% cycle 'odd' 'even' %}'>
-            <td style='padding:5px'><a href="{% url "todos.views.detail" todo.pk %}">#{{todo.pk}} {{ todo.title }}</a> </td>
+            <td style='padding:5px'><a href="{% url "todos-detail" todo.pk 'prioritize' %}">#{{todo.pk}} {{ todo.title }}</a> </td>
             <td style='padding:5px'>{{ todo.status }}</td>
             <td style='padding:5px'>{{ todo.due_on |date:"M d, Y" }}</td>
+            <td style='padding:5px;'>{{ todo.estimate }}</td> 
             <td style='padding:5px;'>{{ todo.rank }}</td> 
         </tr>
     {% endfor %}

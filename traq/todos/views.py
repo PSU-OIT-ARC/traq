@@ -74,13 +74,12 @@ def create(request, project_id):
 
 @can_view_todo    
 @permission_required('todos.add_todo')
-def detail(request, todo_id):
+def detail(request, todo_id, return_to=None):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
     files = TicketFile.objects.filter(todo=todo)
     comments = Comment.objects.filter(todo=todo).select_related('created_by')
     comment_form = CommentForm(created_by=request.user, todo=todo)
-
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
         # was submitted
@@ -99,11 +98,12 @@ def detail(request, todo_id):
         'comments': comments,
         'comment_form': comment_form,
         'files': files,
+        'return_to':return_to,
     })
 
 @can_view_todo
 @permission_required('todos.change_todo')
-def edit(request, todo_id):
+def edit(request, todo_id, return_to=None):
     todo = get_object_or_404(ToDo, pk=todo_id)
     project = todo.project
     files = TicketFile.objects.filter(todo=todo)
@@ -114,10 +114,13 @@ def edit(request, todo_id):
             form.save()
             if form.instance.is_deleted:
                 messages.success(request, 'To Do Item Deleted')
-                return HttpResponseRedirect(reverse("todos-list", args=(project.pk,)))
+                if return_to is 'prioritize':
+                    return HttpResponseRedirect(reverse("todos-prioritize", args=(project.pk,)))
+                else:
+                    return HttpResponseRedirect(reverse("todos-list", args=(project.pk,)))
             else:
                 messages.success(request, 'To Do Item Edited')
-                return HttpResponseRedirect(reverse("todos-detail", args=(form.instance.pk,)))
+                return HttpResponseRedirect(reverse("todos-detail", args=(form.instance.pk, 'prioritize')))
     else:
         form = ToDoForm(instance=todo, user=request.user, project=todo.project)
 
@@ -161,7 +164,6 @@ def prioritize(request, project_id):
             todo.rank = index
             todo.save()
 
-    
     
     project = get_object_or_404(Project, pk=project_id)
     #hide deleted by default

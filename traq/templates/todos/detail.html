@@ -12,6 +12,9 @@
         <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
      {% endif %}
     <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
+    {% if return_to %}
+        <li><a href="{% url 'todos-prioritize' project.pk %}">Prioritize</a></li>
+    {% endif %}
     <li>{{ todo.title }}</li>
 {% endblock %}
 
@@ -20,7 +23,11 @@
 <h2>
     #{{ todo.pk }}: {{ todo.title }} 
     {% if perms.todos.change_todo %}
-    <a href="{% url 'todos-edit' todo.pk %}" class="button">Edit</a>
+        {% if return_to %}
+        <a href="{% url 'todos-edit' todo.pk 'prioritize' %}" class="button">Edit</a>
+        {% else %}
+        <a href="{% url 'todos-edit' todo.pk %}" class="button">Edit</a>
+        {% endif %}
     {% endif %}
     <a href="{% url 'todos-create' project.pk %}" class="button">New ToDo</a> 
 </h2>
