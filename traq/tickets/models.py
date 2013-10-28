@@ -123,12 +123,12 @@ class Ticket(models.Model):
         if is_new or original.assigned_to_id != self.assigned_to_id:
             self.sendNotification()
 
-        #update todo
+        #update todas
         if self.todos.all():
             for todo in self.todos.all():
                 if todo.status_id == 1:
                     todo.status_id = 2
-                    todo.save()
+                todo.save()
  
 
         if not is_new:

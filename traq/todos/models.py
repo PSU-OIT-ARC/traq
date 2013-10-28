@@ -3,6 +3,8 @@ from traq.tickets.models import Ticket, TicketStatus, TicketPriority
 from django.contrib.auth.models import User
 from traq.projects.models import Project, Component
 from datetime import datetime
+from django.db.models import Q
+
 
 class ToDo(models.Model):
     ToDo_id = models.AutoField(primary_key=True)
@@ -22,4 +24,11 @@ class ToDo(models.Model):
     priority = models.ForeignKey(TicketPriority)
     component = models.ForeignKey(Component)
 
-
+    def save(self, *args, **kwargs):
+        if self.tickets.all():
+            qs = self.tickets.filter(Q(status__name='Open')|Q(status__name='Stalled')|Q(status__name='In Progess')) 
+            if not qs:
+                self.status_id = 5
+            else: 
+                self.status_id = 2
+        super(ToDo, self).save(*args, **kwargs)
