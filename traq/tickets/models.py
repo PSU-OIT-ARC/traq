@@ -123,6 +123,14 @@ class Ticket(models.Model):
         if is_new or original.assigned_to_id != self.assigned_to_id:
             self.sendNotification()
 
+        #update todo
+        if self.todos.all():
+            for todo in self.todos.all():
+                if todo.status_id == 1:
+                    todo.status_id = 2
+                    todo.save()
+ 
+
         if not is_new:
             # close all the running work on this ticket if it just turned to Completed or closed
             status_changed = self.status != original.status

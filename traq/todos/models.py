@@ -22,8 +22,4 @@ class ToDo(models.Model):
     priority = models.ForeignKey(TicketPriority)
     component = models.ForeignKey(Component)
 
-    def save(self, *args, **kwargs):
-        if self.tickets.all() and self.status_id == 1:
-            self.status_id = 2
-        super(ToDo,self).save(*args, **kwargs)
 
