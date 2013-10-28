@@ -13,4 +13,13 @@ class ToDoFilterSet(TicketFilterSet):
         model = ToDo
         fields = ('status', 'due_range','sprint_end')
 
+class ToDoPriorityFilterSet(ToDoFilterSet):
+    def __init__(self, *args, **kwargs):
+            super(ToDoFilterSet, self).__init__(*args, **kwargs)
+            self.filters.pop('priority')
+            self.filters.pop('status')
+            
+    class Meta:
+        model = ToDo
+        fields = ('due_range','sprint_end')
 

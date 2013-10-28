@@ -25,7 +25,8 @@ class ToDo(models.Model):
     component = models.ForeignKey(Component)
 
     def save(self, *args, **kwargs):
-        if self.tickets.all():
+        super(ToDo, self).save(*args, **kwargs)
+        if self.tickets.exists():
             qs = self.tickets.filter(Q(status__name='Open')|Q(status__name='Stalled')|Q(status__name='In Progess')) 
             if not qs:
                 self.status_id = 5

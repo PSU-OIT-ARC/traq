@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
-from traq.todos.filters import ToDoFilterSet
+from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
 from django.contrib.auth.decorators import permission_required
 from traq.permissions.decorators import can_view_project, can_view_todo
 
@@ -171,7 +171,7 @@ def prioritize(request, project_id):
     
     project = get_object_or_404(Project, pk=project_id)
     #hide deleted by default
-    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'))
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'))
     todos = todo_filterset
     return render(request, 'todos/prioritize.html', {
         'todos': todos,
