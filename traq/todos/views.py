@@ -183,7 +183,6 @@ def prioritize(request, project_id):
         })
 
 def get_next_friday(dates):
-    d = datetime.date.today()
     for date in dates:
         if date.weekday() == 4:
             return "%s" % date.date()

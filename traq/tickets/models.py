@@ -9,7 +9,8 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from ..projects.models import Project, Component, Milestone
 from django.core.mail import EmailMultiAlternatives
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 import re
 
 class TicketStatus(models.Model):
@@ -384,4 +385,13 @@ class Comment(models.Model):
         db_table = 'comment'
 
 
+@receiver(post_save, sender=Ticket)
+def my_handler(sender, instance, **kwargs):
+    ToDo = models.get_model('todos', 'ToDo') 
+    todos = ToDo.objects.filter(tickets=instance)
+    if todos.exists():
+        for todo in todos:
+            todo.save()
+
+   
 

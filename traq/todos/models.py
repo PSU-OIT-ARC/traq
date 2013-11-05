@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from traq.projects.models import Project, Component
 from datetime import datetime
 from django.db.models import Q
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 
@@ -30,12 +30,14 @@ class ToDo(models.Model):
 @receiver(pre_save, sender=ToDo)
 def my_handler(sender, instance, **kwargs):
     tickets = Ticket.objects.filter(todos=instance).values_list('status', flat=True)
+    print tickets
     if instance.tickets.exists():
-            if 1 in tickets or 2 in tickets or 3 in tickets: 
-                instance.status_id = 2
-            else: 
-                instance.status_id = 5
+        if 1 in tickets or 2 in tickets or 3 in tickets: 
+            instance.status_id = 2
+        else: 
+            instance.status_id = 5
     else:
         instance.status_id = 1
     
+
 
