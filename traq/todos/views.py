@@ -170,12 +170,11 @@ def prioritize(request, project_id):
             todo = get_object_or_404(ToDo, pk=pk)
             todo.rank = index
             todo.save()
+    	messages.success(request, 'To Do Items Prioritized')
 
     
     project = get_object_or_404(Project, pk=project_id)
-    todo_dates = ToDo.objects.filter(due_on__gte=now()).order_by('due_on').values_list('due_on', flat='True').distinct()
-    gets = request.GET.copy()
-    todo_filterset = ToDoPriorityFilterSet(gets, queryset=ToDo.objects.filter(project=project, is_deleted=False, status=1).order_by('rank'))
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'))
     todos = todo_filterset
     return render(request, 'todos/prioritize.html', {
         'todos': todos,
