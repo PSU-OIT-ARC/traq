@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from traq.projects.models import Project, Component
 from datetime import datetime
 from django.db.models import Q
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 class ToDo(models.Model):
@@ -24,12 +26,16 @@ class ToDo(models.Model):
     priority = models.ForeignKey(TicketPriority)
     component = models.ForeignKey(Component)
 
-    def save(self, *args, **kwargs):
-        super(ToDo, self).save(*args, **kwargs)
-        if self.tickets.exists():
-            qs = self.tickets.filter(Q(status__name='Open')|Q(status__name='Stalled')|Q(status__name='In Progess')) 
-            if not qs:
-                self.status_id = 5
+
+@receiver(pre_save, sender=ToDo)
+def my_handler(sender, instance, **kwargs):
+    tickets = Ticket.objects.filter(todos=instance).values_list('status', flat=True)
+    if instance.tickets.exists():
+            if 1 in tickets or 2 in tickets or 3 in tickets: 
+                instance.status_id = 2
             else: 
-                self.status_id = 2
-        super(ToDo, self).save(*args, **kwargs)
+                instance.status_id = 5
+    else:
+        instance.status_id = 1
+    
+
