@@ -174,20 +174,28 @@ def comments_edit(request, comment_id):
     # on the ticket detail view.
     comment = get_object_or_404(Comment, pk=comment_id)
     ticket = comment.ticket
-    project = ticket.project
+    todo = comment.todo
+    if ticket: 
+        project = ticket.project 
+    else:
+        project = todo.project
 
     if request.method == "POST":
-        form = CommentForm(request.POST, instance=comment, created_by=request.user, ticket=ticket)
+        form = CommentForm(request.POST, instance=comment, created_by=request.user, ticket=ticket, todo=todo)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
+            if ticket:
+                return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
+            else:
+                return HttpResponseRedirect(reverse('todos-detail', args=(todo.pk,)))
     else:
         form = CommentForm(instance=comment, created_by=request.user, ticket=ticket)
 
+    object = ticket or todo
     return render(request, 'tickets/comments_edit.html', {
         'form': form,
         'comment': comment,
-        'ticket': ticket,
+        'ticket': object,
         'project': project,
     })
 

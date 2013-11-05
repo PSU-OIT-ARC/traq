@@ -10,8 +10,8 @@ from traq.tickets.forms import TicketForm, CommentForm
 from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
 from django.contrib.auth.decorators import permission_required
 from traq.permissions.decorators import can_view_project, can_view_todo
-
-
+import datetime
+from django.utils.timezone import now
 
 @can_view_project
 @permission_required('todos.add_todo')
@@ -20,9 +20,12 @@ def listing(request, project_id):
     #hide closed by default
     todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False))
     todos = todo_filterset
+    todo_dates = ToDo.objects.filter(due_on__gte=now()).order_by('due_on').values_list('due_on', flat='True').distinct()
+    next_friday = get_next_friday(todo_dates)
     return render(request, 'todos/list.html', {
         'todos': todos,
         'project': project,
+        'next_friday': next_friday,
         'filterset': todo_filterset,
         })
 
@@ -170,8 +173,9 @@ def prioritize(request, project_id):
 
     
     project = get_object_or_404(Project, pk=project_id)
-    #hide deleted by default
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'))
+    todo_dates = ToDo.objects.filter(due_on__gte=now()).order_by('due_on').values_list('due_on', flat='True').distinct()
+    gets = request.GET.copy()
+    todo_filterset = ToDoPriorityFilterSet(gets, queryset=ToDo.objects.filter(project=project, is_deleted=False, status=1).order_by('rank'))
     todos = todo_filterset
     return render(request, 'todos/prioritize.html', {
         'todos': todos,
@@ -179,3 +183,9 @@ def prioritize(request, project_id):
         'filterset': todo_filterset,
         })
 
+def get_next_friday(dates):
+    d = datetime.date.today()
+    for date in dates:
+        if date.weekday() == 4:
+            return "%s" % date.date()
+    return None 

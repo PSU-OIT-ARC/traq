@@ -18,12 +18,21 @@ def range_from_today(interval):
     )
 
 
-def get_choices(model):      
+def get_choices(model, extra=None):      
+    print extra
+    print '%s' % extra
     my_choices= []
     my_choices.append( ('',"Any ol\' Time") )
     last_month = now() - datetime.timedelta(days=30)
-    items = model.objects.filter(project_id=9, due_on__gte=last_month).order_by('due_on').distinct()
-    dates = items.values_list('due_on', flat='true').all()
+    items = model.objects.filter(project_id=9, due_on__gte=last_month, is_deleted=False).order_by('due_on')
+    if extra:
+        items = items.filter(**extra)
+    dates = items.values_list('due_on', flat='true').distinct()
+    
+    for item in items:
+        print item.due_on
+
+
     for due in dates:
         if due is not None:
             pretty_date = due.strftime('%b %d, %Y')
@@ -67,7 +76,7 @@ class TicketFilterSet(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super(TicketFilterSet, self).__init__(*args, **kwargs)
-        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model) )
+        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model)) 
 
         
     class Meta:
