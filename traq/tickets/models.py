@@ -133,6 +133,7 @@ class Ticket(models.Model):
                 if status in ['Completed', 'Closed']:
                     self.finishWork()
 
+
     def totalTimes(self, interval=()):
         """Return a dict containing timedelta objects that indicate how much
         total, billable and non_billable time has been spent on this ticket"""
@@ -387,11 +388,6 @@ class Comment(models.Model):
 
 @receiver(post_save, sender=Ticket)
 def my_handler(sender, instance, **kwargs):
-    ToDo = models.get_model('todos', 'ToDo') 
-    todos = ToDo.objects.filter(tickets=instance)
-    if todos.exists():
-        for todo in todos:
-            todo.save()
-
-   
-
+    print "Ticekt post sfve"
+    for todo in instance.todos.all():
+        todo.save()

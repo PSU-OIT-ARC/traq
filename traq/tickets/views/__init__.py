@@ -77,7 +77,7 @@ def create(request, project_id):
             ticket = form.instance
             if todo:
                 todo.tickets.add(ticket)
-
+                todo.save()
             messages.success(request, 'Ticket Added')
 
             # save the ticket form data so the user doesn't have to reinput

@@ -26,18 +26,18 @@ class ToDo(models.Model):
     priority = models.ForeignKey(TicketPriority)
     component = models.ForeignKey(Component)
 
+    def save(self, *args, **kwargs):
+        print 'todo save'
+        tickets = Ticket.objects.filter(todos=self).values_list('status', flat=True)
+        if tickets:
+            if 1 in tickets or 2 in tickets or 3 in tickets: 
+                self.status_id=2
+            else: 
+                self.status_id = 5
+        else:
+            self.status_id = 1
+        super(ToDo, self).save(*args, **kwargs)
 
-@receiver(pre_save, sender=ToDo)
-def my_handler(sender, instance, **kwargs):
-    tickets = Ticket.objects.filter(todos=instance).values_list('status', flat=True)
-    print tickets
-    if instance.tickets.exists():
-        if 1 in tickets or 2 in tickets or 3 in tickets: 
-            instance.status_id = 2
-        else: 
-            instance.status_id = 5
-    else:
-        instance.status_id = 1
-    
+
 
 

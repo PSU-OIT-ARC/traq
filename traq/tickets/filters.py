@@ -19,8 +19,6 @@ def range_from_today(interval):
 
 
 def get_choices(model, extra=None):      
-    print extra
-    print '%s' % extra
     my_choices= []
     my_choices.append( ('',"Any ol\' Time") )
     last_month = now() - datetime.timedelta(days=30)
@@ -29,8 +27,6 @@ def get_choices(model, extra=None):
         items = items.filter(**extra)
     dates = items.values_list('due_on', flat='true').distinct()
     
-    for item in items:
-        print item.due_on
 
 
     for due in dates:

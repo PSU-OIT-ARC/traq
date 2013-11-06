@@ -54,8 +54,8 @@ def create(request, project_id):
             # Go to the ticket detail page, or if they clicked the "Save and
             # add another ticket button, display the ticket form again
             if request.POST.get("submit", "submit").lower() == "submit":
-                #return HttpResponseRedirect(reverse("todos-create", args=(form.instance.pk,)))
-                return HttpResponseRedirect(request.path)
+                return HttpResponseRedirect(reverse("todos-detail", args=(todo.pk,)))
+                #return HttpResponseRedirect(request.path)
             else:
                 return HttpResponseRedirect(request.path)
     else:
