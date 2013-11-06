@@ -20,7 +20,8 @@ def listing(request, project_id):
     #hide closed by default
     todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False))
     todos = todo_filterset
-    todo_dates = ToDo.objects.filter(due_on__gte=now()).order_by('due_on').values_list('due_on', flat='True').distinct()
+    yesterday = now() - datetime.timedelta(days=1)
+    todo_dates = ToDo.objects.filter(due_on__gte=yesterday).order_by('due_on').values_list('due_on', flat='True').distinct()
     next_friday = get_next_friday(todo_dates)
     return render(request, 'todos/list.html', {
         'todos': todos,
@@ -184,6 +185,6 @@ def prioritize(request, project_id):
 
 def get_next_friday(dates):
     for date in dates:
-        if date.weekday() == 4:
+        if date.weekday() == 2:
             return "%s" % date.date()
     return None 
