@@ -126,9 +126,9 @@ def edit(request, todo_id):
             else:
                 messages.success(request, 'To Do Item Edited')
                 if return_to == 'prioritize':
-                    return HttpResponseRedirect('%s?return_to=prioritize' % reverse("todos-detail", args=(project.pk,)))
+                    return HttpResponseRedirect('%s?return_to=prioritize' % reverse("todos-detail", args=(todo.pk,)))
                 else:
-                    return HttpResponseRedirect(reverse("todos-detail", args=(form.instance.pk, )))
+                    return HttpResponseRedirect(reverse("todos-detail", args=(todo.pk, )))
     else:
         form = ToDoForm(instance=todo, user=request.user, project=todo.project)
 
