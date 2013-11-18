@@ -50,6 +50,9 @@ class TicketForm(forms.ModelForm):
             self.fields['estimated_time'].initial = "1:00"
             self.fields['assigned_to'].initial = self.user
 
+        if self.todos:
+            self.fields['title'].initial = self.todos.title
+
         # one of these fields will be required, but we handle that in the clean
         # method
         self.fields['title'].required = False
