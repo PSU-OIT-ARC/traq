@@ -94,6 +94,8 @@ def create(request, project_id):
             # add another ticket button, display the ticket form again
             if request.POST.get("submit", "submit").lower() == "submit":
                 return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
+            elif "todo_id" in request.GET:
+                return HttpResponseRedirect("%s?todo_id=%d" % (request.path,todo.pk))
             else:
                 return HttpResponseRedirect(request.path)
     else:
