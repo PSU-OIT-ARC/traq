@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from traq.tickets.forms import TicketForm, CommentForm
 from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
+from traq.utils import get_next_scrum_day
 from django.contrib.auth.decorators import permission_required
 from traq.permissions.decorators import can_view_project, can_view_todo
 import datetime
@@ -22,7 +23,9 @@ def listing(request, project_id):
     todos = todo_filterset
     yesterday = now() - datetime.timedelta(days=1)
     todo_dates = ToDo.objects.filter(due_on__gte=yesterday).order_by('due_on').values_list('due_on', flat='True').distinct()
-    next_friday = get_next_friday(todo_dates)
+    next_friday = get_next_scrum_day(todo_dates, 2)
+    print todo_dates
+
     return render(request, 'todos/list.html', {
         'todos': todos,
         'project': project,
@@ -183,8 +186,3 @@ def prioritize(request, project_id):
         'filterset': todo_filterset,
         })
 
-def get_next_friday(dates):
-    for date in dates:
-        if date.weekday() == 2:
-            return "%s" % date.date()
-    return None 

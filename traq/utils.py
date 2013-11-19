@@ -56,3 +56,11 @@ class UnicodeWriter:
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
+
+
+def get_next_scrum_day(dates, day):
+    for date in dates:
+        print date.weekday()
+        if date.weekday() == day:
+            return "%s" % date.date()
+    return None 
