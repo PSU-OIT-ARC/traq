@@ -119,11 +119,15 @@ class Ticket(models.Model):
         super(Ticket, self).save(*args, **kwargs)
 
         is_new = original.pk is None
+        is_done = self.status_id == 4 or self.status_id == 5
+
+        print is_done 
 
         # send a notification for a new ticket, or one that was assigned
         if is_new or original.assigned_to_id != self.assigned_to_id:
-            self.sendNotification()
-
+            self.sendNotification('New')
+        if is_done:
+            self.sendNotification(self.status)
 
         if not is_new:
             # close all the running work on this ticket if it just turned to Completed or closed
@@ -167,7 +171,8 @@ class Ticket(models.Model):
             'non_billable': non_billable,
         }
 
-    def sendNotification(self):
+    def sendNotification(self, *args):
+        status = args[0]
         """Send a notification email to the person assigned to this ticket"""
         if self.assigned_to is not None:
             to = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
@@ -180,7 +185,7 @@ class Ticket(models.Model):
             text_content = render_to_string('tickets/notification.txt', context)
             html_content = render_to_string('tickets/notification.html', context)
             clean_title = re.sub(r"[\r\n]+", "; ", self.title)
-            subject = 'Traq Ticket #%d %s' % (self.pk, clean_title)
+            subject = 'Traq: %s Ticket #%d %s' % (status, self.pk, clean_title)
 
             msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
             msg.attach_alternative(html_content, "text/html")
@@ -350,7 +355,6 @@ class Comment(models.Model):
                 ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
             else:
                 item = 'To Do'
-                #call this todo a ticket jsut for shorter code
                 ticket = self.todo or None  
                 ticket_url = SETTINGS.BASE_URL + reverse('todos-detail', args=(ticket.pk,))
             
@@ -367,7 +371,7 @@ class Comment(models.Model):
                 "author" : self.created_by,
                 "comment_body": self.body,
             })
-            subject = 'Traq %s #%d %s' % (item, ticket.pk, ticket.title)
+            subject = 'Traq New Comment: %s #%d %s' % (item, ticket.pk, ticket.title)
             if project.pm_email:
                 text_content = body
                 html_content = body
