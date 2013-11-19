@@ -23,13 +23,12 @@ def listing(request, project_id):
     todos = todo_filterset
     yesterday = now() - datetime.timedelta(days=1)
     todo_dates = ToDo.objects.filter(due_on__gte=yesterday).order_by('due_on').values_list('due_on', flat='True').distinct()
-    next_friday = get_next_scrum_day(todo_dates, 2)
-    print todo_dates
+    next_day = get_next_scrum_day(todo_dates, 2) or ''
 
     return render(request, 'todos/list.html', {
         'todos': todos,
         'project': project,
-        'next_friday': next_friday,
+        'next_day': next_day,
         'filterset': todo_filterset,
         })
 

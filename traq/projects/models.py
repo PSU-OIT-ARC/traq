@@ -4,7 +4,6 @@ from pytz import timezone
 from django.conf import settings as SETTINGS
 from datetime import timedelta
 from django.db import models
-from django.db import connection
 from django.contrib.auth.models import User
 from django.utils.timezone import utc
 from ..utils import dictfetchall, jsonhandler
@@ -323,5 +322,8 @@ class Milestone(models.Model):
         tz = timezone(SETTINGS.TIME_ZONE)
         return u'%s %s' % (self.name, utc_date.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")) 
 
+
 # circular dependance problem
 from ..tickets.models import Ticket, Work
+
+

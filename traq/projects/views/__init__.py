@@ -10,7 +10,7 @@ from django.db.models import Q
 
 from traq.permissions.decorators import can_view_project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
-from traq.utils import querySetToJSON
+from traq.utils import querySetToJSON, get_next_scrum_day
 
 from ..forms import ProjectForm
 from ..models import Project, Milestone

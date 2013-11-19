@@ -19,7 +19,7 @@
     <h2 >To Do Items
     <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a>
     {% if project.is_scrum %}
-        <a href="{% url 'todos-prioritize' project.pk %}/?sprint_end={{next_friday}}" class="button">Prioritize</a>
+        <a href="{% url 'todos-prioritize' project.pk %}/?sprint_end={{next_day}}" class="button">Prioritize</a>
     {% endif %}</h2>
     {% include 'filterset.html' %}
     <table cellpadding='5px' id='todo-table' class='tablesorter' style='width:100%;'>
