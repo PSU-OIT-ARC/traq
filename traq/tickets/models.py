@@ -388,6 +388,7 @@ class Comment(models.Model):
 
 @receiver(post_save, sender=Ticket)
 def my_handler(sender, instance, **kwargs):
-    print "Ticekt post sfve"
-    for todo in instance.todos.all():
-        todo.save()
+    if instance.todos.all():
+        for todo in instance.todos.all():
+            todo.due_on = instance.due_on
+            todo.save()
