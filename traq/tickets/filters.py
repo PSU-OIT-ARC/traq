@@ -68,7 +68,7 @@ class TicketFilterSet(django_filters.FilterSet):
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
     sprint_end = django_filters.DateFilter('due_on', label=_('Due On'),) 
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
-
+    
 
     def __init__(self, *args, **kwargs):
         super(TicketFilterSet, self).__init__(*args, **kwargs)
@@ -77,7 +77,7 @@ class TicketFilterSet(django_filters.FilterSet):
         
     class Meta:
         model = Ticket
-        fields = ('status', 'priority', 'due_range', 'sprint_end')
+        fields = ('assigned_to', 'status', 'priority', 'due_range', 'sprint_end')
 
 
 
