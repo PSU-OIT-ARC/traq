@@ -107,3 +107,8 @@ class ReportIntervalForm(forms.Form):
             if end < start:
                 raise forms.ValidationError("The start must be less than the end")
         return cleaned
+
+class ProjectSprintForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ('current_sprint_start', 'current_sprint_end')

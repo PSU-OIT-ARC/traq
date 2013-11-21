@@ -12,7 +12,7 @@ from traq.permissions.decorators import can_view_project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.utils import querySetToJSON, get_next_scrum_day
 
-from ..forms import ProjectForm
+from ..forms import ProjectForm, ProjectSprintForm
 from ..models import Project, Milestone
 
 # there's an annoying circular dependency between the ticket and project apps 
@@ -124,3 +124,15 @@ def create(request):
         'form': form,
     })
 
+@permission_required('projects.change_project')
+def edit_sprint(request, project_id):
+    project = get_object_or_404(Project,pk= project_id)
+    if request.method == "POST":
+        form = ProjectSprintForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
+    else:
+        form = ProjectSprintForm(instance=project)
+    return render(request, 'projects/edit_sprint.html', {
+        'form': form,})

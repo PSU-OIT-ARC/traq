@@ -108,7 +108,17 @@ $(document).ready(function(){
     <div class="right-section-block">
         {% include 'tickets/_worklog.html' %}
     </div>
-
+    {% if project.is_scrum %}
+    <div class="right-section-block">
+            <h3>Current Sprint </h3>
+            <div class="inner">
+                <ul>
+                    <li>Start: {{ project.current_sprint_start }}</li>
+                    <li>End: {{ project.current_sprint_end }} </li>
+                </ul>
+            </div>
+        </div>
+    {% endif %}
     <div class="right-section-block">
         <h3>Reports</h3>
         <div class="inner">
