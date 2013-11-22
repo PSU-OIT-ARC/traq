@@ -196,6 +196,10 @@ class Project(models.Model):
         """, (self.pk,))
         return queryset
 
+    def get_next_sprint(self):
+        return (self.current_sprint_end or now()) + timedelta(days=14)
+        
+    
     class Meta:
         db_table = 'project'
         ordering = ['name']
