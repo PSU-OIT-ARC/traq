@@ -61,6 +61,14 @@ def detail(request, project_id):
         tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
     else:
         tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
+    
+    if project.is_scrum:
+        tickets =tickets.filter(due_on=project.current_sprint_end)
+        template = 'projects/scrum_detail.html'
+    else:
+        template = 'projects/detail.html'
+    
+
     # paginate on tickets queryset
     do_pagination = False
     if not request.GET.get('showall', False):
@@ -81,11 +89,6 @@ def detail(request, project_id):
     components = project.components()
     work = project.latestWork(10)
     milestones = Milestone.objects.filter(project=project)
-    if project.is_scrum:
-        template = 'projects/scrum_detail.html'
-    else:
-        template = 'projects/detail.html'
-    
     return render(request, template, {
         'project': project,
         'tickets': tickets,

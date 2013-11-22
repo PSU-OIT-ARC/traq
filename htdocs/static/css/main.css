@@ -571,5 +571,17 @@ th.headerSortUp {
     background-color:rgb(239, 239, 239);
 }
 
+/*scrum styles */
 .small {
     font-size: .75em;}
+
+ul.stripe {
+    list-style: none;
+    padding:3px;}
+
+li.odd {
+    background-color:rgb(239, 239, 239);
+}
+
+#page {
+    background:white;}
