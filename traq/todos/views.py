@@ -18,17 +18,17 @@ from django.utils.timezone import now
 @permission_required('todos.add_todo')
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    #hide closed by default
     todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False))
     todos = todo_filterset
-    yesterday = now() - datetime.timedelta(days=1)
-    todo_dates = ToDo.objects.filter(due_on__gte=yesterday).order_by('due_on').values_list('due_on', flat='True').distinct()
-    next_day = get_next_scrum_day(todo_dates, 2) or ''
+    if project.is_scrum:
+        backlog = project.current_sprint_end - datetime.timedelta(days=2)
+    else: 
+        backlog = None
 
     return render(request, 'todos/list.html', {
         'todos': todos,
         'project': project,
-        'next_day': next_day,
+        'backlog': backlog,
         'filterset': todo_filterset,
         })
 
