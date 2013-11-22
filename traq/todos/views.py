@@ -18,7 +18,7 @@ from django.utils.timezone import now
 @permission_required('todos.add_todo')
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False))
+    todo_filterset = ToDoFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False), project_id = project_id)
     todos = todo_filterset
     if project.is_scrum:
         backlog = project.current_sprint_end - datetime.timedelta(days=2)
@@ -177,7 +177,7 @@ def prioritize(request, project_id):
 
     
     project = get_object_or_404(Project, pk=project_id)
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'))
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'), project_id=project_id)
     todos = todo_filterset
     return render(request, 'todos/prioritize.html', {
         'todos': todos,

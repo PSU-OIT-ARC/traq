@@ -50,7 +50,7 @@ def meta(request, project_id):
 @permission_required('projects.can_view_all', raise_exception=True)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
+    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
     q = request.GET.get('contains', '')
     if request.GET.get('due_on') == 'a':
         tickets = ticket_filterset.qs.order_by("-due_on")

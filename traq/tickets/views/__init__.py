@@ -162,7 +162,7 @@ def edit(request, ticket_id):
 @permission_required('tickets.add_ticket')
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets())
+    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
     tickets= ticket_filterset.qs.order_by('-priority', 'due_on')
     return render(request, 'tickets/list.html', {
         'tickets': tickets,

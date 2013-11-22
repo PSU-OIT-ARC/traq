@@ -5,6 +5,7 @@ import django_filters
 from .models import TicketStatus, TicketPriority, Ticket, Project
 from django import forms
 from django.utils.timezone import  get_current_timezone, localtime, now, make_aware
+from django.shortcuts import get_object_or_404
 import datetime
 
 def range_from_today(interval):
@@ -18,17 +19,14 @@ def range_from_today(interval):
     )
 
 
-def get_choices(model, extra=None):      
+def get_choices(model, project=None, extra=None):      
     my_choices= []
     my_choices.append( ('',"Any ol\' Time") )
     last_month = now() - datetime.timedelta(days=30)
-    items = model.objects.filter(project_id=9, due_on__gte=last_month, is_deleted=False).order_by('due_on')
+    items = model.objects.filter(project_id=project.pk, is_deleted=False).order_by('due_on')
     if extra:
         items = items.filter(**extra)
     dates = items.values_list('due_on', flat='true').distinct()
-    
-
-
     for due in dates:
         if due is not None:
             pretty_date = due.strftime('%b %d, %Y')
@@ -71,9 +69,10 @@ class TicketFilterSet(django_filters.FilterSet):
     
 
     def __init__(self, *args, **kwargs):
+        project_id = kwargs.pop('project_id')
+        project = get_object_or_404(Project, pk=project_id)
         super(TicketFilterSet, self).__init__(*args, **kwargs)
-        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model)) 
-
+        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project=project)) 
         
     class Meta:
         model = Ticket
