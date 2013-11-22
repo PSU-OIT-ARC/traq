@@ -51,7 +51,7 @@ class TicketForm(forms.ModelForm):
             self.fields['assigned_to'].initial = self.user
 
         if self.todos:
-            self.fields['title'].initial = self.todos.title
+            self.fields['title'].initial = "%s ticket" % self.todos.title
 
         # one of these fields will be required, but we handle that in the clean
         # method

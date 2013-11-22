@@ -121,8 +121,6 @@ class Ticket(models.Model):
         is_new = original.pk is None
         is_done = self.status_id == 4 or self.status_id == 5
 
-        print is_done 
-
         # send a notification for a new ticket, or one that was assigned
         if is_new or original.assigned_to_id != self.assigned_to_id:
             self.sendNotification('New')
@@ -395,4 +393,12 @@ def my_handler(sender, instance, **kwargs):
     if instance.todos.all():
         for todo in instance.todos.all():
             todo.due_on = instance.due_on
+            tic = Ticket.objects.filter(todos=todo).values_list('status', flat=True)
+            print instance.status
+            print tic
+            if 1 in tic or 2 in tic or 3 in tic: 
+                todo.status_id=2
+            else: 
+                todo.status_id = 5
             todo.save()
+

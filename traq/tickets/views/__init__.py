@@ -76,10 +76,9 @@ def create(request, project_id):
             form.save()
             ticket = form.instance
             if todo:
-                todo.tickets.add(ticket)
-                todo.save()
+                ticket.todos.add(todo)
+                ticket.save()
             messages.success(request, 'Ticket Added')
-
             # save the ticket form data so the user doesn't have to reinput
             # everything again, if they want to create a similar ticket in the
             # future. Save the data on a per project basis (using the project's pk)
