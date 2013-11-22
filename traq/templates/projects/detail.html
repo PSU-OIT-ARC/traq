@@ -127,6 +127,13 @@ $(document).ready(function(){
                     <td>
                         <form method="POST" action="{% url "projects-edit-sprint" project.pk %}">
                         {% csrf_token %}
+                        <input type='hidden' name='current_sprint_end' value={{ project.get_prev_sprint | date:'c' }}>
+                        <input type='submit' value='Prev'></input>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{% url "projects-edit-sprint" project.pk %}">
+                        {% csrf_token %}
                         <input type='hidden' name='current_sprint_end' value={{ project.get_next_sprint | date:'c' }}>
                         <input type='submit' value='Next'></input>
                         </form>

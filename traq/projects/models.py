@@ -5,7 +5,7 @@ from django.conf import settings as SETTINGS
 from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.timezone import utc
+from django.utils.timezone import utc, now
 from ..utils import dictfetchall, jsonhandler
 
 
@@ -197,7 +197,10 @@ class Project(models.Model):
         return queryset
 
     def get_next_sprint(self):
-        return (self.current_sprint_end or now()) + timedelta(days=14)
+        return (self.current_sprint_end or now().date()) + timedelta(days=14)
+     
+    def get_prev_sprint(self):
+        return (self.current_sprint_end or now().date()) - timedelta(days=14)
         
     
     class Meta:
