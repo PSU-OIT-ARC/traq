@@ -25,6 +25,7 @@ class ToDoPriorityFilterSet(ToDoFilterSet):
             self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project, extra)) 
             self.filters.pop('priority')
             self.filters.pop('status')
+            self.filters.pop('due_range')
     class Meta:
         model = ToDo
         fields = ('due_range','sprint_end')
