@@ -1,0 +1,25 @@
+{% extends "scrum_base.html" %}
+
+{% load tickets %}
+
+{% block page_title %}{{ project.name }}{% endblock %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+{% endblock %}
+
+
+{% block content %}
+<h2>{{ project.name }} <div class='float-right iblock small'><a href=#>My Tickets</a></div></h2>
+<div class='split float-left'>
+    <h3><a href="{% url "tickets-list" project.pk %}">Tickets</a> <div class='iblock small'>for sprint ending: {{ project.current_sprint_end }}</div> </h3>
+    <ul>
+        {% for ticket in tickets %}
+        <li>{{ticket}}</li>
+        {% endfor %}
+    </ul>
+</div>
+<div class='split float-right'>
+    <h3>To Do's <div class='iblock small'>for sprint ending: {{ project.current_sprint_end }}</div> </h3>
+</div>
+{% endblock %}

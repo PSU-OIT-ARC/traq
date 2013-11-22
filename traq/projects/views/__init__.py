@@ -46,7 +46,8 @@ def meta(request, project_id):
         'target_completion': target_completion,
     })
 
-    
+
+
 @permission_required('projects.can_view_all', raise_exception=True)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -80,8 +81,12 @@ def detail(request, project_id):
     components = project.components()
     work = project.latestWork(10)
     milestones = Milestone.objects.filter(project=project)
-
-    return render(request, 'projects/detail.html', {
+    if project.is_scrum:
+        template = 'projects/scrum_detail.html'
+    else:
+        template = 'projects/detail.html'
+    
+    return render(request, template, {
         'project': project,
         'tickets': tickets,
         'queries': connection.queries,

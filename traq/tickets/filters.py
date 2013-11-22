@@ -23,7 +23,10 @@ def get_choices(model, project=None, extra=None):
     my_choices= []
     my_choices.append( ('',"Any ol\' Time") )
     last_month = now() - datetime.timedelta(days=30)
-    items = model.objects.filter(project_id=project.pk, is_deleted=False).order_by('due_on')
+    if project:
+        items = model.objects.filter(project_id=project.pk, is_deleted=False).order_by('due_on')
+    else:
+        items = model.objects.filter(is_deleted=False).order_by('due_on')
     if extra:
         items = items.filter(**extra)
     dates = items.values_list('due_on', flat='true').distinct()
@@ -69,8 +72,11 @@ class TicketFilterSet(django_filters.FilterSet):
     
 
     def __init__(self, *args, **kwargs):
-        project_id = kwargs.pop('project_id')
-        project = get_object_or_404(Project, pk=project_id)
+        project_id = kwargs.pop('project_id', None)
+        if project_id is not None:
+            project = get_object_or_404(Project, pk=project_id)
+        else: 
+            project = None
         super(TicketFilterSet, self).__init__(*args, **kwargs)
         self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project=project)) 
         
