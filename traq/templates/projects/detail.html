@@ -122,7 +122,6 @@ $(document).ready(function(){
             <div class="inner">
                 <table class="block-table">
                   <tr>
-                    <td><strong>Start:</strong> {{ project.current_sprint_start }}</td>
                     <td><strong>End:</strong> {{ project.current_sprint_end }}</td>
                     <td><a class='button' href="{% url "projects-edit-sprint" project.pk %}">Edit</a></td></tr>
                 </table>

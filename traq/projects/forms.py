@@ -111,4 +111,4 @@ class ReportIntervalForm(forms.Form):
 class ProjectSprintForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ('current_sprint_start', 'current_sprint_end')
+        fields = ('current_sprint_end',)

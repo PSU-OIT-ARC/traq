@@ -80,8 +80,7 @@ class Project(models.Model):
     clients = models.ManyToManyField(User, blank=True, null=True)
     estimated_hours = models.IntegerField(null=True, default=None, blank=True)
     is_scrum = models.BooleanField(default=False, help_text='This turns on a bunch of annoying Scrum things') 
-    current_sprint_start = models.DateField(null=True, blank=True, verbose_name="Sprint Start")  
-    current_sprint_end = models.DateField(null=True, blank=True, verbose_name="Sprint End")
+    current_sprint_end= models.DateField(null=True, blank=True, verbose_name="Sprint End")  
 
 
     def __unicode__(self):
