@@ -32,7 +32,14 @@ class ToDoForm(forms.ModelForm):
         self.user = kwargs.pop("user")
 
         super(ToDoForm, self).__init__(*args, **kwargs)
-
+        
+        if project.is_scrum:
+            backlog = project.current_sprint_end - timedelta(days=2)
+            if backlog >= datetime.now().date():
+                self.fields['due_on'].initial = backlog
+            else:
+                self.fields['due_on'].initial = backlog + timedelta(days = 14)
+                
         # if this is a new to do item, we need to set some additional fields
         if self.instance.pk is None:
             self.instance.created_by = self.user

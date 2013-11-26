@@ -36,7 +36,9 @@ class TicketForm(forms.ModelForm):
         if self.instance.pk is None:
             self.instance.created_by = self.user
             self.instance.project = project
-
+        
+        if project.is_scrum:
+            self.fields['due_on'].initial = project.current_sprint_end 
         # remove the blank choices from the fields
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
