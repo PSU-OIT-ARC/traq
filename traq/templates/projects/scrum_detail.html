@@ -13,18 +13,59 @@
 <h2>{{ project.name }} <div class='float-right iblock small'><a href=#>My Tickets</a></div></h2>
 <div class='split float-left'>
     <h3><a href="{% url "tickets-list" project.pk %}">Tickets</a> <div class='iblock small'>for sprint ending: {{ project.current_sprint_end }}</div> </h3>
-    <ul class='stripe'>
-        {% for ticket in tickets %}
-            <li class='{% cycle 'even' 'odd'%}'>{{ticket}}</li>
-        {% endfor %}
-    </ul>
-</div>
-<div class='split float-right'>
-    <h3>To Do's <div class='iblock small'>for sprint ending: {{ project.current_sprint_end }}</div> </h3>
-    <ul class='stripe'
+    <table class='table-info'>
+    <thead><th>Title</th><th>Assignee</th><th>Status</th></thead>
     {% for ticket in tickets %}
-        <li class='{% cycle 'even' 'odd'%}'>{{ticket}}</li>
+        <tr class="{% cycle 'even' 'odd' %}"><td>{{ticket}}</td><td>{{ticket.assigned_to}}</td><td>{{ticket.status}}</td></tr>
+    {% empty %}
+        <tr><td>Well, there aren't any. click link above to find what you're looking for </td></tr>
     {% endfor %}
-    </ul>
+
+    </table>
+       </div>
+<div class='split float-right'>
+    <h3><a href="{% url "todos-list" project.pk%}">To Do's</a> <div class='iblock small'>for sprint ending: {{ project.current_sprint_end }}</div> </h3>
+    <table class='table-info'>
+    <thead><th>Title</th><th>Status</th><th>Tickets</th></thead>
+    {% for todo in todos %}
+        <tr class="{% cycle 'even' 'odd' %}">
+          <td><a href="{% url "todos-detail" todo.pk %}">{{todo}}</a></td>
+          <td>{{todo.status}}</td>
+          <td>{% for ticket in todo.tickets.all %}
+                {% if not forloop.first %},{% endif %}
+                {{ticket.pk}}
+                {% empty %}
+                No Tickets
+                {% endfor %}
+          </td>
+          </tr>
+    {% empty %}
+        <tr><td>Well, there aren't any. click link above to find what you're looking for </td></tr>
+    {% endfor %}
+    </table>
+    </div>
+<div style='width:100%;clear:right'>
+<hr>
+<div class='float-left triptych' style='clear:both;'>
+<h3>Components <a href="{% url 'components-create' project.pk %}" class="button">Create</a></h3>
+        <table class="block-table">
+            {% for comp in components %}
+                <tr class="{% cycle 'odd' 'even' %}">
+                    <td>
+                        {% if perms.projects.change_component %}
+                            <a href="{% url 'components-edit' comp.pk %}" class="discrete">{{ comp.name }}</a></td>
+                        {% else %}
+                            {{ comp.name }}
+                        {% endif %}
+                    <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
+                </tr>
+            {% endfor %}
+        </table>
+</div>
+<div class='float-right triptych'>
+    <div class="block-table">
+        {% include 'tickets/_worklog.html' %}
+    </div>
+</div>
 </div>
 {% endblock %}

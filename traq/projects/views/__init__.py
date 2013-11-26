@@ -14,6 +14,7 @@ from traq.utils import querySetToJSON, get_next_scrum_day
 
 from ..forms import ProjectForm, ProjectSprintForm
 from ..models import Project, Milestone
+from traq.todos.models import ToDo
 
 # there's an annoying circular dependency between the ticket and project apps 
 # so this import needs to be after project models are imported
@@ -67,8 +68,9 @@ def detail(request, project_id):
         template = 'projects/scrum_detail.html'
     else:
         template = 'projects/detail.html'
-    
-
+    todos = ToDo.objects.prefetch_related('tickets')
+    todos=todos.filter(project=project, due_on=project.current_sprint_end)
+    print todos
     # paginate on tickets queryset
     do_pagination = False
     if not request.GET.get('showall', False):
@@ -99,7 +101,7 @@ def detail(request, project_id):
         'filterset': ticket_filterset,
         "do_pagination": do_pagination,
         'page': tickets,
-        'today': date.today(),
+        'todos': todos,
     })
 
 @permission_required('projects.change_project')
