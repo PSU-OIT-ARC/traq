@@ -10,7 +10,11 @@
     <li><a href="{% url 'todos-list' project.pk %}">Todos</a></li>
     {% endif %}
     {% if perms.tickets.change_ticket %}
-    <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
+        {% if project.is_scrum %}
+            <li><a href="{% url 'tickets-list' project.pk %}?sprint_end={{project.current_sprint_end | date:'c'}}">Tickets</a></li>
+        {% else %}
+            <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
+        {% endif %}
     {% else %}
     <li>Tickets</li>
     {% endif %}
