@@ -9,6 +9,9 @@
     {% if ticket.todos.count  %}
     <li><a href="{% url 'todos-list' project.pk %}">Todos</a></li>
     {% endif %}
+    {% if return_to %}
+    <li><a href="{% url 'todos-prioritize' project.pk %}">Prioritize</a></li>
+    {% endif %}
     {% if perms.tickets.change_ticket %}
     <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
     {% else %}
