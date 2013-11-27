@@ -79,7 +79,6 @@ class TicketFilterSet(django_filters.FilterSet):
             project = None
         super(TicketFilterSet, self).__init__(*args, **kwargs)
         self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project=project)) 
-        
     class Meta:
         model = Ticket
         fields = ('assigned_to', 'status', 'priority', 'due_range', 'sprint_end')
