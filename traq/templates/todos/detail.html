@@ -17,7 +17,7 @@
         <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
     {% endif %}
     {% if return_to %}
-        <li><a href="{% url 'todos-prioritize' project.pk %}">Prioritize</a></li>
+        <li><a href="{% url 'todos-prioritize' project.pk %}?sprint_end={{project.backlog}}">Prioritize</a></li>
     {% endif %}
     <li>{{ todo.title }}</li>
 {% endblock %}

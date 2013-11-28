@@ -202,7 +202,9 @@ class Project(models.Model):
     def get_prev_sprint(self):
         return (self.current_sprint_end or now().date()) - timedelta(days=14)
         
-    
+    def backlog(self):
+        return (self.current_sprint_end - timedelta(days=2)).strftime('%Y-%m-%d')
+
     class Meta:
         db_table = 'project'
         ordering = ['name']

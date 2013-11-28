@@ -11,7 +11,7 @@
         <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
      {% endif %}
     <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
-    <li><a href="{% url 'todos-prioritize' project.pk %}">Prioritize</a></li>
+    <li><a href="{% url 'todos-prioritize' project.pk %}?sprint_end={{project.backlog}}">Prioritize</a></li>
 {% endblock %}
 
 {%block content %}
