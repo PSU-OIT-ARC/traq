@@ -59,6 +59,7 @@ urlpatterns = patterns('',
     url(r'^todos/(\d+)/?$', todos.views.detail, name='todos-detail'),
     url(r'^todos/(\d+)/edit/?$', todos.views.edit, name='todos-edit'),
     url(r'^project/(\d+)/prioritize/?$', todos.views.prioritize, name='todos-prioritize'),
+    url(r'^projects/(\d+)/todos/bulk/?$', todos.views.bulk, name='todos-bulk'),
 
     # comments
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),

@@ -14,7 +14,7 @@ from traq.tickets.models import (
     TicketFile,
 )
 from ..projects.models import Component, Milestone
-from traq.tickets.forms import TicketForm
+from traq.tickets.forms import TicketForm, BulkForm
 from traq.todos.models import ToDo
 
 class ToDoForm(forms.ModelForm):
@@ -133,4 +133,25 @@ class ToDoForm(forms.ModelForm):
         widgets = {
             "due_on": forms.DateTimeInput(attrs={'type':'date'})
         }
+
+class BulkToDoForm(BulkForm):
+    def bulkUpdate(self, todo_ids):    
+        # figure out all the fields that needs to be updated on a todo
+        change_to = {}
+        for k, field in self.fields.items():
+            is_being_updated = self.cleaned_data.get(k, None)
+            corresponding_name = k[:-len("_update")]
+            corresponding_data = self.cleaned_data.get(corresponding_name, None)
+
+            if is_being_updated:
+                change_to[corresponding_name] = corresponding_data
+
+        # for each ticket, update all the fields specified on the form
+        for todo_id in todo_ids:
+            todo = ToDo.objects.get(pk=todo_id)
+
+            for k, v in change_to.items():
+                setattr(todo, k, v)
+
+            todo.save()
 
