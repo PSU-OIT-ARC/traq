@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.db.models import Q
 
 from traq.permissions.decorators import can_view_project
@@ -91,6 +91,11 @@ def detail(request, project_id):
     components = project.components()
     work = project.latestWork(10)
     milestones = Milestone.objects.filter(project=project)
+    sess_sprint = "sprint_end%d" % project.pk
+    sprint_end = request.session.get(sess_sprint, project.current_sprint_end)
+    next = sprint_end + timedelta(days=14)
+    prev = sprint_end - timedelta(days=14)
+    
     return render(request, template, {
         'project': project,
         'tickets': tickets,
@@ -102,6 +107,9 @@ def detail(request, project_id):
         "do_pagination": do_pagination,
         'page': tickets,
         'todos': todos,
+        'sprint_end': sprint_end,
+        'next': next,
+        'prev':prev,
     })
 
 @permission_required('projects.change_project')
@@ -147,4 +155,10 @@ def edit_sprint(request, project_id):
     return render(request, 'projects/edit_sprint.html', {
         'form': form,})
 
-
+def which_sprint(request, project_id):
+    project = get_object_or_404(Project,pk= project_id)
+    if request.method == "POST":
+        end = request.POST.get('current_sprint_end', project.current_sprint_end)
+        sprint = "sprint_end%d" % project.pk
+        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date()
+    return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load tickets %}
+
+{% block page_title %}Bulk Edit{% endblock %}
+{% block breadcrums %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    <li>Tickets</li>
+    <li>Bulk Edit</li>
+{% endblock %}
+
+{% block content %}
+
+<h2>Bulk Edit</h2>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.errors }}
+    <table>
+        {% for field in form.editableFields %}
+            <tr>
+                <th colspan="2">{{ field.label_tag }} {{ field.errors }}</th>
+            </tr>
+            <tr>
+                <td>{{ field.field.update_field }}</td>
+                <td>{{ field }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" name="submit" value="submit" />
+</form>
+
+{% endblock %}
+

@@ -185,3 +185,24 @@ def prioritize(request, project_id):
         'filterset': todo_filterset,
         })
 
+@can_view_project
+@permission_required('todos.change_todo')
+def bulk(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    todos_ids = request.GET['todos'].split(",")
+    # TODO add permissions checking on a ticket level. 
+
+    if request.method == "POST":
+        form = BulkToDoForm(request.POST, project=project)
+        if form.is_valid():
+            form.bulkUpdate(todos_ids)
+            return HttpResponseRedirect(reverse('todos-list', args=(project.pk,)))
+    else:
+        form = BulkForm(project=project)
+
+    return render(request, 'todos/bulk.html', {
+        'form': form,
+        'project': project,
+    })
+
+

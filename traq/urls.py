@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/edit/?$', projects.views.edit, name='projects-edit'),
     url(r'^projects/(\d+)/meta/?$', projects.views.meta, name='projects-meta'),
     url(r'^projects/(\d+)/edit_sprint/?$', projects.views.edit_sprint, name='projects-edit-sprint'),
+    url(r'^projects/(\d+)/which_sprint/?$', projects.views.which_sprint, name='projects-which-sprint'),
     # components
     url(r'^projects/(\d+)/components/create/?$', projects.views.components.create, name='components-create'),
     url(r'^components/(\d+)/edit/?$', projects.views.components.edit, name='components-edit'),
@@ -59,6 +60,7 @@ urlpatterns = patterns('',
     url(r'^todos/(\d+)/?$', todos.views.detail, name='todos-detail'),
     url(r'^todos/(\d+)/edit/?$', todos.views.edit, name='todos-edit'),
     url(r'^project/(\d+)/prioritize/?$', todos.views.prioritize, name='todos-prioritize'),
+    url(r'^projects/(\d+)/todos/bulk/?$', todos.views.bulk, name='todos-bulk'),
 
     # comments
     url(r'^comments/(\d+)/edit/?$', tickets.views.comments_edit, name='comments-edit'),

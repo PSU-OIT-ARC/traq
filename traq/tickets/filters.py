@@ -75,11 +75,10 @@ class TicketFilterSet(django_filters.FilterSet):
         project_id = kwargs.pop('project_id', None)
         if project_id is not None:
             project = get_object_or_404(Project, pk=project_id)
-        else: 
+        else:
             project = None
         super(TicketFilterSet, self).__init__(*args, **kwargs)
         self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project=project)) 
-        
     class Meta:
         model = Ticket
         fields = ('assigned_to', 'status', 'priority', 'due_range', 'sprint_end')

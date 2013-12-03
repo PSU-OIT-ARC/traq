@@ -24,6 +24,8 @@ def detail(request, ticket_id):
     work = Work.objects.filter(ticket=ticket).filter(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
+    
+    return_to = request.GET.get('return_to', None)
 
     # this view has two forms on it. We multiplex between the two using a
     # hidden form_type field on the page 
@@ -58,6 +60,7 @@ def detail(request, ticket_id):
         'times': times,
         'running_work': running_work,
         'files': files,
+        'return_to': return_to,
     })
 
 HAD_RUNNING_WORK_MESSAGE = 'There was running work on this ticket. The work was marked as "Done".'
@@ -69,7 +72,7 @@ def create(request, project_id):
         todo = get_object_or_404(ToDo, pk=request.GET['todo_id'])
     else: 
         todo = None
-
+    
     if request.method == "POST":
         form = TicketForm(request.POST, request.FILES, user=request.user, project=project, todo=todo)
         if form.is_valid():
@@ -92,7 +95,10 @@ def create(request, project_id):
             # Go to the ticket detail page, or if they clicked the "Save and
             # add another ticket button, display the ticket form again
             if request.POST.get("submit", "submit").lower() == "submit":
-                return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
+                if "return_to" in request.GET:
+                    return HttpResponseRedirect("%s?todo_id=%d&return_to=prioritize" % (reverse("tickets-detail", args=(form.instance.pk,)),todo.pk ) )
+                else:
+                    return HttpResponseRedirect(reverse("tickets-detail", args=(form.instance.pk,)))
             elif "todo_id" in request.GET:
                 return HttpResponseRedirect("%s?todo_id=%d" % (request.path,todo.pk))
             else:
