@@ -90,7 +90,7 @@
   <table class='block-table'>
     {% for todo in upcoming %}
         <tr class="{% cycle 'odd' 'even' %}">
-            <td>{{todo.title}}</td>
+            <td><a href="{% url "todos-detail" todo.pk %}">{{todo.title}}</a></td>
             <td>{{todo.due_on}}</td>
         {% empty %}
         No more todos

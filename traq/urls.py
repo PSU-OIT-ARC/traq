@@ -37,7 +37,7 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/edit_sprint/?$', projects.views.edit_sprint, name='projects-edit-sprint'),
     
     #scrum
-    url(r'^projects/dashboard/(\d+)/?$', projects.views.scrum.dashboard, name='projects-dashboard'),
+    url(r'^projects/(\d+)/dashboard/?$', projects.views.scrum.dashboard, name='projects-dashboard'),
     url(r'^projects/(\d+)/which_sprint/?$', projects.views.scrum.which_sprint, name='projects-which-sprint'),
     # components
     url(r'^projects/(\d+)/components/create/?$', projects.views.components.create, name='components-create'),
