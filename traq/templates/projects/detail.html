@@ -14,6 +14,9 @@
         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
     {% endif %}
     <a href="{% url 'projects-meta' project.pk %}" class="button">Meta Info</a>
+    {% if project.is_scrum %}
+    <a href="{% url 'projects-dashboard' project.pk %}" class='button'>Dashboard</a>
+    {% endif %}
 </h2>
 
 
@@ -116,35 +119,6 @@ $(document).ready(function(){
     <div class="right-section-block">
         {% include 'tickets/_worklog.html' %}
     </div>
-    {% if project.is_scrum %}
-    <div class="right-section-block">
-            <h3>Current Sprint </h3>
-            <div class="inner">
-                <table class="block-table">
-                  <tr>
-                    <td><strong>End:</strong> {{ project.current_sprint_end }}</td>
-                    <td><a class='button' href="{% url "projects-edit-sprint" project.pk %}">Edit</a></td></tr>
-                    <tr>
-                    <td><strong>Showing: </strong>{{ sprint_end }}</td>
-                    <td>
-                        <form method="POST" action="{% url "projects-which-sprint" project.pk %}">
-                        {% csrf_token %}
-                        <input type='hidden' name='current_sprint_end' value={{ prev | date:'c' }}>
-                        <input type='submit' value='Prev'></input>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="POST" action="{% url "projects-which-sprint" project.pk %}">
-                        {% csrf_token %}
-                        <input type='hidden' name='current_sprint_end' value={{ next | date:'c' }}>
-                        <input type='submit' value='Next'></input>
-                        </form>
-                    </td>
-                  </tr>
-                </table>
-            </div>
-        </div>
-    {% endif %}
     <div class="right-section-block">
         <h3>Reports</h3>
         <div class="inner">
