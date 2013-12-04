@@ -29,7 +29,7 @@
 <div class='split float-left' style=' margin-top:0px; clear:both'>
     <h3>
       <a href="{% url "tickets-list" project.pk %}">Tickets</a> <div class='iblock small'>for sprint ending: {{ sprint_end }}</div> 
-      <div class='float-right iblock small'><a href=#>My Tickets</a></div>
+      <div class='float-right iblock small'><a href="{% url "accounts-profile" %}assigned?sprint_end={{ sprint_end | date:'c'}}">My Tickets</a></div>
     </h3>
     <table class='table-info'>
     <thead><th>Title</th><th>Assignee</th><th>Status</th></thead>

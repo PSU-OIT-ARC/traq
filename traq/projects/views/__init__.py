@@ -53,8 +53,6 @@ def meta(request, project_id):
 @permission_required('projects.can_view_all', raise_exception=True)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    if project.is_scrum:
-        return scrum.dashboard(request, project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
     q = request.GET.get('contains', '')
     if request.GET.get('due_on') == 'a':
@@ -148,10 +146,4 @@ def edit_sprint(request, project_id):
     return render(request, 'projects/edit_sprint.html', {
         'form': form,})
 
-def which_sprint(request, project_id):
-    project = get_object_or_404(Project,pk= project_id)
-    if request.method == "POST":
-        end = request.POST.get('current_sprint_end', project.current_sprint_end)
-        sprint = "sprint_end%d" % project.pk
-        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date()
-    return HttpResponseRedirect(reverse("projects-detail", args=(project.pk,)))
+
