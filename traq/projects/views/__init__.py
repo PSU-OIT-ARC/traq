@@ -14,6 +14,7 @@ from traq.utils import querySetToJSON, get_next_scrum_day
 
 from ..forms import ProjectForm, ProjectSprintForm
 from ..models import Project, Milestone
+from ..views import scrum
 from traq.todos.models import ToDo
 
 # there's an annoying circular dependency between the ticket and project apps 
@@ -52,6 +53,8 @@ def meta(request, project_id):
 @permission_required('projects.can_view_all', raise_exception=True)
 def detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    if project.is_scrum:
+        return scrum.dashboard(request, project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
     q = request.GET.get('contains', '')
     if request.GET.get('due_on') == 'a':
@@ -62,15 +65,12 @@ def detail(request, project_id):
         tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
     else:
         tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
+   
     
-    if project.is_scrum:
-        tickets =tickets.filter(due_on=project.current_sprint_end)
-        template = 'projects/scrum_detail.html'
-    else:
-        template = 'projects/detail.html'
-    todos = ToDo.objects.prefetch_related('tickets')
-    todos=todos.filter(project=project, due_on=project.current_sprint_end)
-    print todos
+    todo_list = ToDo.objects.prefetch_related('tickets')
+    todos=todo_list.filter(project=project, due_on=project.current_sprint_end)
+
+
     # paginate on tickets queryset
     do_pagination = False
     if not request.GET.get('showall', False):
@@ -91,12 +91,8 @@ def detail(request, project_id):
     components = project.components()
     work = project.latestWork(10)
     milestones = Milestone.objects.filter(project=project)
-    sess_sprint = "sprint_end%d" % project.pk
-    sprint_end = request.session.get(sess_sprint, project.current_sprint_end)
-    next = sprint_end + timedelta(days=14)
-    prev = sprint_end - timedelta(days=14)
-    
-    return render(request, template, {
+        
+    return render(request, "projects/detail.html", {
         'project': project,
         'tickets': tickets,
         'queries': connection.queries,
@@ -107,9 +103,6 @@ def detail(request, project_id):
         "do_pagination": do_pagination,
         'page': tickets,
         'todos': todos,
-        'sprint_end': sprint_end,
-        'next': next,
-        'prev':prev,
     })
 
 @permission_required('projects.change_project')

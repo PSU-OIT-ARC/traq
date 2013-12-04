@@ -10,9 +10,27 @@
 
 
 {% block content %}
-<h2>{{ project.name }} <div class='float-right iblock small'><a href=#>My Tickets</a></div></h2>
-<div class='split float-left'>
-    <h3><a href="{% url "tickets-list" project.pk %}">Tickets</a> <div class='iblock small'>for sprint ending: {{ project.current_sprint_end }}</div> </h3>
+<h2>{{ project.name }} 
+<div class='float-right small'>
+  <h3>Showing Sprint Ending: {{sprint_end }}</h3>
+    <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
+      {% csrf_token %}
+      <input type='hidden' name='current_sprint_end' value={{ prev | date:'c' }}>
+      <input type='submit' value='Prev'></input>
+    </form>
+    <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
+      {% csrf_token %}
+      <input type='hidden' name='current_sprint_end' value={{ next | date:'c' }}>
+      <input type='submit' value='Next'></input>
+    </form>
+    <a class='button' href="{% url "projects-edit-sprint" project.pk %}">Edit Sprint Dates</a>
+</div>
+</h2>
+<div class='split float-left' style=' margin-top:0px; clear:both'>
+    <h3>
+      <a href="{% url "tickets-list" project.pk %}">Tickets</a> <div class='iblock small'>for sprint ending: {{ sprint_end }}</div> 
+      <div class='float-right iblock small'><a href=#>My Tickets</a></div>
+    </h3>
     <table class='table-info'>
     <thead><th>Title</th><th>Assignee</th><th>Status</th></thead>
     {% for ticket in tickets %}
@@ -23,8 +41,8 @@
 
     </table>
        </div>
-<div class='split float-right'>
-    <h3><a href="{% url "todos-list" project.pk%}">To Do's</a> <div class='iblock small'>for sprint ending: {{ project.current_sprint_end }}</div> </h3>
+<div class='split float-right' style='margin-top:0px;'>
+    <h3><a href="{% url "todos-list" project.pk%}">To Do's</a> <div class='iblock small'>for sprint ending: {{ sprint_end }}</div> </h3>
     <table class='table-info'>
     <thead><th>Title</th><th>Status</th><th>Tickets</th></thead>
     {% for todo in todos %}
@@ -62,10 +80,24 @@
             {% endfor %}
         </table>
 </div>
-<div class='float-right triptych'>
+<div class='float-left triptych'>
     <div class="block-table">
         {% include 'tickets/_worklog.html' %}
     </div>
 </div>
+<div class='float-left triptych'>
+  <h3>Upcoming ToDo's</h3>
+  <table class='block-table'>
+    {% for todo in upcoming %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{todo.title}}</td>
+            <td>{{todo.due_on}}</td>
+        {% empty %}
+        No more todos
+        {% endfor %}
+        </tr>
+    </table>
+</div>
+
 </div>
 {% endblock %}

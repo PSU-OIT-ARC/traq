@@ -586,7 +586,8 @@ li.odd {
 #page {
     background:white;}
 
-.triptych {
+div.triptych {
     width:31%;
+    margin: 1%;
 }
 
