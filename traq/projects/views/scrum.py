@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import permission_required
+from django.db.models import Count
 from ..models import Project, Milestone
 from traq.tickets.models import Ticket
 from traq.tickets.filters import TicketFilterSet
@@ -26,7 +27,7 @@ def dashboard(request, project_id):
     todo_list = ToDo.objects.prefetch_related('tickets')
     todos = todo_list.filter(project=project, due_on=sprint_end)
     if project.current_sprint_end is not None:
-        upcoming = todo_list.filter(Q(project=project), Q(due_on__gt=sprint_end)| Q(due_on__isnull=True))
+        upcoming = todo_list.filter(Q(project=project), Q(due_on__gt=sprint_end)| Q(due_on__isnull=True)).annotate(null_pos=Count('due_on')).order_by('-null_pos','due_on')
     else:
         upcoming = None
     components = project.components()
@@ -38,8 +39,9 @@ def dashboard(request, project_id):
     else:
         next = None
         prev = None
-
-    return render(request, "projects/scrum_detail.html", {
+    tix_completed = tickets.filter(Q(status__name='Completed')|Q(status__name='Closed')).count() 
+    todos_completed = todos.filter(Q(status__name='Completed')|Q(status__name='Closed')).count() 
+    return render(request, "projects/dashboard.html", {
         'project': project,
         'tickets': tickets,
         'components': components,
@@ -51,6 +53,8 @@ def dashboard(request, project_id):
         'next': next,
         'prev':prev,
         'upcoming': upcoming,
+        'tix_completed': tix_completed,
+        'todos_completed': todos_completed,
     })
 
 def which_sprint(request, project_id):

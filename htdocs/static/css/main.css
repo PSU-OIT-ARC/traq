@@ -586,8 +586,38 @@ li.odd {
 #page {
     background:white;}
 
+#page #header{
+    padding: 0px;
+}
+
 div.triptych {
     width:31%;
     margin: 1%;
 }
+
+div.triptych h3 {
+    margin-bottom: 8px;
+}
+
+.scrum-nav  {
+    padding: 0px;
+    margin: 0px;
+    
+}
+
+.scrum-nav li {
+    list-style: none;
+    padding: 8px;
+    float:left;
+    border-right: 2px solid #5E700E;
+}
+
+
+.scrum-nav li a {
+    text-decoration: none;
+}
+.scrum-nav li a:hover{
+    text-decoration: underline;
+}
+
 

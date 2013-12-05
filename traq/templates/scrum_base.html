@@ -22,13 +22,13 @@
 
                         {% endif %}
                         <!-- yes, I spelled breadcumbs wrong -->
-                        <ul id="nav-breadcrums">
-                            {% block breadcrums %}{% endblock %}
+                        <ul class="scrum-nav">
+                            {% block navigation %}{% endblock %}
                         </ul>
 
                         {% block nav %}
                             {% if user.is_authenticated %}
-                                <ul id="nav-account">
+                                <ul class="scrum-nav float-right">
                                     <li><a href="{% url 'accounts-profile' %}">{{ user.username }}</a></li>
                                     <li><a href="{% url 'accounts-logout' %}">Logout</a></li>
                                 </ul>
