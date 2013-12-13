@@ -165,7 +165,7 @@ class CommentForm(forms.ModelForm):
         fields = (
             'body',
             'is_deleted',
-        )
+            )
 
 class WorkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

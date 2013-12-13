@@ -346,6 +346,7 @@ class Comment(models.Model):
 
     def sendNotification(self):
         """Send a notification email to the pm when a comment is made on  this ticket"""
+        to = []
         if self.body is not None:
             if self.ticket is not None:
                 item = 'Ticket'
@@ -355,14 +356,17 @@ class Comment(models.Model):
                 item = 'To Do'
                 ticket = self.todo or None  
                 ticket_url = SETTINGS.BASE_URL + reverse('todos-detail', args=(ticket.pk,))
-            
             project = ticket.project
-           
+            if project.clients:
+                if self.todo:
+                    for client in project.clients.all():
+                        to.append(client.username + "@" + SETTINGS.EMAIL_DOMAIN)
+
            # if there is no PM, there is no place to send the email
             if project.pm is None:
                 return
-            to = project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN
-            
+            to.append(project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN)
+                
             body = render_to_string('tickets/comment_notification.txt', {
                 "ticket": ticket,
                 "ticket_url": ticket_url, 
@@ -373,7 +377,7 @@ class Comment(models.Model):
             if project.pm_email:
                 text_content = body
                 html_content = body
-                msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
+                msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', to)
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
