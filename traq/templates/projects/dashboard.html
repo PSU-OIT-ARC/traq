@@ -3,12 +3,6 @@
 {% load tickets %}
 
 {% block page_title %}{{ project.name }}{% endblock %}
-{% comment %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-{% endblock %}
-{% endcomment %}
 {% block navigation %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
     <li><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
@@ -31,19 +25,29 @@
       <input type='hidden' name='current_sprint_end' value={{ next | date:'c' }}>
       <input type='submit' value='Next'></input>
     </form>
-    <a class='button' href="{% url "projects-edit-sprint" project.pk %}">Edit Sprint Dates</a>
+    {% if perms.projects.change_project %}
+      <a class='button' href="{% url "projects-edit-sprint" project.pk %}">Edit Sprint Dates</a>
+    {% endif %}
 </div>
 </h2>
 <div class='split float-left' style=' margin-top:0px; clear:both'>
     <h3>
+    {% if perms.tickets.change_ticket %}
       <a href="{% url "tickets-list" project.pk %}?sprint_end={{ sprint_end | date:'c'}}">Tickets</a> 
+    {% else %}
+      Tickets 
+    {% endif %}
     <div class='float-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
     </h3>
     <table class='table-info'>
     <thead><th>Title</th><th>Assignee</th><th>Status</th></thead>
     {% for ticket in tickets %}
         <tr class="{% cycle 'even' 'odd' %}">
-        <td><a href="{% url "tickets-detail" ticket.pk %}">{{ticket}}</a></td>
+        {% if perms.tickets.change_ticket %}
+          <td><a href="{% url "tickets-detail" ticket.pk %}">{{ticket}}</a></td>
+        {% else %}
+          <td>{{ticket}}</td>
+        {% endif %}
         <td>{{ticket.assigned_to}}</td>
         <td>{{ticket.status}}</td></tr>
     {% empty %}
@@ -78,7 +82,7 @@
 <div style='width:100%;clear:right'>
 <hr>
 <div class='float-left triptych' style='clear:both;'>
-<h3>Components <a href="{% url 'components-create' project.pk %}" class="button">Create</a></h3>
+<h3>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="button">Create</a>{% endif %}</h3>
         <table class="block-table">
             {% for comp in components %}
                 <tr class="{% cycle 'odd' 'even' %}">

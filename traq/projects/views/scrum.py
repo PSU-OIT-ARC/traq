@@ -9,9 +9,9 @@ from ..models import Project, Milestone
 from traq.tickets.models import Ticket
 from traq.tickets.filters import TicketFilterSet
 from traq.todos.models import ToDo
+from traq.permissions.decorators import can_view_project
 
-
-@permission_required('projects.can_view_all', raise_exception=True)
+@can_view_project
 def dashboard(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
