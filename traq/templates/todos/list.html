@@ -65,6 +65,7 @@
                 alert("You must select some todos first (use the checkboxes)");
                 return;
             }
+            vals.shift()
             var query = vals.join(",");
 
             var href = $(this).attr('href');
