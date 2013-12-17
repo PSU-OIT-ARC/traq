@@ -56,7 +56,7 @@
     <table>
         <tr class='tool-wrap'>
             <td>{{ form.started_on.label }}</td>
-            <td class='tool'>{{ form.estimate.label }}<div class='question-mark'>?</div><div class="tip">Comma separated list of numbers are averaged on blur</div></td>
+            <td class='tool'>{{ form.estimate.label }}{%if project.is_scrum %}<div class='question-mark'>?</div><div class="tip">Comma separated list of numbers are averaged on blur</div>{% endif %}</td>
             <td>{{ form.due_on.label }}</td>
         </tr>
         <tr>
@@ -141,7 +141,7 @@
       }
     });
   }    
-
+    {% if project.is_scrum %}
     //average a csv of numbers in estimate input on lose focus
     $('#id_estimate').blur(function(){
         arr = $(this).val().split(',').map(Number); 
@@ -152,6 +152,7 @@
             return a+b;}); 
         $(this).val(sum/arr.length); 
     });
+    {% endif %}
  });
 </script>
 {% endblock %}
