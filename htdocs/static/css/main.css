@@ -528,22 +528,6 @@ p.error {
     vertical-align:top;
 }
 
-.tip {
-    display:none;
-    padding-bottom: 10px;
-}
-
-li.hover {
-    color:white;
-    padding: 5px 5px 5px 5px;
-    list-style: none;
-}
-
-.tip-show {
-    background:#87983F;
-    border-radius: 3px;
-    width:100%;
-}
 
 /*tablesorter css*/
 th.header { 
@@ -618,6 +602,38 @@ div.triptych h3 {
 }
 .scrum-nav li a:hover{
     text-decoration: underline;
+}
+
+.question-mark {
+    color: white;
+    display: inline-block;
+    background: #6A7F10;
+    border-radius: 15px;
+    padding: 2px 5px;
+    margin-left: 3px;
+    font-size: 0.8em;
+}
+
+.tool {
+    position:relative;}
+
+.tip {
+    position: absolute;
+    left: 35px;
+    bottom: 15px;
+    display: inline-block;
+    background: black;
+    color:white;
+    padding:5px;
+    border-radius:5px;
+    min-width:150px;
+}
+
+.tool .tip {
+    display:none;}
+
+.tool:hover .tip {
+    display:inline-block;
 }
 
 

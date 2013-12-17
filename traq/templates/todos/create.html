@@ -54,14 +54,14 @@
     
     <div class="clear"></div>
     <table>
-        <tr>
+        <tr class='tool-wrap'>
             <td>{{ form.started_on.label }}</td>
-            <td>{{ form.estimate.label }}</td>
+            <td class='tool'>{{ form.estimate.label }}<div class='question-mark'>?</div><div class="tip">Comma separated list of numbers are averaged on blur</div></td>
             <td>{{ form.due_on.label }}</td>
         </tr>
         <tr>
             <td>{{ form.started_on }}</td>
-            <td>{{ form.estimate }}</td>
+            <td>{{ form.estimate }} </td>
             <td>{{ form.due_on }}</td>
         </tr>
     </table>
@@ -141,6 +141,17 @@
       }
     });
   }    
+
+    //average a csv of numbers in estimate input on lose focus
+    $('#id_estimate').blur(function(){
+        arr = $(this).val().split(',').map(Number); 
+        //trailing commas' value is removed
+        if(arr[arr.length-1] == 0){
+            arr.pop()}; 
+        sum = arr.reduce(function(a,b){
+            return a+b;}); 
+        $(this).val(sum/arr.length); 
+    });
  });
 </script>
 {% endblock %}
