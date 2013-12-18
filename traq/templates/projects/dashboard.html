@@ -14,11 +14,18 @@
 {% block content %}
 <h2>{{ project.name }} 
 <div class='float-right small'>
-  <div>For Sprint Ending: {{sprint_end }}</div>
     <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
       {% csrf_token %}
-      <input type='hidden' name='current_sprint_end' value={{ prev | date:'c' }}>
-      <input type='submit' value='Prev'></input>
+    <div>For Sprint Ending: 
+        <input style='display:inline-block' name='current_sprint_end' type='date' value='{{sprint_end|date:'c' }}'></input>
+        <input style='display:inline-block' type='submit' value='Go'></input>
+    </div>
+     </form>
+     <div>
+     <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
+      {% csrf_token %}
+    <input type='hidden' name='current_sprint_end' value={{ prev | date:'c' }}>
+    <input type='submit' value='Prev'></input>
     </form>
     <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
       {% csrf_token %}
@@ -28,6 +35,7 @@
     {% if perms.projects.change_project %}
       <a class='button' href="{% url "projects-edit-sprint" project.pk %}">Edit Sprint Dates</a>
     {% endif %}
+    </div>
 </div>
 </h2>
 <div class='split float-left' style=' margin-top:0px; clear:both'>
