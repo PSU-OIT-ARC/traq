@@ -373,7 +373,9 @@ class Comment(models.Model):
                 "author" : self.created_by,
                 "comment_body": self.body,
             })
-            subject = 'Traq New Comment: %s #%d %s' % (item, ticket.pk, ticket.title)
+
+            clean_title = re.sub(r"[\r\n]+", "; ", ticket.title)
+            subject = 'Traq New Comment: %s #%d %s' % (item, ticket.pk, clean_title)
             if project.pm_email:
                 text_content = body
                 html_content = body

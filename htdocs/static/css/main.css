@@ -397,6 +397,7 @@ p.error {
 .block-table td {
     padding-bottom:3px;
     padding-left:3px;
+    word-break:break-all;
 }
 
 .block-table th:first-child {
@@ -636,4 +637,6 @@ div.triptych h3 {
     display:inline-block;
 }
 
-
+#gantt p {
+    display:inline-block;
+}
