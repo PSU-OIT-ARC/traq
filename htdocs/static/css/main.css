@@ -640,3 +640,8 @@ div.triptych h3 {
 #gantt p {
     display:inline-block;
 }
+
+.scroll-table-wrap {
+    overflow: auto;
+    max-height: 400px;
+}

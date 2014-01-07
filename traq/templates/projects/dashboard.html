@@ -47,8 +47,9 @@
     {% endif %}
     <div class='float-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
     </h3>
+    <div class='scroll-table-wrap'>
     <table class='table-info'>
-    <thead><th>Title</th><th>Assignee</th><th>Status</th></thead>
+    <thead class='sticky'><th>Title</th><th>Assignee</th><th>Status</th></thead>
     {% for ticket in tickets %}
         <tr class="{% cycle 'even' 'odd' %}">
         {% if perms.tickets.change_ticket %}
@@ -63,13 +64,15 @@
     {% endfor %}
 
     </table>
-       </div>
+  </div>
+</div>
 <div class='split float-right' style='margin-top:0px;'>
     <h3><a href="{% url "todos-list" project.pk%}?sprint_end={{ sprint_end | date:'c'}}">To Do's</a> 
     <div class='float-right small'>{{todos_completed}}/{{todos.count}} Completed</div>
     </h3>
+    <div class='scroll-table-wrap'>
     <table class='table-info'>
-    <thead><th>Title</th><th>Status</th><th>Tickets</th></thead>
+    <thead class='sticky'><th>Title</th><th>Status</th><th>Tickets</th></thead>
     {% for todo in todos %}
         <tr class="{% cycle 'even' 'odd' %}">
           <td><a href="{% url "todos-detail" todo.pk %}">{{todo}}</a></td>
@@ -86,7 +89,8 @@
         <tr><td>Well, there aren't any. click link above to find what you're looking for </td></tr>
     {% endfor %}
     </table>
-    </div>
+  </div>
+</div>
 <div style='width:100%;clear:right'>
 <hr>
 <div class='float-left triptych' style='clear:both;'>
@@ -125,4 +129,15 @@
 </div>
 
 </div>
+<script type='text/javascript'>
+    //sticky table headers 
+    var width = [];
+    $(document).ready(function(){
+        $.each($('thead.sticky th'), function(k,v){
+            width.push($(v).width());});
+        $('thead.sticky').css('position', 'absolute');
+        $.each($('thead.sticky th'), function(k,v){
+            $(v).width(width[k]);});
+    });
+</script>
 {% endblock %}
