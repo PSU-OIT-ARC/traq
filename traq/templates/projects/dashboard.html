@@ -47,6 +47,7 @@
     {% endif %}
     <div class='float-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
     </h3>
+    <div style='position:relative'>
     <div class='scroll-table-wrap'>
     <table class='table-info'>
     <thead class='sticky'><th>Title</th><th>Assignee</th><th>Status</th></thead>
@@ -66,10 +67,12 @@
     </table>
   </div>
 </div>
+</div>
 <div class='split float-right' style='margin-top:0px;'>
     <h3><a href="{% url "todos-list" project.pk%}?sprint_end={{ sprint_end | date:'c'}}">To Do's</a> 
     <div class='float-right small'>{{todos_completed}}/{{todos.count}} Completed</div>
     </h3>
+    <div style='position:relative'>
     <div class='scroll-table-wrap'>
     <table class='table-info'>
     <thead class='sticky'><th>Title</th><th>Status</th><th>Tickets</th></thead>
@@ -90,6 +93,7 @@
     {% endfor %}
     </table>
   </div>
+</div>
 </div>
 <div style='width:100%;clear:right'>
 <hr>
@@ -134,7 +138,8 @@
     var width = [];
     $(document).ready(function(){
         $.each($('thead.sticky th'), function(k,v){
-            width.push($(v).width());});
+            w = $(v).width();
+            width.push(w);});
         $('thead.sticky').css('position', 'absolute');
         $.each($('thead.sticky th'), function(k,v){
             $(v).width(width[k]);});
