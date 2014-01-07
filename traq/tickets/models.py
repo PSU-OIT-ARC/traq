@@ -352,6 +352,8 @@ class Comment(models.Model):
                 item = 'Ticket'
                 ticket = self.ticket or None
                 ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
+                if not self.created_by == self.ticket.assigned_to:
+                        to.append(self.ticket.assigned_to.username +"@" + SETTINGS.EMAIL_DOMAIN)
             else:
                 item = 'To Do'
                 ticket = self.todo or None  
@@ -366,7 +368,7 @@ class Comment(models.Model):
             if project.pm is None:
                 return
             to.append(project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN)
-                
+            
             body = render_to_string('tickets/comment_notification.txt', {
                 "ticket": ticket,
                 "ticket_url": ticket_url, 
