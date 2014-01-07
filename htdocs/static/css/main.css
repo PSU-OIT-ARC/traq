@@ -644,4 +644,8 @@ div.triptych h3 {
 .scroll-table-wrap {
     overflow: auto;
     max-height: 400px;
+    margin-top: 20px;
 }
+
+.sticky {
+    top: -20px;}
