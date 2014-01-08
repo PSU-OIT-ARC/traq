@@ -18,7 +18,7 @@ from traq.tickets.templatetags.tickets import tickettimepretty
 @permission_required('projects.can_view_all')
 def mega(request):
     form, interval = _intervalHelper(request)
-    users = list(User.objects.all().order_by("username"))
+    users = list(User.objects.all().exclude(groups__name='arcclient').order_by('username'))
     projects = list(Project.objects.all())
     for user in users:
         user.projects = Project.objects.timeByUser(user, interval)
