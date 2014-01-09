@@ -14,18 +14,19 @@ from traq.permissions.decorators import can_view_project
 @can_view_project
 def dashboard(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
-    q = request.GET.get('contains', '')
-    if request.GET.get('contains'):
-        tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
-    else:
-        tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
-    
     sess_sprint = "sprint_end%d" % project.pk
     sprint_end = request.session.get(sess_sprint, project.current_sprint_end)
-    tickets =tickets.filter(due_on=sprint_end)
+    ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
     todo_list = ToDo.objects.prefetch_related('tickets')
-    todos = todo_list.filter(project=project, due_on=sprint_end)
+    
+    q = request.GET.get('q', '')
+    if request.GET.get('q'):
+        tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+        todos = todo_list.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q), due_on=sprint_end)
+    else:
+        tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
+        todos = todo_list.filter(project=project, due_on=sprint_end)
+    tickets =tickets.filter(due_on=sprint_end)
     if project.current_sprint_end is not None:
         upcoming = todo_list.filter(Q(project=project), Q(due_on__gt=sprint_end)| Q(due_on__isnull=True)).annotate(null_pos=Count('due_on')).order_by('-null_pos','due_on')
     else:
