@@ -120,6 +120,7 @@
 </div>
 <div class='float-left triptych'>
   <h3>Upcoming ToDo's</h3>
+  <div style="max-height:325px; overflow:auto;">
   <table class='block-table'>
     {% for todo in upcoming %}
         <tr class="{% cycle 'odd' 'even' %}">
@@ -130,6 +131,7 @@
         {% endfor %}
         </tr>
     </table>
+    </div>
 </div>
 
 </div>
