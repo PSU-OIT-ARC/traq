@@ -22,13 +22,13 @@ def dashboard(request, project_id):
     q = request.GET.get('q', '')
     if request.GET.get('q'):
         tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
-        todos = todo_list.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q), due_on=sprint_end)
+        todos = todo_list.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q), due_on=sprint_end, is_deleted=False)
     else:
         tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
-        todos = todo_list.filter(project=project, due_on=sprint_end)
+        todos = todo_list.filter(project=project, due_on=sprint_end, is_deleted=False)
     tickets =tickets.filter(due_on=sprint_end)
     if project.current_sprint_end is not None:
-        upcoming = todo_list.filter(Q(project=project), Q(due_on__gt=sprint_end)| Q(due_on__isnull=True)).annotate(null_pos=Count('due_on')).order_by('-null_pos','due_on')
+        upcoming = todo_list.filter(Q(project=project), Q(due_on__gt=sprint_end)| Q(due_on__isnull=True), is_deleted=False).annotate(null_pos=Count('due_on')).order_by('-null_pos','due_on')
     else:
         upcoming = None
     components = project.components()
