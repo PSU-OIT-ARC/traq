@@ -50,7 +50,7 @@ def mega(request):
 def grid(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     # get all the people who have worked on this project
-    form, interval = _intervalHelper(request)
+    form, interval = _intervalHelper(request, project_id)
     users = list(project.users())
     components = list(project.components())
     # for each user, for each component, figure out how much work they spent
@@ -74,7 +74,7 @@ def grid(request, project_id):
 @permission_required('projects.can_view_all')
 def component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    form, interval = _intervalHelper(request)
+    form, interval = _intervalHelper(request, project_id)
     components = project.components(interval=interval)
     # queries in loop...stupid but on reports, I don't care
     for comp in components:
@@ -110,7 +110,7 @@ def component(request, project_id):
 def invoice(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
-    form, interval = _intervalHelper(request)
+    form, interval = _intervalHelper(request, project_id)
 
     components = project.components(interval=interval)
     for comp in components:
@@ -126,16 +126,23 @@ def invoice(request, project_id):
         'interval': interval,
     })
 
-def _intervalHelper(request):
+def _intervalHelper(request, project_id=None):
     interval = ()
+    print project_id
     if request.GET.get('submit'):
         form = ReportIntervalForm(request.GET)
         if form.is_valid():
             interval = (form.cleaned_data['start'], form.cleaned_data['end'])
-
+    if project_id:
+        project = Project.objects.get(pk=project_id)
+        project_start = project.created_on
+    
     if interval == ():
         now = datetime.utcnow().replace(tzinfo=utc)
-        earlier = now - timedelta(days=30)
+        if project_id:
+            earlier = project_start
+        else:
+            earlier = now - timedelta(days=30)
         interval = (earlier.date(), now.date())
 
         if not request.GET.get('submit'):
