@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.timezone import utc
 from django.contrib.auth.models import User
-from ..forms import ReportIntervalForm
+from ..forms import ReportIntervalForm, ReportFilterForm
 from ..models import Project, Component
 from traq.tickets.models import Ticket
 from django.contrib.auth.decorators import permission_required
@@ -18,10 +18,16 @@ from traq.tickets.templatetags.tickets import tickettimepretty
 @permission_required('projects.can_view_all')
 def mega(request):
     form, interval = _intervalHelper(request)
-    users = list(User.objects.all().exclude(groups__name='arcclient').order_by('username'))
-    projects = list(Project.objects.all())
+    users = list(User.objects.all().filter(is_active=True).exclude(groups__name='arcclient').order_by('username'))
+    status = request.GET.get('status', 1)
+    if status == 'All':
+        projects = list(Project.objects.all())
+    else:
+        projects = list(Project.objects.filter(status = status))
+    filter_form = ReportFilterForm(status=status)
+    
     for user in users:
-        user.projects = Project.objects.timeByUser(user, interval)
+        user.projects = [p for p in Project.objects.timeByUser(user, interval) if p  in projects]
         user.totals = {"total": timedelta(0), "billable": timedelta(0), "non_billable": timedelta(0)}
         for project in user.projects:
             user.totals['total'] += project.total
@@ -44,6 +50,7 @@ def mega(request):
         'projects': projects,
         'interval': interval,
         'form': form,
+        'filter_form': filter_form,
     })
 
 @permission_required('projects.can_view_all')
