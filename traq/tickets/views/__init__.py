@@ -21,6 +21,8 @@ def detail(request, ticket_id):
     project = ticket.project
     files = TicketFile.objects.filter(ticket=ticket)
     comments = Comment.objects.filter(ticket=ticket).select_related('created_by')
+    if ticket.todos.all():
+        comments = list(comments) + list(Comment.objects.filter(todo__pk__in=ticket.todos.all()).select_related('created_by'))
     work = Work.objects.filter(ticket=ticket).filter(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
@@ -179,6 +181,7 @@ def listing(request, project_id):
 def comments_edit(request, comment_id):
     # there is no corresponding comments_create view since a comment is created
     # on the ticket detail view.
+    return_to = request.GET.get('return_to',None)
     comment = get_object_or_404(Comment, pk=comment_id)
     ticket = comment.ticket
     todo = comment.todo
@@ -193,6 +196,8 @@ def comments_edit(request, comment_id):
             form.save()
             if ticket:
                 return HttpResponseRedirect(reverse('tickets-detail', args=(ticket.pk,)))
+            elif return_to:
+                return HttpResponseRedirect(reverse('tickets-detail', args=(return_to,)))
             else:
                 return HttpResponseRedirect(reverse('todos-detail', args=(todo.pk,)))
     else:

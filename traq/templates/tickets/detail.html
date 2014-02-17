@@ -81,11 +81,18 @@
         {% for comment in comments %}
             <div class="ticket">
                 <div class="comment-info">
+                {% if comment.todo %}
+                    <div><strong>To Do Comment </strong></div>
+                {% endif %}
                     <ul>
                         <li><strong>Author:</strong> {{ comment.created_by }}</li>
                         <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
                         {% if perms.tickets.change_comment %}
-                        <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
+                            {% if comment.todo %}
+                              <li><a href="{% url 'comments-edit' comment.pk %}/?return_to={{ticket.pk}}" class="button">Edit</a></li>
+                            {% else %}
+                              <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
+                            {% endif %}
                         {% endif %}
                     </ul>
                     <div class="clear"></div>
