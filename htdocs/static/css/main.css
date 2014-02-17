@@ -130,7 +130,9 @@ p.error {
     background-color:#efefef;
 }
 
-
+#mega-form p, #mega-form input {
+    display: inline-block;
+}
 
 /* these colors are from twitter bootstrap */
 .label-default {
@@ -649,3 +651,5 @@ div.triptych h3 {
 
 .sticky {
     top: -20px;}
+
+
