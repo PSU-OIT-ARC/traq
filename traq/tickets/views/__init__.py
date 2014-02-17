@@ -12,7 +12,7 @@ from traq.tickets.filters import TicketFilterSet
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 
-@permission_required('tickets.add_ticket')
+@permission_required('todos.add_todo')
 def detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     todos = ticket.todos.all()
