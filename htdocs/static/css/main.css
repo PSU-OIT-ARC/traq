@@ -134,6 +134,10 @@ p.error {
     display: inline-block;
 }
 
+td.time-cell.red {
+    color:red;
+}
+
 /* these colors are from twitter bootstrap */
 .label-default {
     background-color:#999999;

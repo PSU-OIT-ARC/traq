@@ -43,7 +43,7 @@ def mega(request):
 
         if project.estimated_hours:
             project.hours_remaining = timedelta(hours=project.estimated_hours) - project.total_time
-
+            project.in_red = project.hours_remaining < timedelta(minutes=0)
 
     return render(request, 'projects/reports/mega.html', {
         'users': users,
