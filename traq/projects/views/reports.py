@@ -18,7 +18,7 @@ from traq.tickets.templatetags.tickets import tickettimepretty
 @permission_required('projects.can_view_all')
 def mega(request):
     form, interval = _intervalHelper(request)
-    users = list(User.objects.all().filter(is_active=True).exclude(groups__name='arcclient').order_by('username'))
+    users = list(User.objects.all().filter(is_active=True, groups__name='arc').order_by('username'))
     status = request.GET.get('status', 1)
     if status == 'All':
         projects = list(Project.objects.all())
