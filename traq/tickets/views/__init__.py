@@ -14,10 +14,17 @@ from django.core.exceptions import PermissionDenied
 
 @permission_required('tickets.add_ticket')
 def detail(request, ticket_id):
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    todos = ticket.todos.all()
+    #try to redirect client to todo item if it exists. else they'll get 403
+    if todos:
+        todo = todos[0]
+        if request.user.groups.filter(name='arcclient').exists():
+            messages.success(request, 'You have insufficeient privileges to see this ticket. You have been redirected to the associated to do item')
+            return HttpResponseRedirect(reverse('todos-detail', args=(todo.pk,)))
     #check for arc group (staff and students should have this)
     if not request.user.groups.filter(name='arc'):
         raise PermissionDenied("Access Denied")
-    ticket = get_object_or_404(Ticket, pk=ticket_id)
     project = ticket.project
     files = TicketFile.objects.filter(ticket=ticket)
     comments = Comment.objects.filter(ticket=ticket).select_related('created_by')
