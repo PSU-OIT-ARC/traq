@@ -11,14 +11,15 @@
 
 <h2>Projects</h2>
 <div class="print-hide">
-    <form method="get" action="">
+    <form id='mega-form' method="get" action="">
         {{ form.as_p }}
-        <input type="submit" name="submit" value="submit" />
+        {{ filter_form.as_p }}
+        <input type="submit" name='submit' value="submit" />
     </form>
 </div>
 
 <h3>Grid</h3>
-<p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1 }}</span></p>
+<p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1 | date:'N d, Y'}}</span></p>
 <div class="table-scroller">
     <table class="report time-grid">
         <thead>
@@ -72,7 +73,7 @@
             <tr>
                 <th colspan="2">Hours Remaining</th>
                 {% for project in projects %}
-                    <td class="time-cell border-left">{{ project.hours_remaining|fractionsofhours }}</td>
+                    <td class="{% if project.in_red %}red {% endif %}time-cell border-left">{{ project.hours_remaining|fractionsofhours }}</td>
                 {% endfor %}
             </tr>
         </tfoot>

@@ -108,7 +108,22 @@ class ReportIntervalForm(forms.Form):
                 raise forms.ValidationError("The start must be less than the end")
         return cleaned
 
+class ReportFilterForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.status = kwargs.pop('status')
+        super(ReportFilterForm, self).__init__(*args, **kwargs)
+        choices = self.fields['status'].choices 
+        choices.insert(2,('All', 'All')) 
+        self.fields['status'].choices = choices 
+        self.fields['status'].initial = self.status
+
+    class Meta:
+        model = Project
+        fields = ['status',]
+
+
 class ProjectSprintForm(forms.ModelForm):
+
     class Meta:
         model = Project
         fields = ('current_sprint_end',)
