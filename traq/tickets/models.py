@@ -340,14 +340,16 @@ class Comment(models.Model):
     todo = models.ForeignKey('todos.ToDo', null=True)
     ticket = models.ForeignKey(Ticket, null=True)
     created_by = models.ForeignKey(User, related_name='+')
-
     objects = CommentManager()
     
 
-    def sendNotification(self):
+    def sendNotification(self, cc=None):
         """Send a notification email to the pm when a comment is made on  this ticket"""
         to = []
         if self.body is not None:
+            if self.cc is not None:
+                for cc in self.cc:
+                    to.append(cc.username + '@' + SETTINGS.EMAIL_DOMAIN)
             if self.ticket is not None:
                 item = 'Ticket'
                 ticket = self.ticket or None

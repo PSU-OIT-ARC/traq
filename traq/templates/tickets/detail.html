@@ -111,7 +111,8 @@
             <h4>Add Comment</h4>
             {{ comment_form.body.errors }}
             {{ comment_form.body }}
-            <input type="submit" name="submit" value="Add" class="submit" />
+            {{comment_form.cc.label}}: {{ comment_form.cc }}
+            <input type="submit" name="submit" value="Add" class="submit float-right" />
         </form>
     </div>
 </div>

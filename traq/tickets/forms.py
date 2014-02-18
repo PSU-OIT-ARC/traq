@@ -145,6 +145,8 @@ class TicketForm(forms.ModelForm):
         }
 
 class CommentForm(forms.ModelForm):
+    cc = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True,groups__name='arc'), required=False)
+    
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
         # the caller
@@ -160,12 +162,18 @@ class CommentForm(forms.ModelForm):
         self.instance.todo = todo
         self.instance.ticket = ticket
 
+    def save(self, *args, **kwargs):
+        self.instance.cc = self.cleaned_data['cc']
+        super(CommentForm, self).save(*args, **kwargs)
+
     class Meta:
         model = Comment
         fields = (
+            'cc',
             'body',
             'is_deleted',
             )
+
 
 class WorkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
