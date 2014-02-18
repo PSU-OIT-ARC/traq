@@ -145,7 +145,7 @@ class TicketForm(forms.ModelForm):
         }
 
 class CommentForm(forms.ModelForm):
-    cc = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True), required=False)
+    cc = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True).exclude(groups__isnull=True), required=False)
     
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
