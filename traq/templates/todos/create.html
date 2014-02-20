@@ -150,7 +150,9 @@
             arr.pop()}; 
         sum = arr.reduce(function(a,b){
             return a+b;}); 
-        $(this).val(sum/arr.length); 
+        sum = sum/arr.length;
+        sum = Math.round(sum * 100) / 100;
+        $(this).val(sum); 
     });
     {% endif %}
  });
