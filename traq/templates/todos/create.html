@@ -148,11 +148,12 @@
         //trailing commas' value is removed
         if(arr[arr.length-1] == 0){
             arr.pop()}; 
+        if (arr.length) {
         sum = arr.reduce(function(a,b){
             return a+b;}); 
         sum = sum/arr.length;
         sum = Math.round(sum * 100) / 100;
-        $(this).val(sum); 
+        $(this).val(sum);} 
     });
     {% endif %}
  });
