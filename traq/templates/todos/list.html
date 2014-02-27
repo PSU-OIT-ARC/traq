@@ -25,7 +25,11 @@
     <a href="{% url 'todos-bulk' project.pk %}" class="button" id="bulk-action">Bulk Action</a>
     {% if project.is_scrum %}
         <a href="{% url 'todos-prioritize' project.pk %}/?sprint_end={{backlog | date:'c'}}" class="button">Prioritize</a>
-    {% endif %}</h2>
+    {% endif %}
+      <form style='display:inline-block;float:right;margin-top:5px;' id='search' method='GET'>
+        <input type='text' name='q' placeholder='Search'></input>
+      </form>
+    </h2>
     {% include 'filterset.html' %}
     <table cellpadding='5px' id='todo-table' class='tablesorter' style='width:100%;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
@@ -40,6 +44,8 @@
             <td style='padding:5px'>{{ todo.due_on |date:"M d, Y" }}</td>
             <td style='padding:5px;'>{{ todo.priority }}</td> 
         </tr>
+        {% empty %}
+        <tr><td></td><td>No To Dos for you</td></tr>
     {% endfor %}
     </tbody>    
     </table>

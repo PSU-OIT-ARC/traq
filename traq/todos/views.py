@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.db.models import Q
 from traq.tickets.forms import TicketForm, CommentForm
 from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
 from traq.utils import get_next_scrum_day
@@ -24,6 +25,10 @@ def listing(request, project_id):
         backlog = project.current_sprint_end - datetime.timedelta(days=2)
     else: 
         backlog = None
+    
+    q = request.GET.get('q', '')
+    if request.GET.get('q'):
+        todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
 
     return render(request, 'todos/list.html', {
         'todos': todos,
