@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
+from django.db.models import Q
 from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
@@ -176,8 +177,14 @@ def edit(request, ticket_id):
 @permission_required('tickets.add_ticket')
 def listing(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
     tickets= ticket_filterset.qs.order_by('-priority', 'due_on')
+    
+    q = request.GET.get('q', '')
+    if request.GET.get('q'):
+        tickets = tickets.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+
     return render(request, 'tickets/list.html', {
         'tickets': tickets,
         'project': project,
