@@ -24,9 +24,9 @@ def get_choices(model, project=None, extra=None):
     my_choices.append( ('',"Any ol\' Time") )
     last_month = now() - datetime.timedelta(days=30)
     if project:
-        items = model.objects.filter(project_id=project.pk, is_deleted=False).order_by('due_on')
+        items = model.objects.filter(project_id=project.pk, is_deleted=False).order_by('-due_on')
     else:
-        items = model.objects.filter(is_deleted=False).order_by('due_on')
+        items = model.objects.filter(is_deleted=False).order_by('-due_on')
     if extra:
         items = items.filter(**extra)
     dates = items.values_list('due_on', flat='true').distinct()
