@@ -109,9 +109,9 @@
                 {% for ticket in todo.tickets.all %}
                     <tr>
                         {% if perms.tickets.add_ticket %}
-                            <td class='hover' title="{{ ticket.title|escape |truncatechars:50}}"><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></td>
+                            <td class='tool'><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a><div class='tip'>{{ ticket.title|escape |truncatechars:50}}</div></td>
                         {% else %}
-                            <td class='hover' title="{{ ticket.title|escape|truncatechars:50 }}"><a class='button' href=#>#{{ ticket.pk }}: {{ ticket.status }}</a></td>
+                            <td class='tool'><a class='button' href=#>#{{ ticket.pk }}: {{ ticket.status }}</a><div class='tip'>{{ ticket.title|escape |truncatechars:50}}</div>/td>
                         {% endif %}
                     </tr>
                 {% endfor %}
