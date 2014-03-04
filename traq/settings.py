@@ -5,7 +5,7 @@ from django.conf import global_settings
 PROJECT_DIR = os.path.dirname(__file__)
 HOME_DIR = os.path.normpath(os.path.join(PROJECT_DIR, '../'))
 
-LDAP_URL = "ldap://ldap.oit.pdx.edu"
+LDAP_URL = "ldap://ldap-login.oit.pdx.edu"
 LDAP_BASE_DN = 'dc=pdx,dc=edu'
 
 # When an email is sent to a user, the address is formed by username@EMAIL_DOMAIN
