@@ -58,6 +58,16 @@ def dashboard(request, project_id):
         'todos_completed': todos_completed,
     })
 
+@can_view_project
+def scrum(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    sess_sprint = "sprint_end%d" % project.pk
+    sprint_end = request.session.get(sess_sprint, project.current_sprint_end)
+    return render(request, "projects/scrum.html",{
+        'project': project,
+        })
+    
+    
 def which_sprint(request, project_id):
     project = get_object_or_404(Project,pk= project_id)
     if request.method == "POST":

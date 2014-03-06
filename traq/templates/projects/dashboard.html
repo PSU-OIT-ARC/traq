@@ -3,12 +3,6 @@
 {% load tickets %}
 
 {% block page_title %}{{ project.name }}{% endblock %}
-{% block navigation %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
-    <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
-    <li><a href="{% url 'todos-list' project.pk %}">ToDos</a></li>
-{% endblock navigation %}
 <div class='float-right iblock small'><a href="{% url "accounts-profile" %}assigned?sprint_end={{ sprint_end | date:'c'}}">My Tickets</a></div>
 
 {% block content %}
