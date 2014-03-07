@@ -65,6 +65,7 @@ def scrum(request, project_id):
     sprint_end = request.session.get(sess_sprint, project.current_sprint_end)
     return render(request, "projects/scrum.html",{
         'project': project,
+        'sprint_end': sprint_end,
         })
     
     
@@ -73,5 +74,5 @@ def which_sprint(request, project_id):
     if request.method == "POST":
         end = request.POST.get('current_sprint_end', project.current_sprint_end)
         sprint = "sprint_end%d" % project.pk
-        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date()
-    return HttpResponseRedirect(reverse("projects-dashboard", args=(project.pk,)))
+        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date() 
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
