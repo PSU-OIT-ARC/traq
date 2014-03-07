@@ -28,7 +28,7 @@
                           <li><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
                           <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
                           <li><a href="{% url 'todos-list' project.pk %}">ToDos</a></li>
-                          {#<li><a href="{% url 'scrum' project.pk %}">Scrum</a></li>#}
+                          <li><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
                         {% endblock navigation %}
                         </ul>
 

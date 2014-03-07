@@ -1,5 +1,7 @@
 {% extends "scrum_base.html" %}
-
+{% block page_title %}Scrum Workflow{%endblock%}
 {% block content %}
-{{project}}
+<h2>{{ project.name }}: Scrum Workflow
+{% include '_sprint_end_form.html' %}
+</h2>
 {% endblock %}
