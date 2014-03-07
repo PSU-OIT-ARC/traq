@@ -6,8 +6,8 @@
 </h2>
 <div class='scrum-workflow'>
   <ul>
-    <li><a href='{% url 'todos-list' project.pk %}'>Prioritize ToDos</a></li>
-    <li><a href='{% url 'todos-list' project.pk %}'>Backlog Refinement Meeting</a></li>
+    <li><a href='{% url 'todos-prioritize' project.pk %}'>Prioritize ToDos</a></li>
+    <li><a href='{% url 'projects-backlog' project.pk %}'>Backlog Refinement Meeting</a></li>
     <li><a href='{% url 'todos-list' project.pk %}'>Sprint Planning Meeting</a></li>
     <li><a href='{% url 'todos-list' project.pk %}'>Sprint Review Meeting</a></li>
     <li><a href='{% url 'todos-list' project.pk %}'>Scrum Stats</a></li>

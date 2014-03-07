@@ -8,6 +8,7 @@ from django.db.models import Count
 from ..models import Project, Milestone
 from traq.tickets.models import Ticket
 from traq.tickets.filters import TicketFilterSet
+from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
 from traq.todos.models import ToDo
 from traq.permissions.decorators import can_view_project
 
@@ -57,6 +58,19 @@ def dashboard(request, project_id):
         'tix_completed': tix_completed,
         'todos_completed': todos_completed,
     })
+
+@can_view_project
+@permission_required('todos.change_todo')
+def backlog(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True), project_id=project_id)
+    todos = todo_filterset
+    return render(request, 'projects/backlog.html', {
+        'todos': todos,
+        'project': project,
+        'filterset': todo_filterset,
+        })
+
 
 @can_view_project
 def scrum(request, project_id):
