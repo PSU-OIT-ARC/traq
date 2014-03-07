@@ -65,6 +65,10 @@ def backlog(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True), project_id=project_id)
     todos = todo_filterset
+    q = request.GET.get('q', None) 
+    if q is not None:
+        todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+        
     return render(request, 'projects/backlog.html', {
         'todos': todos,
         'project': project,
