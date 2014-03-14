@@ -24,7 +24,7 @@ def dashboard(request, project_id):
         tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
         todos = todo_list.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q), due_on=sprint_end, is_deleted=False)
     else:
-        tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-priority__rank")
+        tickets = ticket_filterset.qs.order_by("-status__importance", "-global_order", "-assigned_to", "-priority__rank")
         todos = todo_list.filter(project=project, due_on=sprint_end, is_deleted=False)
     tickets =tickets.filter(due_on=sprint_end)
     if project.current_sprint_end is not None:
