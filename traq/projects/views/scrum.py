@@ -8,6 +8,7 @@ from django.db.models import Count
 from ..models import Project, Milestone
 from traq.tickets.models import Ticket
 from traq.tickets.filters import TicketFilterSet
+from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
 from traq.todos.models import ToDo
 from traq.permissions.decorators import can_view_project
 
@@ -58,10 +59,38 @@ def dashboard(request, project_id):
         'todos_completed': todos_completed,
     })
 
+@can_view_project
+@permission_required('todos.change_todo')
+def backlog(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True), project_id=project_id)
+    todos = todo_filterset
+    q = request.GET.get('q', None) 
+    if q is not None:
+        todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+        
+    return render(request, 'projects/backlog.html', {
+        'todos': todos,
+        'project': project,
+        'filterset': todo_filterset,
+        })
+
+
+@can_view_project
+def scrum(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    sess_sprint = "sprint_end%d" % project.pk
+    sprint_end = request.session.get(sess_sprint, project.current_sprint_end)
+    return render(request, "projects/scrum.html",{
+        'project': project,
+        'sprint_end': sprint_end,
+        })
+    
+    
 def which_sprint(request, project_id):
     project = get_object_or_404(Project,pk= project_id)
     if request.method == "POST":
         end = request.POST.get('current_sprint_end', project.current_sprint_end)
         sprint = "sprint_end%d" % project.pk
-        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date()
-    return HttpResponseRedirect(reverse("projects-dashboard", args=(project.pk,)))
+        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date() 
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])

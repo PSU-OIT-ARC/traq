@@ -575,6 +575,8 @@ li.odd {
 }
 
 #page {
+    width:90%;
+    margin:auto;
     background:white;}
 
 #page #header{
@@ -656,4 +658,12 @@ div.triptych h3 {
 .sticky {
     top: -20px;}
 
+.scrum-workflow ul li {
+    list-style:none;
+    padding:10px;
+    font-size: 1em;
+}
 
+.scrum-workflow ul li a {
+    color:black;
+}
