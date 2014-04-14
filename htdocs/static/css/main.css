@@ -575,6 +575,8 @@ li.odd {
 }
 
 #page {
+    width:90%;
+    margin:auto;
     background:white;}
 
 #page #header{
