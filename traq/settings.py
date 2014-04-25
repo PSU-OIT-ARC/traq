@@ -7,6 +7,7 @@ HOME_DIR = os.path.normpath(os.path.join(PROJECT_DIR, '../'))
 
 LDAP_URL = "ldap://ldap-login.oit.pdx.edu"
 LDAP_BASE_DN = 'dc=pdx,dc=edu'
+LDAP_DISABLED = False
 
 # When an email is sent to a user, the address is formed by username@EMAIL_DOMAIN
 EMAIL_DOMAIN = 'pdx.edu'
