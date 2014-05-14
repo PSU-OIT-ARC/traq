@@ -172,7 +172,7 @@ class Ticket(models.Model):
     def sendNotification(self, *args):
         status = args[0]
         """Send a notification email to the person assigned to this ticket"""
-        if self.assigned_to is not None:
+        if self.assigned_to:
             to = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(self.pk,))
             context = {
@@ -354,7 +354,8 @@ class Comment(models.Model):
                 item = 'Ticket'
                 ticket = self.ticket or None
                 ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
-                if not self.created_by == self.ticket.assigned_to:
+                if self.ticket.assigned_to:
+                    if not self.created_by == self.ticket.assigned_to:
                         to.append(self.ticket.assigned_to.username +"@" + SETTINGS.EMAIL_DOMAIN)
             else:
                 item = 'To Do'
