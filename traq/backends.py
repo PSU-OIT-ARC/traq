@@ -28,7 +28,7 @@ class PSUBackend(CASBackend):
             user.groups.add(group)
 
     def get_groups(self, username):
-        if settings.DEBUG and settings.LDAP_DISABLED:
+        if SETTINGS.DEBUG and SETTINGS.LDAP_DISABLED:
             return LOGIN_GROUPS
 
         # figure out which ldap groups this user belongs to
