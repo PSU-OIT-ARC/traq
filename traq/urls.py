@@ -51,6 +51,8 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/reports/component/?$', projects.views.reports.component, name='projects-reports-component'),
     url(r'^projects/(\d+)/reports/invoice/?$', projects.views.reports.invoice, name='projects-reports-invoice'),
     url(r'^projects/reports/mega/?$', projects.views.reports.mega, name='projects-reports-mega'),
+    url(r'^projects/reports/summary/?$', projects.views.reports.summary, name='projects-reports-summary'),
+    
     # milestones
     url(r'^projects/(\d+)/milestons/create/?$', projects.views.milestones.create, name='milestones-create'),
     url(r'^milestones/(\d+)/edit/?$', projects.views.milestones.edit, name='milestones-edit'),
