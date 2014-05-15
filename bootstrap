@@ -1,0 +1,176 @@
+#!/bin/bash
+
+
+VIRTUALENV_EXECUTABLE=`which virtualenv`
+PYTHON_EXECUTABLE=${1-`which python`}
+ENVIRONMENT_PATH="`pwd`/env"
+
+
+function patch_broken_packages() {
+    echo -e "Patching broken packages ...\n"
+}
+
+function patch_environment() {
+    echo "Patching environment ..."
+}
+
+function check_system_packages() {
+    echo "Verifying required system-packages are installed ..."
+    echo "XXX: Support for Python 3.X is available on APT-based distributions."
+
+    if [[ ${OS} == 'Ubuntu' || ${OS} == 'Debian' ]]; then
+        PYTHON_DEV_PKG="python-dev"
+        if [ $PYTHON_MAJOR_VERSION -gt "2" ]; then
+            PYTHON_DEV_PKG="python3-dev"
+        fi
+        GIT_PKG="git-core"
+        HG_PKG="mercurial"
+        FLITE_PKG="flite"
+        DEV_PKGS="libpq-dev libmysqlclient-dev zlib1g-dev libssl-dev libfreetype6-dev libjpeg-dev libpng12-dev"
+
+        dpkg -s ${PYTHON_DEV_PKG} ${GIT_PKG} ${HG_PKG} ${FLITE_PKG} ${DEV_PKGS} >& /dev/null
+        if [ $? -ne 0 ]; then
+            echo "Installing ${PYTHON_DEV_PKG} ${GIT_PKG} ${HG_PKG} ${FLITE_PKG} ${DEV_PKGS} ..."
+            sudo apt-get install ${PYTHON_DEV_PKG} ${GIT_PKG} ${HG_PKG} ${FLITE_PKG} ${DEV_PKGS}
+        fi
+    elif [[ ${OS} == 'CentOS' || ${OS} == 'Redhat' ]]; then
+        echo "Please verify the following development packages are installed:"
+        echo ""
+        echo "  * python (e.g., python26-devel)"
+        echo "  * postgresql (e.g., python91-devel)"
+        echo "  * mysql (e.g., mysql-devel)"
+        echo ""
+        echo "Please verify the following revision control systems are installed:"
+        echo ""
+        echo "  * git (e.g., git, git-all)"
+        echo "  * hg (e.g., mercurial)"
+
+        HAS_ZLIB_DEVEL=`rpm -qa | grep zlib-devel`
+        if [ ! "${HAS_ZLIB_DEVEL}" ]; then
+            echo "Installing zlib-devel..."
+            sudo yum install zlib-devel
+        fi
+        HAS_OPENSSL_DEVEL=`rpm -qa | grep openssl-devel`
+        if [ ! "${HAS_OPENSSL_DEVEL}" ]; then
+            echo "Installing openssl-devel..."
+            sudo yum install openssl-devel
+        fi
+        HAS_FREETYPE_DEVEL=`rpm -qa | grep freetype-devel`
+        if [ ! "${HAS_FREETYPE_DEVEL}" ]; then
+            echo "Installing freetype-devel..."
+            sudo yum install freetype-devel
+        fi
+        HAS_LIBJPEG_DEVEL=`rpm -qa | grep libjpeg-devel`
+        if [ ! "${HAS_LIBJPEG_DEVEL}" ]; then
+            echo "Installing libjpeg-devel..."
+            sudo yum install libjpeg-devel
+        fi
+        HAS_LIBPNG_DEVEL=`rpm -qa | grep libpng-devel`
+        if [ ! "${HAS_LIBPNG_DEVEL}" ]; then
+            echo "Installing libpng-devel..."
+            sudo yum install libpng-devel
+        fi
+        HAS_FLITE=`rpm -qa | grep flite`
+        if [ ! "${HAS_FLITE}" ]; then
+            echo "Installing flite..."
+            sudo yum install flite
+        fi
+    else
+        echo "Unsupported host operating system. Cannot verify system package requirements."
+        echo "INFO: Please ensure that the default (support/stable) versions of database development"
+        echo "      packages to be installed match those of the database services you are attempting"
+        echo "      to use."
+    fi
+}
+
+function check_environment() {
+    echo "Detected host OS: ${OS} ${VER}"
+
+    check_system_packages
+}
+
+function prepare_environment() {
+    echo "Using Python: ${PYTHON_EXECUTABLE}"
+
+    # Inspect python major version
+    PYTHON_MAJOR_VERSION_NUM=`${PYTHON_EXECUTABLE} -c 'import sys; sys.version_info[0]'`
+    PYTHON_MINOR_VERSION_NUM=`${PYTHON_EXECUTABLE} -c 'import sys; sys.version_info[1]'`
+
+    if [ $? -eq 0 ]; then
+      if [ "${PYTHON_MAJOR_VERSION_NUM}" = "3" ]; then
+        if [ "${PYTHON_MINOR_VERSION_NUM}" = "4" ]; then
+            echo "Please install a version of Python3 >=3.4."
+            exit
+        fi
+        PYTHON_MAJOR_VERSION="3"
+      else
+        if [ "${PYTHON_MAJOR_VERSION_NUM}" = "2" ]; then
+            if [ "${PYTHON_MINOR_VERSION_NUM}" = "6" ]; then
+                echo "Please install a version of Python >2.6,<3.0."
+                exit
+            fi
+        fi
+        PYTHON_MAJOR_VERSION=2
+      fi
+    fi
+}
+
+function check_distribute() {
+    if [[ `./env/bin/pip list | grep "distribute"` ]]; then
+      echo "Converting local environment to utilize 'setuptools>=0.7'."
+      read -p "This will delete your existing virtual environment. Continue? [y/N]" -n 1 REMOVE_EXISTING
+      if [[ ${REMOVE_EXISTING} =~ ^[Yy]$ ]]; then
+          echo "Please re-run the bootstrap script to complete the conversion."
+          rm -Rf ./env/* || echo "Error: Could not remove existing virtual environment."
+      fi
+      exit
+    fi
+}
+
+function build_environment() {
+    # Build virtual environment
+    which virtualenv > /dev/null
+    HAS_VIRTUALENV=$?
+    if [ ${HAS_VIRTUALENV} -eq 0 ]; then
+        echo "Using virtualenv: ${VIRTUALENV_EXECUTABLE}"
+        if [[ ! -d ${ENVIRONMENT_PATH} || ! -x ${ENVIRONMENT_PATH}/bin/pip ]]; then
+            echo "Creating virtual environment at $ENVIRONMENT_PATH"
+            ${VIRTUALENV_EXECUTABLE} -p ${PYTHON_EXECUTABLE} --setuptools --no-site-packages ${ENVIRONMENT_PATH}
+        fi
+
+        check_environment || exit
+        patch_environment || exit
+        check_distribute || exit
+
+        echo "Updating local version of pip ..."
+        ./env/bin/pip install --upgrade pip || exit
+        echo "Updating local version of setuptools ..."
+        ./env/bin/pip install --upgrade setuptools || exit
+        echo "Updating local installation of Django ..."
+        ./env/bin/pip install `grep "Django==" requirements.txt` || exit
+        echo "Updating virtual environment ..."
+        ./env/bin/pip install --requirement=requirements.txt || exit
+
+        patch_broken_packages || exit
+    else
+        echo "Could not find 'virtualenv'. Please install the 'python-virtualenv' package for Debian or RedHat-based systems. If you're using OS X, install homebrew?"
+        exit
+    fi
+}
+
+function print_help() {
+  echo "Usage: $0 [-h/--help] [path-to-python]"
+}
+
+# Get distribution information
+OS=$(lsb_release -si)
+ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+VER=$(lsb_release -sr)
+
+if [[ $1 == "-h" || $1 == "--help" ]]; then
+  print_help
+  exit 0
+fi
+
+prepare_environment || exit
+build_environment || exit
