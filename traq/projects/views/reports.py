@@ -79,6 +79,15 @@ def grid(request, project_id):
     })
 
 @permission_required('projects.can_view_all')
+def summary(request):
+    projects = Project.objects.filter(status=1)
+    # get all the people who have worked on this project
+    
+    return render(request, 'projects/reports/summary.html', {
+        'projects': projects,
+    })
+
+@permission_required('projects.can_view_all')
 def component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     form, interval = _intervalHelper(request, project_id)

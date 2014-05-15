@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% load tickets %}
+{% block page_title %}Summary Report{% endblock %}
+{% block breadcrums %}
+  <li><a href="{% url 'projects-all' %}">Projects</a></li>
+{% endblock %}
+{% block content %}
+
+<h2>Projects Summary</h2>
+<div class="print-hide">
+</div>
+
+<div class="tabler">
+    <table class="report time-grid">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Project Lead/PM</th>
+            <th>Programmers</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td class="">{{ project }}</td>
+                <td class="">{{ project.pm | default:'–'}}</td>
+                <td class="">
+                  {% for user in project.users %}
+                    {{ user }},
+                  {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
