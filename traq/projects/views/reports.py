@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.timezone import utc
 from django.contrib.auth.models import User
 from ..forms import ReportIntervalForm, ReportFilterForm
-from ..models import Project, Component
+from ..models import Project, Component, Milestone
 from traq.tickets.models import Ticket
 from django.contrib.auth.decorators import permission_required
 from traq.tickets.templatetags.tickets import tickettimepretty
@@ -81,8 +81,8 @@ def grid(request, project_id):
 @permission_required('projects.can_view_all')
 def summary(request):
     projects = Project.objects.filter(status=1)
-    # get all the people who have worked on this project
-    
+    for p in projects:
+        p.milestone = Milestone.objects.filter(project = p.project_id, name='Target Completion Date').values_list('due_on',flat=True)
     return render(request, 'projects/reports/summary.html', {
         'projects': projects,
     })
