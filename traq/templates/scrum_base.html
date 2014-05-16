@@ -39,10 +39,12 @@
                                     <li><a href="{% url 'accounts-logout' %}">Logout</a></li>
                                 </ul>
                             {% endif %}
+                        {% block search %}
                             <form style='display:inline-block;float:right;margin-top:5px;' id='search' method='GET'>
                               <input type='text' name='q' placeholder='Search'></input>
                             </form>
-
+                        
+                        {% endblock %}
                         {% endblock %}
                         <div class="clear"></div>
                     {% endblock %}

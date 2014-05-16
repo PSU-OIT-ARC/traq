@@ -80,9 +80,15 @@ def grid(request, project_id):
 
 @permission_required('projects.can_view_all')
 def summary(request):
+    ''' this is like the mega view but pivoted on projects'''
     projects = Project.objects.filter(status=1).exclude(name__exact='')
     for p in projects:
         p.milestone = Milestone.objects.filter(project = p.project_id, name='Target Completion Date').values_list('due_on',flat=True)
+        p.total_time = timedelta(0)
+        for t in p.ticket_set.filter(is_deleted=False):
+            for w in t.work_set.filter(is_deleted=False):
+                p.total_time += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second )
+    
     return render(request, 'projects/reports/summary.html', {
         'projects': projects,
     })
