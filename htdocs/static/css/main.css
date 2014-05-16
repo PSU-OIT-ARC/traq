@@ -130,6 +130,9 @@ p.error {
     background-color:#efefef;
 }
 
+.report.summary td {
+    padding: 5px;
+}
 #mega-form p, #mega-form input {
     display: inline-block;
 }
