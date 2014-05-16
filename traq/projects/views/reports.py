@@ -11,7 +11,7 @@ from django.utils.timezone import utc
 from django.contrib.auth.models import User
 from ..forms import ReportIntervalForm, ReportFilterForm
 from ..models import Project, Component, Milestone
-from traq.tickets.models import Ticket
+from traq.tickets.models import Ticket, Work
 from django.contrib.auth.decorators import permission_required
 from traq.tickets.templatetags.tickets import tickettimepretty
 
@@ -85,10 +85,10 @@ def summary(request):
     for p in projects:
         p.milestone = Milestone.objects.filter(project = p.project_id, name='Target Completion Date').values_list('due_on',flat=True)
         p.total_time = timedelta(0)
-        for t in p.ticket_set.filter(is_deleted=False):
-            for w in t.work_set.filter(is_deleted=False):
-                p.total_time += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second )
-    
+        work = Work.objects.filter(ticket__project = p.project_id)
+        for w in work:
+           p.total_time += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second )
+
     return render(request, 'projects/reports/summary.html', {
         'projects': projects,
     })
