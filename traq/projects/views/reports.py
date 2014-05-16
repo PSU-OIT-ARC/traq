@@ -80,7 +80,7 @@ def grid(request, project_id):
 
 @permission_required('projects.can_view_all')
 def summary(request):
-    projects = Project.objects.filter(status=1)
+    projects = Project.objects.filter(status=1).exclude(name__exact='')
     for p in projects:
         p.milestone = Milestone.objects.filter(project = p.project_id, name='Target Completion Date').values_list('due_on',flat=True)
     return render(request, 'projects/reports/summary.html', {
