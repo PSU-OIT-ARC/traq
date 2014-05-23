@@ -27,11 +27,12 @@ from django.contrib.auth.models import User
 
 @permission_required('projects.can_view_all', raise_exception=True)
 def all(request):
-    projects = []
-    projects.append(Project.objects.filter(status=Project.ACTIVE))
-    projects.append(Project.objects.filter(status=Project.INACTIVE))
+    projects_active = Project.objects.filter(status=Project.ACTIVE)
+    projects_inactive = Project.objects.filter(status=Project.INACTIVE)
+    
     return render(request, 'projects/all.html', {
-        'projects': projects,
+        'projects_active': projects_active,
+        'projects_inactive': projects_inactive,
     })
 
     

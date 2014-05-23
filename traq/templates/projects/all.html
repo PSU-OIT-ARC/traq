@@ -7,8 +7,7 @@
 {% block content %}
 <h2>Projects <a class="button" href="{% url 'projects-create' %}">New Project</a></h2>
 
-{% for project_list in projects %}
-<table class="table-info project-list">
+<table class="table-info project-list active">
     <thead>
         <tr>
             <th>Name</th>
@@ -17,7 +16,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for project in project_list %}
+        {% for project in projects_active %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td style="min-width:200px">
                     <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> 
@@ -31,10 +30,43 @@
         {% endfor %}
     </tbody>
 </table>
-{% endfor %}
+<a href='#' class='button inactive-toggle'>Show Inactive Projects</a>
+<a href='#' style='display:none' class='button inactive-toggle'>Hide Inactive Projects</a>
+<table style='display:none' class="table-info project-list inactive">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects_inactive %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td style="min-width:200px">
+                    <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> 
+                    {% if perms.projects.change_project %}
+                        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+                    {% endif %}
+                </td>
+                <td>{{ project.get_status_display }}</td>
+                <td>{{ project.description|truncatechars:80 }} <a href="{% url 'projects-meta' project.pk %}">Read more</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 <h2>Report</h2>
 <p><a href="{% url 'projects-reports-mega' %}">Mega</a></p>
 <p><a href="{% url 'projects-reports-summary' %}">Summary</a></p>
+
+
+<script type='text/javascript'>
+    $('.inactive-toggle').click(function(e){
+        e.preventDefault();
+        $('table.inactive').toggle();
+        $('.inactive-toggle').toggle();
+    });
+</script>
 {% endblock %}
 
