@@ -88,7 +88,8 @@ def summary(request):
         work = Work.objects.filter(ticket__project = p.project_id)
         for w in work:
            p.total_time += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second )
-
+        if p.estimated_hours:
+            p.percent = p.total_time/p.estimated_hours * 100
     return render(request, 'projects/reports/summary.html', {
         'projects': projects,
     })
