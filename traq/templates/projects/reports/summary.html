@@ -25,14 +25,13 @@
             <th>Estimated </th>
             <th>Percentage</th>
             <th>Programmers</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
             {% for project in projects %}
 
             <tr class="{% cycle 'odd' 'even' %}">
-                <td class=""><a href='{% url 'projects-detail' project.pk %}'>{{ project }}</a></td>
+                <td class=""><a href='{% url 'projects-detail' project.pk %}'>{{ project }}</a> <a class='button'href='{% url 'projects-edit' project.pk %}'>Edit</a></td>
                 <td class="">{{ project.milestone.0|date:'M d, Y' |default:'–' }}</td>
                 <td class="">{{ project.pm | default:'–'}}</td>
                 <td class="">{{ project.point_of_contact | default:'–'}}</td>
@@ -43,10 +42,6 @@
                   {% for user in project.users %}
                     {{ user }},
                   {% endfor %}
-                </td>
-
-                <td>
-                 <a href='{% url 'projects-edit' project.pk %}'>Edit</a>
                 </td>
             </tr>
             {% endfor %}

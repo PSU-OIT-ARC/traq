@@ -43,7 +43,8 @@ class TicketForm(forms.ModelForm):
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
         self.fields['component'].empty_label = None
-
+        self.fields['assigned_to'].queryset = User.objects.filter(is_active=True, groups__name='arc')
+        
         # set some sensible default values
         if not self.is_bound:
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
@@ -51,7 +52,7 @@ class TicketForm(forms.ModelForm):
             self.fields['component'].initial = project.defaultComponent()
             self.fields['estimated_time'].initial = "1:00"
             self.fields['assigned_to'].initial = self.user
-
+            
         if self.todos:
             self.fields['body'].initial = "from todo: \n%s " % self.todos.body
 

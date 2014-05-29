@@ -28,6 +28,7 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = (
             'name',
+            'team_dynamix_id',
             'description',
             'point_of_contact',
             'invoice_description',

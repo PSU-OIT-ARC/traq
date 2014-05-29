@@ -57,6 +57,7 @@ class Project(models.Model):
     INACTIVE = 0
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    team_dynamix_id = models.IntegerField(default=None, blank=True, null=True)
     description = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
@@ -81,7 +82,7 @@ class Project(models.Model):
     estimated_hours = models.IntegerField(null=True, default=None, blank=True)
     is_scrum = models.BooleanField(default=False, help_text='This turns on a bunch of annoying Scrum things') 
     current_sprint_end= models.DateField(null=True, blank=True, verbose_name="Sprint End")  
-
+    
 
     def __unicode__(self):
         return "%s" % self.name
