@@ -15,10 +15,15 @@
 {% block content %}
 
 <h2>{{ project.name }} 
-    {% if perms.projects.change_project %}
+{% if perms.projects.change_project %}
         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
     {% endif %}
 </h2>
+{% if perms.projects.can_view_all %}
+    {% if project.team_dynamix_id %}
+        Team Dynamix Id: {{project.team_dynamix_id }}
+    {% endif %}
+{% endif %}
 
 {% if perms.tickets.add_ticket %}
     <h3><a href="{% url 'projects-detail' project.pk %}">Project Tickets</a></h3>

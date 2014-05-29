@@ -19,7 +19,7 @@
         {% for project in projects_active %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td style="min-width:200px">
-                    <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> 
+                    <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> {% if project.team_dynamix_id %}({{project.team_dynamix_id}}){% endif %}
                     {% if perms.projects.change_project %}
                         <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
                     {% endif %}

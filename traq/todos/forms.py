@@ -50,7 +50,7 @@ class ToDoForm(forms.ModelForm):
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
         self.fields['component'].empty_label = None
-
+        
         # set some sensible default values
         if not self.is_bound:
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
