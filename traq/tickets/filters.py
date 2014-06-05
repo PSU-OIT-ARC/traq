@@ -3,6 +3,7 @@ from django.db.models.loading import get_model
 from django.template.defaultfilters import date
 import django_filters
 from .models import TicketStatus, TicketPriority, Ticket, Project
+from django.contrib.auth.models import User
 from django import forms
 from django.utils.timezone import  get_current_timezone, localtime, now, make_aware
 from django.shortcuts import get_object_or_404
@@ -69,7 +70,7 @@ class TicketFilterSet(django_filters.FilterSet):
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
     sprint_end = django_filters.DateFilter('due_on', label=_('Due On'),) 
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
-    
+    assigned_to = django_filters.ModelChoiceFilter('assigned_to', label='Assigned to', queryset=User.objects.filter(is_active=True).exclude(groups__name='arcclient')) 
 
     def __init__(self, *args, **kwargs):
         project_id = kwargs.pop('project_id', None)
