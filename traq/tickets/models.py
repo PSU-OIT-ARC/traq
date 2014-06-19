@@ -40,6 +40,14 @@ class TicketPriority(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+class TicketType(models.Model):
+    ticket_type_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, null=True, blank=True, default=None)
+
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
 class TicketManager(models.Manager):
     def get_query_set(self):
         return super(TicketManager, self).get_query_set().filter(is_deleted=False)
@@ -94,6 +102,8 @@ class Ticket(models.Model):
     component = models.ForeignKey(Component)
     milestone = models.ForeignKey(Milestone, null=True, default=None, blank=True)
 
+    type = models.ForeignKey(TicketType, null=True)
+    
     objects = TicketManager()
 
     def isOverDue(self):

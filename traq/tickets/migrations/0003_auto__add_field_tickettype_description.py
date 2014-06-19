@@ -8,124 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'TicketStatus'
-        db.create_table('ticket_status', (
-            ('ticket_status_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('rank', self.gf('django.db.models.fields.IntegerField')()),
-            ('is_default', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('importance', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal(u'tickets', ['TicketStatus'])
-
-        # Adding model 'TicketPriority'
-        db.create_table('ticket_priority', (
-            ('ticket_priority_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('rank', self.gf('django.db.models.fields.IntegerField')()),
-            ('is_default', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'tickets', ['TicketPriority'])
-
-        # Adding model 'Ticket'
-        db.create_table('ticket', (
-            ('ticket_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('body', self.gf('django.db.models.fields.TextField')()),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('started_on', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 4, 14, 0, 0))),
-            ('edited_on', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('estimated_time', self.gf('django.db.models.fields.TimeField')(default=None, null=True)),
-            ('is_deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_extra', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('due_on', self.gf('django.db.models.fields.DateTimeField')(default=None, null=True, blank=True)),
-            ('is_internal', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('release', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('branch', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['auth.User'])),
-            ('assigned_to', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='+', null=True, blank=True, to=orm['auth.User'])),
-            ('status', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tickets.TicketStatus'])),
-            ('priority', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tickets.TicketPriority'])),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Project'])),
-            ('component', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Component'])),
-            ('milestone', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['projects.Milestone'], null=True, blank=True)),
-        ))
-        db.send_create_signal(u'tickets', ['Ticket'])
-
-        # Adding model 'TicketFile'
-        db.create_table('ticket_file', (
-            ('file_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-            ('uploaded_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('uploaded_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['auth.User'])),
-            ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tickets.Ticket'])),
-            ('todo', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['todos.ToDo'])),
-        ))
-        db.send_create_signal(u'tickets', ['TicketFile'])
-
-        # Adding model 'WorkType'
-        db.create_table('work_type', (
-            ('work_type_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('price', self.gf('django.db.models.fields.DecimalField')(max_digits=10, decimal_places=2)),
-            ('is_default', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('rank', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal(u'tickets', ['WorkType'])
-
-        # Adding model 'Work'
-        db.create_table('work', (
-            ('work_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('billable', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('time', self.gf('django.db.models.fields.TimeField')()),
-            ('started_on', self.gf('django.db.models.fields.DateTimeField')()),
-            ('done_on', self.gf('django.db.models.fields.DateTimeField')(default=None, null=True)),
-            ('state', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('state_changed_on', self.gf('django.db.models.fields.DateTimeField')(default=None, null=True, blank=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tickets.WorkType'])),
-            ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tickets.Ticket'])),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['auth.User'])),
-            ('is_deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'tickets', ['Work'])
-
-        # Adding model 'Comment'
-        db.create_table('comment', (
-            ('comment_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('body', self.gf('django.db.models.fields.TextField')()),
-            ('created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('edited_on', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('is_deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('todo', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['todos.ToDo'], null=True)),
-            ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tickets.Ticket'], null=True)),
-            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['auth.User'])),
-        ))
-        db.send_create_signal(u'tickets', ['Comment'])
+        # Adding field 'TicketType.description'
+        db.add_column(u'tickets_tickettype', 'description',
+                      self.gf('django.db.models.fields.CharField')(default=None, max_length=255, null=True, blank=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting model 'TicketStatus'
-        db.delete_table('ticket_status')
-
-        # Deleting model 'TicketPriority'
-        db.delete_table('ticket_priority')
-
-        # Deleting model 'Ticket'
-        db.delete_table('ticket')
-
-        # Deleting model 'TicketFile'
-        db.delete_table('ticket_file')
-
-        # Deleting model 'WorkType'
-        db.delete_table('work_type')
-
-        # Deleting model 'Work'
-        db.delete_table('work')
-
-        # Deleting model 'Comment'
-        db.delete_table('comment')
+        # Deleting field 'TicketType.description'
+        db.delete_column(u'tickets_tickettype', 'description')
 
 
     models = {
@@ -205,6 +96,7 @@ class Migration(SchemaMigration):
             'point_of_contact': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'project_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'status': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
+            'team_dynamix_id': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'technical': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'})
         },
         u'tickets.comment': {
@@ -236,10 +128,11 @@ class Migration(SchemaMigration):
             'priority': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['tickets.TicketPriority']"}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.Project']"}),
             'release': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'started_on': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 4, 14, 0, 0)'}),
+            'started_on': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 6, 19, 0, 0)'}),
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['tickets.TicketStatus']"}),
             'ticket_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['tickets.TicketType']", 'null': 'True'})
         },
         u'tickets.ticketfile': {
             'Meta': {'ordering': "['file']", 'object_name': 'TicketFile', 'db_table': "'ticket_file'"},
@@ -264,6 +157,12 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'rank': ('django.db.models.fields.IntegerField', [], {}),
             'ticket_status_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
+        u'tickets.tickettype': {
+            'Meta': {'object_name': 'TicketType'},
+            'description': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'ticket_type_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         u'tickets.work': {
             'Meta': {'ordering': "['-created_on']", 'object_name': 'Work', 'db_table': "'work'"},
@@ -303,7 +202,7 @@ class Migration(SchemaMigration):
             'priority': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['tickets.TicketPriority']"}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.Project']"}),
             'rank': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'started_on': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 4, 14, 0, 0)'}),
+            'started_on': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 6, 19, 0, 0)'}),
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['tickets.TicketStatus']"}),
             'tickets': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'todos'", 'symmetrical': 'False', 'to': u"orm['tickets.Ticket']"}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
