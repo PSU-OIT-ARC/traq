@@ -1,13 +1,13 @@
-{% extends "base.html" %}
+{% extends "bootstrap_base.html" %}
 
 {% block page_title %}Projects{% endblock %}
-{% block breadcrums %}
+{% block navigation %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
 {% endblock %}
 {% block content %}
-<h2>Projects <a class="button" href="{% url 'projects-create' %}">New Project</a></h2>
-
-<table class="table-info project-list active">
+<h2>Projects </h2><a class="button" href="{% url 'projects-create' %}">New Project</a>
+<div class='row'>
+<table class="table-striped table-bordered project-list active">
     <thead>
         <tr>
             <th>Name</th>
@@ -55,7 +55,7 @@
         {% endfor %}
     </tbody>
 </table>
-
+</div>
 <h2>Report</h2>
 <p><a href="{% url 'projects-reports-mega' %}">Mega</a></p>
 <p><a href="{% url 'projects-reports-summary' %}">Summary</a></p>

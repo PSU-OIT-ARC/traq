@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView
 
 import views
 
@@ -80,6 +81,9 @@ urlpatterns = patterns('',
     url(r'^tickets/(\d+)/work/create/?$', tickets.views.work.create, name='work-create'),
     url(r'^work/(\d+)/pause/?$', tickets.views.work.pause, name='work-pause'),
     url(r'^work/(\d+)/continue/?$', tickets.views.work.continue_, name='work-continue'),
+
+    #just playing
+    url(r'^about/', TemplateView.as_view(template_name="bootstrap_base.html"), {'project': 9}),
 
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),
