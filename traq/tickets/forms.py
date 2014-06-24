@@ -52,6 +52,7 @@ class TicketForm(forms.ModelForm):
             self.fields['component'].initial = project.defaultComponent()
             self.fields['estimated_time'].initial = "1:00"
             self.fields['assigned_to'].initial = self.user
+            self.fields['type'].initial = 1
             
         if self.todos:
             self.fields['body'].initial = "from todo: \n%s " % self.todos.body
@@ -66,6 +67,8 @@ class TicketForm(forms.ModelForm):
         self.fields['milestone'].queryset = Milestone.objects.filter(project=project)
         self.fields['existing_files'].queryset = TicketFile.objects.filter(ticket=self.instance)
 
+        self.fields['type'].help_text = u"New: Client-driven feature work. \nCode Maintenace: Refactoring and revisions. \nBug Fixes: yep."
+    
     def hasFiles(self):
         # does this Ticket have any files associated with it?
         return self.fields['existing_files'].queryset.count() != 0
@@ -136,6 +139,7 @@ class TicketForm(forms.ModelForm):
             'due_on',
             'release',
             'branch',
+            'type',
             
         )
 
@@ -291,4 +295,6 @@ class BulkForm(forms.Form):
                 setattr(ticket, k, v)
 
             ticket.save()
+
+
 

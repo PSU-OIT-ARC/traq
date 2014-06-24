@@ -37,6 +37,7 @@
             <td>Component</td>
             <td>Branch</td>
             <td>Release</td>
+            <td class='tool'>Ticket Type<div class='question-mark'>?<div class='tip'>{{form.type.help_text|linebreaks}}</div></div></td>
         </tr>
         <tr>
             <td>{{ form.assigned_to }}</td>
@@ -45,6 +46,7 @@
             <td>{{ form.component }}</td>
             <td>{{ form.branch }}</td>
             <td>{{ form.release }}</td>
+            <td>{{ form.type }}</td>
         </tr>
     </table>
 
