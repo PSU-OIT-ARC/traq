@@ -31,6 +31,7 @@ def detail(request, ticket_id):
     comments = Comment.objects.filter(ticket=ticket).select_related('created_by')
     if ticket.todos.all():
         comments = list(comments) + list(Comment.objects.filter(todo__pk__in=ticket.todos.all()).select_related('created_by'))
+        comments.sort(key=lambda x: x.created_on)
     work = Work.objects.filter(ticket=ticket).filter(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
