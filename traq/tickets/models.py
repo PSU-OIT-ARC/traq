@@ -102,7 +102,7 @@ class Ticket(models.Model):
     component = models.ForeignKey(Component)
     milestone = models.ForeignKey(Milestone, null=True, default=None, blank=True)
 
-    type = models.ForeignKey(TicketType, null=True)
+    type = models.ForeignKey(TicketType, null=True, blank=True)
     
     objects = TicketManager()
 
