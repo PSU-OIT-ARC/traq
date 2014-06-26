@@ -3,8 +3,20 @@
 {% endblock %}
 {% block page_title %}Tickets{% endblock %}
 {% block navigation %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+    {% if perms.projects.can_view_all %}
+        <li><a href="{% url 'projects-all' %}">Projects</a></li>
+        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+        <li class='active'><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
+    {% else %}
+        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
+        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+     {% endif %}
+    {% if project.is_scrum %} 
+    <li><a href="{% url 'todos-list' project.pk %}?sprint_end={{project.current_sprint_end}}">To Do Items</a></li>
+    <li><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
+    {% else %}
+    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
+    {% endif %}
 {% endblock %}
 
 {%block content %}
