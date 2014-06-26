@@ -1,5 +1,7 @@
+import re
 from django import template
 from django.http import QueryDict
+from django.core.urlresolvers import resolve
 
 register = template.Library()
 
@@ -295,6 +297,13 @@ def compile_current_location(parser, token):
     as_var = bits[2]
     return CurrentLocationNode(as_var)
 
+@register.simple_tag(takes_context=True)
+def active_nav(context, pattern):
+        request = context['request']
+        url_name = resolve(request.path).url_name
+        if url_name == pattern:
+            return 'active'
+        return ''
 
 register.tag("append_key", compile_append_key)
 register.tag("replace_key", compile_replace_key)
