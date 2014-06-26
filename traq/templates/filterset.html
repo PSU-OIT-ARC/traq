@@ -2,7 +2,7 @@
 
 {% clone_query_dict request.GET as "params" %}
 
-<div class="filterset" >
+<div class="hidden-xs filterset" >
     <form id="id_filterset_form" class='col-md-12 form-inline' method="GET">
         {% for filter in filterset.form %}
         <div class='form-group'>
