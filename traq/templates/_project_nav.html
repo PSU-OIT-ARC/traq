@@ -1,0 +1,12 @@
+{% if perms.projects.can_view_all %}
+        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+        <li><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
+        <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
+    {% else %}
+        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+     {% endif %}
+        <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
+    {% if project.is_scrum %} 
+      <li><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
+{% endif %}
+

@@ -1,24 +1,7 @@
-{% extends 'bootstrap_base.html' %}
+{% extends 'project_base.html' %}
 {% block scripts %}
 {% endblock %}
 {% block page_title %}Tickets{% endblock %}
-{% block navigation %}
-    {% if perms.projects.can_view_all %}
-        <li><a href="{% url 'projects-all' %}">Projects</a></li>
-        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-        <li><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
-        <li class='active'><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
-    {% else %}
-        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
-        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
-     {% endif %}
-    {% if project.is_scrum %} 
-    <li><a href="{% url 'todos-list' project.pk %}?sprint_end={{project.current_sprint_end}}">To Do Items</a></li>
-    <li><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
-    {% else %}
-    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
-    {% endif %}
-{% endblock %}
 
 {%block content %}
     <script type='text/javascript' src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>

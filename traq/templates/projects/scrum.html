@@ -1,5 +1,9 @@
-{% extends "scrum_base.html" %}
+{% extends "bootstrap_base.html" %}
 {% block page_title %}Scrum Workflow{%endblock%}
+{% block navigation %}
+{{ block.super }} 
+{% include '_project_nav.html' %}
+{% endblock %}
 {% block content %}
 <h2>{{ project.name }}: Scrum Workflow
 {% include '_sprint_end_form.html' %}

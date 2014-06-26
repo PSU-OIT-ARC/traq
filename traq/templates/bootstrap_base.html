@@ -38,12 +38,16 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-            <a class="navbar-brand" href="#">Traq</a>
+            <a class="navbar-brand" href="/">Traq</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
             {% block navigation %}
-            <li class='active'><a href="{% url 'projects-all' %}">Projects</a></li>
+            {% if perms.projects.can_view_all %}
+              <li><a href="{% url 'projects-all' %}">Projects</a></li>
+            {% else %}
+              <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
+            {% endif %}
             {% endblock navigation %}
           </ul>
         </div><!--/.nav-collapse -->
