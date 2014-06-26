@@ -6,6 +6,7 @@
     {% if perms.projects.can_view_all %}
         <li><a href="{% url 'projects-all' %}">Projects</a></li>
         <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+        <li><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
         <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
     {% else %}
         <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
