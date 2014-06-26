@@ -7,7 +7,11 @@ body {
 
 .navbar-inverse {
     background-color: #6A7F10;
-    border-color: #333;
+    border-color: #566E10;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus {
+    background-color: #566E10;
 }
 
 .navbar-inverse .navbar-nav>li>a, .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {

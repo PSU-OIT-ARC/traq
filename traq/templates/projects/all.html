@@ -2,7 +2,7 @@
 
 {% block page_title %}Projects{% endblock %}
 {% block navigation %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
+    <li class='active'><a href="{% url 'projects-all' %}">Projects</a></li>
 {% endblock %}
 {% block content %}
 <h2>Projects <small class='pull-right' ><a class="btn btn-primary btn-xs" href="{% url 'projects-create' %}">New Project</a></small></h2>
