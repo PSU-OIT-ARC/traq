@@ -3,7 +3,7 @@
 
 {% clone_query_dict request.GET as "params" %}
 
-<div class="pagination" style="margin-top: 0.5em;background-color: #ccc; padding: 0.5em 1em;">
+<div class="traq-pagination col-md-12" style="margin-top: 0.5em;background-color: #ccc; padding: 0.5em 1em;">
   <span class="current">
     Page {{ page.number }} of {{ page.paginator.num_pages }} <em>({{ page.paginator.count }} results</em>)
   </span>

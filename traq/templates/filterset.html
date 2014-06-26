@@ -2,30 +2,21 @@
 
 {% clone_query_dict request.GET as "params" %}
 
-<div class="filterset" style="padding: 0.5em 0.1em;margin-top: 0.5em; min-height: 16px;background-color: #eee;">
-    <form id="id_filterset_form" method="GET">
-    <table>
-      <thead>
-	<tr>
-	  {% for filter in filterset.form %}
-	    <th>{{ filter.label }}</th>
-	    {% endfor %}
-	</tr>
-      </thead>
-      <tbody>
-	<tr>
-    {% for filter in filterset.form %}
-        <td>{{ filter }}</td>
+<div class="filterset" >
+    <form id="id_filterset_form" class='col-md-12 form-inline' method="GET">
+        {% for filter in filterset.form %}
+        <div class='form-group'>
+            <label class='center-block'>{{ filter.label }}</label>
+            {{ filter }}
+        </div>
     {% endfor %}
-    </tr>
-      </tbody>
-    </table>
     </form>
 </div>
 
 {# TODO: enable better dependency handling and loading of Javascript assets #}
 <script type="text/javascript">
     $(document).ready(function() {
+            $('select').addClass('form-control');
     $('#minmax, #closethis').click(function(){
         $('.filterset').toggle();})
     $("#id_filterset_form input,select").change(function() {

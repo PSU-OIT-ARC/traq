@@ -19,3 +19,34 @@ body {
     background-color:#6A7F10;
     border-color: #5D700D;
 }
+
+.ticket-priority-low {
+    background-color:#5BC0DE;
+}
+
+.ticket-priority-normal {
+    background-color:#F0AD4E;
+}
+
+.ticket-priority-high {
+    background-color: #D9534F;
+}
+
+.table-condensed {
+    font-size: 13px;
+}
+
+select.form-control {
+    height:25px;
+}
+
+/*traq */
+#ticket-list tr.odd {
+    background-color: #F9F9F9;
+}
+
+#ticket-list tr td{
+    border:none;
+}
+
+

@@ -11,7 +11,7 @@ $(document).ready(function(){
     });
 });
 </script>
-<table class="table-info" id="ticket-list">
+<table class="table table-info" id="ticket-list">
     <thead>
         <tr>
             {% if project %}
@@ -36,7 +36,7 @@ $(document).ready(function(){
                     <td><input type="checkbox" name="ticket" value="{{ ticket.pk }}" />
                 {% endif %}
                 <td colspan="4">
-                    <span class="ticket-priority ticket-priority-{{ ticket.priority|slugify }} ">{{ ticket.priority }}</span> 
+                    <span class="label ticket-priority ticket-priority-{{ ticket.priority|slugify }} ">{{ ticket.priority }}</span> 
                     <a href="{% url 'tickets-detail' ticket.pk %}">#{{ ticket.pk }} {{ ticket.title }}</a>
                 </td>
             </tr>

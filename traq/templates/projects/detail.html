@@ -1,24 +1,24 @@
-{% extends "base.html" %}
+{% extends "bootstrap_base.html" %}
 
 {% load tickets %}
 
 {% block page_title %}{{ project.name }}{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+{% block navigation %}
+    <li><a href="{% url 'projects-all' %}">Projects</a></li>    
+    {% if project.is_scrum %}
+    <li><a href="{% url 'projects-dashboard' project.pk %}" >Dashboard</a></li>
+    {% endif %}
+
 {% endblock %}
 
 {% block content %}
 <h2>{{ project.name }} 
     {% if perms.projects.change_project %}
-        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+        <a href="{% url 'projects-edit' project.pk %}" class="btn btn-primary btn-xs">Edit</a>
     {% endif %}
-    <a href="{% url 'projects-meta' project.pk %}" class="button">Meta Info</a>
-    {% if project.is_scrum %}
-    <a href="{% url 'projects-dashboard' project.pk %}" class='button'>Dashboard</a>
-    {% endif %}
+    <a href="{% url 'projects-meta' project.pk %}" class="btn btn-primary btn-xs">Meta Info</a>
 </h2>
-
+<hr>
 
 <script type="text/javascript">
 //TICKETS = {{ tickets_json|safe }};
@@ -43,28 +43,28 @@ $(document).ready(function(){
 })
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
-<div class="left-section-wrapper">
+<div class="col-md-8 pull-left-section-wrapper">
+ <div class='row'>
   {% if project.is_scrum %}
-    <h3 class='left iblock pad5'><a href="{% url 'tickets-list' project.pk%}/?sprint_end={{project.current_sprint_end|date:'c'}}">Tickets</a> 
+    <h3 class='pull-left col-md-5 iblock pad5'><a href="{% url 'tickets-list' project.pk%}/?sprint_end={{project.current_sprint_end|date:'c'}}">Tickets</a> 
   {% else %}
-    <h3 class='left iblock pad5'><a href="{% url 'tickets-list' project.pk%}">Tickets</a> 
+    <h3 class='pull-left col-md-5 iblock pad5'><a href="{% url 'tickets-list' project.pk%}">Tickets</a> 
   {% endif %}
-    <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> |
-    <a href="{% url 'tickets-bulk' project.pk %}" class="button" id="bulk-action">Bulk Action</a>
+    <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a> |
+    <a href="{% url 'tickets-bulk' project.pk %}" class="btn btn-primary btn-xs" id="bulk-action">Bulk Action</a>
   </h3>
   {% if project.is_scrum %}
-    <h3 class='iblock left pad5'><a href="{% url 'todos-list' project.pk%}/?sprint_end={{ sprint_end|date:'c' }}">To Do Items</a> 
+    <h3 class='iblock pull-left col-md-4 pad5'><a href="{% url 'todos-list' project.pk%}/?sprint_end={{ sprint_end|date:'c' }}">To Do Items</a> 
   {% else %}
-    <h3 class='iblock left pad5'><a href="{% url 'todos-list' project.pk%}">To Do Items</a> 
+    <div class='iblock pull-left col-md-4 pad5'><a href="{% url 'todos-list' project.pk%}">To Do Items</a> 
   {% endif %}
-  <a href="{% url 'todos-create' project.pk %}" class="button">New To Do</a> 
+  <a href="{% url 'todos-create' project.pk %}" class="btn btn-primary btn-xs">New To Do</a> 
   </h3>
-    <div class='iblock float-right' id='minmax' style='color:grey;' ><span style='display:inline-block' class="ui-icon ui-icon-search"></span>&#9776;</div>  
     <!--input class='iblock float-right' type="text" name="search" id="ticket-search" placeholder="Search" /-->
-    <form class='iblock float-right' style='margin-top:20px;' method='GET'>
+    <form class='iblock pull-right' style='margin-top:20px;' method='GET'>
     <input  type="text" name="contains" id='ticket-contains'  placeholder="Search" />
     </form>
-  <div class="clear"></div>
+    </div>
   {% include 'filterset.html' %}
 
   {% if do_pagination %}
@@ -79,10 +79,10 @@ $(document).ready(function(){
   {% endif %}
 </div>
 
-<div class="right-section-wrapper">
+<div class="col-md-4 right-section-wrapper">
     <div class="right-section-block">
-        <h3>Milestones <a href="{% url 'milestones-create' project.pk %}" class="button">Create</a></h3>
-        <table class="block-table">
+        <h3>Milestones <a href="{% url 'milestones-create' project.pk %}" class="btn btn-primary btn-xs">Create</a></h3>
+        <table class="table table-condensed table-bordered block-table">
             {% for milestone in milestones %}
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td>
@@ -99,8 +99,8 @@ $(document).ready(function(){
     </div>
 
     <div class="right-section-block">
-        <h3>Components <a href="{% url 'components-create' project.pk %}" class="button">Create</a></h3>
-        <table class="block-table">
+        <h3>Components <a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs">Create</a></h3>
+        <table class="table table-condensed table-bordered block-table">
             {% for comp in components %}
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td>
@@ -122,10 +122,10 @@ $(document).ready(function(){
     <div class="right-section-block">
         <h3>Reports</h3>
         <div class="inner">
-            <ul>
-                <li><a href="{% url 'projects-reports-grid' project.pk %}">People and Time</a></li>
-                <li><a href="{% url 'projects-reports-component' project.pk %}">Component Breakdown</a></li>
-                <li><a href="{% url 'projects-reports-invoice' project.pk %}">Invoice</a></li>
+            <ul class='list-group'>
+                <li class='list-group-item'><a href="{% url 'projects-reports-grid' project.pk %}">People and Time</a></li>
+                <li class='list-group-item'><a href="{% url 'projects-reports-component' project.pk %}">Component Breakdown</a></li>
+                <li class='list-group-item'><a href="{% url 'projects-reports-invoice' project.pk %}">Invoice</a></li>
             </ul>
         </div>
     </div>
