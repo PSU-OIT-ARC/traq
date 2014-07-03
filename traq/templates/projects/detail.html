@@ -49,7 +49,7 @@ $(document).ready(function(){
   {% if project.is_scrum %}
     <h3 class='iblock pull-left col-md-4 pad5'><a href="{% url 'todos-list' project.pk%}/?sprint_end={{ sprint_end|date:'c' }}">To Do Items</a> 
   {% else %}
-    <div class='iblock pull-left col-md-4 pad5'><a href="{% url 'todos-list' project.pk%}">To Do Items</a> 
+    <h3 class='iblock pull-left col-md-4 pad5'><a href="{% url 'todos-list' project.pk%}">To Do Items</a> 
   {% endif %}
   <a href="{% url 'todos-create' project.pk %}" class="btn btn-primary btn-xs">New To Do</a> 
   </h3>
