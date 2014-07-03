@@ -140,8 +140,8 @@ def create(request):
 def search(request, project_id):
     project = get_object_or_404(Project,pk= project_id)
     q = request.GET.get('contains', '')
-    tickets = Ticket.objects.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
-    todos = ToDo.objects.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    tickets = Ticket.objects.filter(project=project).filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    todos = ToDo.objects.filter(project=project).filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
     tickets = match_results(q, tickets)
     todos = match_results(q, todos)
     results = tickets.count() + todos.count()
