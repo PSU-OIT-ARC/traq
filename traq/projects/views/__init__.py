@@ -175,7 +175,7 @@ def match_results(q, tickets):
             end = match.end() + 20 if (match.end() + 20 is not None) else match.end() 
             repl = '<strong>%s</strong>' % match.group()
             pat = re.compile(q, re.I)
-            body = pat.sub(repl, ticket.body)
+            body = pat.sub(repl, ticket.body, 1)
             ticket.match = body[start:end+20]
         match = re.search(q, ticket.title, re.IGNORECASE )
         if match is not None:    
@@ -183,6 +183,6 @@ def match_results(q, tickets):
             end = match.end() + 20 if (match.end() + 20 is not None) else match.end() 
             repl = '<strong>%s</strong>' % match.group()
             pat = re.compile(q, re.I)
-            title = pat.sub(repl, ticket.title)
+            title = pat.sub(repl, ticket.title, 1)
             ticket.match = title[start:end+20]
     return tickets
