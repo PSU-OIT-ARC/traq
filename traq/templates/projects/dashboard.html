@@ -2,6 +2,12 @@
 
 {% load tickets %}
 
+{% block scripts %}
+<script type='text/javascript' src='{{ STATIC_URL }}datatables/js/jquery.dataTables.min.js'></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/datatables/css/jquery.dataTables.min.css">
+{% endblock %}
+
+
 {% block page_title %}{{ project.name }}{% endblock %}
 <div class='pull-right iblock small'><a href="{% url "accounts-profile" %}assigned?sprint_end={{ sprint_end | date:'c'}}">My Tickets</a></div>
 
@@ -19,7 +25,7 @@
     </h3>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
-    <table class='table table-info'>
+    <table class='data-table table table-striped table-info'>
     <thead class='sticky'><th>Title</th><th>Assignee</th><th>Status</th></thead>
     {% for ticket in tickets %}
         <tr class="{% cycle 'even' 'odd' %}">
@@ -31,7 +37,7 @@
         <td>{{ticket.assigned_to}}</td>
         <td>{{ticket.status}}</td></tr>
     {% empty %}
-        <tr><td>Well, there aren't any. click link above to find what you're looking for </td></tr>
+        <tr><td>Well, there aren't any. click link above to find what you're looking for </td><td></td><td></td></tr>
     {% endfor %}
 
     </table>
@@ -44,8 +50,9 @@
     </h3>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
-    <table class='table table-info'>
-    <thead class='sticky'><th>Title</th><th>Status</th><th>Tickets</th></thead>
+    <table class='data-table table table-striped table-info'>
+    <thead class='sticky'>
+    <th>Title</th><th>Status</th><th>Tickets</th></thead>
     {% for todo in todos %}
         <tr class="{% cycle 'even' 'odd' %}">
           <td><a href="{% url "todos-detail" todo.pk %}">{{todo}}</a></td>
@@ -59,13 +66,13 @@
           </td>
           </tr>
     {% empty %}
-        <tr><td>Well, there aren't any. click link above to find what you're looking for </td></tr>
+        <tr><td>Well, there aren't any. click link above to find what you're looking for </td><td></td><td></td></tr>
     {% endfor %}
     </table>
   </div>
 </div>
 </div>
-<div style='width:100%;clear:right'>
+<div style='clear:both' class='row'>
 <hr>
 <div class='pull-left col-md-4' style='clear:both;'>
 <h3>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs">Create</a>{% endif %}</h3>
@@ -91,7 +98,7 @@
 <div class='pull-left col-md-4'>
   <h3>Upcoming ToDo's</h3>
   <div style="max-height:325px; overflow:auto;">
-  <table class='table table-condensed table-bordered block-table'>
+  <table class='table data-table table-condensed table-bordered block-table'>
     {% for todo in upcoming %}
         <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{% url "todos-detail" todo.pk %}">{{todo }}</a></td>
@@ -105,8 +112,9 @@
 </div>
 
 </div>
+
 <script type='text/javascript'>
-    //sticky table headers 
+  /*  //sticky table headers 
     var width = [];
     $(document).ready(function(){
         $.each($('thead.sticky th'), function(k,v){
@@ -115,6 +123,13 @@
         $('thead.sticky').css('position', 'absolute');
         $.each($('thead.sticky th'), function(k,v){
             $(v).width(width[k]);});
+    });*/
+
+$(document).ready( function () {
+    $('.data-table').DataTable(
+      { "bLengthChange": false } );
     });
+
+
 </script>
 {% endblock %}
