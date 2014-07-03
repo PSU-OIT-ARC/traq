@@ -36,6 +36,7 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/edit/?$', projects.views.edit, name='projects-edit'),
     url(r'^projects/(\d+)/meta/?$', projects.views.meta, name='projects-meta'),
     url(r'^projects/(\d+)/edit_sprint/?$', projects.views.edit_sprint, name='projects-edit-sprint'),
+    url(r'^projects/(\d+)/search/?$', projects.views.search, name='projects-search'),
     
     #scrum
     url(r'^projects/(\d+)/dashboard/?$', projects.views.scrum.dashboard, name='projects-dashboard'),
@@ -81,9 +82,6 @@ urlpatterns = patterns('',
     url(r'^tickets/(\d+)/work/create/?$', tickets.views.work.create, name='work-create'),
     url(r'^work/(\d+)/pause/?$', tickets.views.work.pause, name='work-pause'),
     url(r'^work/(\d+)/continue/?$', tickets.views.work.continue_, name='work-continue'),
-
-    #just playing
-    url(r'^about/', TemplateView.as_view(template_name="bootstrap_base.html"), {'project': 9}),
 
     # Examples:
     # url(r'^$', 'example.views.home', name='home'),

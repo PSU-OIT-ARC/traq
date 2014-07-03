@@ -16,6 +16,7 @@ from ..forms import ProjectForm, ProjectSprintForm
 from ..models import Project, Milestone
 from ..views import scrum
 from traq.todos.models import ToDo
+from traq.todos.models import Ticket
 
 # there's an annoying circular dependency between the ticket and project apps 
 # so this import needs to be after project models are imported
@@ -133,6 +134,19 @@ def create(request):
     return render(request, 'projects/create.html', {
         'form': form,
     })
+
+@permission_required('projects.can_view_all', raise_exception=True)
+def search(request, project_id):
+    project = get_object_or_404(Project,pk= project_id)
+    q = request.GET.get('contains', '')
+    tickets = Ticket.objects.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    todos = ToDo.objects.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    return render(request, 'projects/search-results.html', {
+        'tickets': tickets,
+        'todos': todos,
+        'project': project,
+    })
+
 
 @permission_required('projects.change_project')
 def edit_sprint(request, project_id):
