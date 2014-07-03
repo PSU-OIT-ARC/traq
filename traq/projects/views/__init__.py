@@ -1,3 +1,4 @@
+import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
@@ -141,10 +142,15 @@ def search(request, project_id):
     q = request.GET.get('contains', '')
     tickets = Ticket.objects.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
     todos = ToDo.objects.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    tickets = match_results(q, tickets)
+    todos = match_results(q, todos)
+    results = tickets.count() + todos.count()
+    
     return render(request, 'projects/search-results.html', {
         'tickets': tickets,
         'todos': todos,
         'project': project,
+        'results': results,
     })
 
 
@@ -161,4 +167,22 @@ def edit_sprint(request, project_id):
     return render(request, 'projects/edit_sprint.html', {
         'form': form,})
 
-
+def match_results(q, tickets):
+    for ticket in tickets:
+        match = re.search(q, ticket.body, re.IGNORECASE) 
+        if match is not None:
+            start = match.start() - 20 if (match.start() -20) > 0 else match.start() 
+            end = match.end() + 20 if (match.end() + 20 is not None) else match.end() 
+            repl = '<strong>%s</strong>' % match.group()
+            pat = re.compile(q, re.I)
+            body = pat.sub(repl, ticket.body)
+            ticket.match = body[start:end+20]
+        match = re.search(q, ticket.title, re.IGNORECASE )
+        if match is not None:    
+            start = match.start() - 20 if (match.start() -20) > 0 else match.start() 
+            end = match.end() + 20 if (match.end() + 20 is not None) else match.end() 
+            repl = '<strong>%s</strong>' % match.group()
+            pat = re.compile(q, re.I)
+            title = pat.sub(repl, ticket.title)
+            ticket.match = title[start:end+20]
+    return tickets

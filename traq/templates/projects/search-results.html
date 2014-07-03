@@ -3,6 +3,7 @@
     <h2> {{project.name }} </h2>
     <hr>
     <p>Search Results</p>
+    <p>{{ results }} Results </p>
     {% if not tickets and not todos %}
       <p> Sorry, No results were found </p>
     {% endif %}
@@ -12,7 +13,7 @@
         <div class="panel-body">
           <ul class="list-group">
            {% for ticket in tickets %}
-             <li class="list-group-item"> <a href='{% url 'tickets-detail' ticket.pk %}'>{{ ticket }}</a></li>
+             <li class="list-group-item"> <a href='{% url 'tickets-detail' ticket.pk %}'>{{ ticket }}</a><div class='pull-right'>...{{ticket.match | removetags:'a b p'|safe}}...</div>  </li>
            {% endfor %}
          </ul>
        </div>
@@ -24,7 +25,7 @@
         <div class="panel-body">
           <ul class="list-group">
            {% for todo in todos %}
-             <li class="list-group-item"><a href='{% url 'todos-detail' todo.pk%}'>{{ todo }}</a></li>
+             <li class="list-group-item"><a href='{% url 'todos-detail' todo.pk%}'>{{ todo }}</a><div class='pull-right'>...{{todo.match | removetags:'a b p'|safe}}...</div></li>
            {% endfor %}
          </ul>
        </div>
