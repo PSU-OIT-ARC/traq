@@ -3,24 +3,23 @@
 {% load tickets %}
 
 {% block page_title %}{{ project.name }}{% endblock %}
-<div class='float-right iblock small'><a href="{% url "accounts-profile" %}assigned?sprint_end={{ sprint_end | date:'c'}}">My Tickets</a></div>
+<div class='pull-right iblock small'><a href="{% url "accounts-profile" %}assigned?sprint_end={{ sprint_end | date:'c'}}">My Tickets</a></div>
 
 {% block content %}
-<h2>{{ project.name }} 
-{% include '_sprint_end_form.html' %}
-</h2>
-<div class='split float-left' style=' margin-top:0px; clear:both'>
+<div style='display:inline-block' class='h2'>{{ project.name }}</div>
+    {% include '_sprint_end_form.html' %}
+<div class='col-md-6 pull-left' style=' margin-top:0px; clear:both'>
     <h3>
     {% if perms.tickets.change_ticket %}
       <a href="{% url "tickets-list" project.pk %}?sprint_end={{ sprint_end | date:'c'}}">Tickets</a> 
     {% else %}
       Tickets 
     {% endif %}
-    <div class='float-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
+    <div class='pull-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
     </h3>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
-    <table class='table-info'>
+    <table class='table table-info'>
     <thead class='sticky'><th>Title</th><th>Assignee</th><th>Status</th></thead>
     {% for ticket in tickets %}
         <tr class="{% cycle 'even' 'odd' %}">
@@ -39,13 +38,13 @@
   </div>
 </div>
 </div>
-<div class='split float-right' style='margin-top:0px;'>
+<div class='col-md-6 pull-right' style='margin-top:0px;'>
     <h3><a href="{% url "todos-list" project.pk%}?sprint_end={{ sprint_end | date:'c'}}">To Do's</a> 
-    <div class='float-right small'>{{todos_completed}}/{{todos.count}} Completed</div>
+    <div class='pull-right small'>{{todos_completed}}/{{todos.count}} Completed</div>
     </h3>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
-    <table class='table-info'>
+    <table class='table table-info'>
     <thead class='sticky'><th>Title</th><th>Status</th><th>Tickets</th></thead>
     {% for todo in todos %}
         <tr class="{% cycle 'even' 'odd' %}">
@@ -68,9 +67,9 @@
 </div>
 <div style='width:100%;clear:right'>
 <hr>
-<div class='float-left triptych' style='clear:both;'>
-<h3>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="button">Create</a>{% endif %}</h3>
-        <table class="block-table">
+<div class='pull-left col-md-4' style='clear:both;'>
+<h3>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs">Create</a>{% endif %}</h3>
+        <table class="table table-condensed table-bordered block-table">
             {% for comp in components %}
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td>
@@ -84,15 +83,15 @@
             {% endfor %}
         </table>
 </div>
-<div class='float-left triptych'>
-    <div class="block-table">
+<div class='pull-left col-md-4'>
+    <div class="table block-table">
         {% include 'tickets/_worklog.html' %}
     </div>
 </div>
-<div class='float-left triptych'>
+<div class='pull-left col-md-4'>
   <h3>Upcoming ToDo's</h3>
   <div style="max-height:325px; overflow:auto;">
-  <table class='block-table'>
+  <table class='table table-condensed table-bordered block-table'>
     {% for todo in upcoming %}
         <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{% url "todos-detail" todo.pk %}">{{todo }}</a></td>

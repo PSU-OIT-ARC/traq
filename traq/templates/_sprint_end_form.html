@@ -1,24 +1,24 @@
-<div class='float-right small'>
+<div class='pull-right'>
     <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
       {% csrf_token %}
-    <div>For Sprint Ending: 
+    <div class='form-group'>For Sprint Ending: 
         <input style='display:inline-block' name='current_sprint_end' type='date' value='{{sprint_end|date:'c' }}'></input>
         <input style='display:inline-block' type='submit' value='Go'></input>
     </div>
      </form>
-     <div>
+     <div class='form-group'>
      <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
       {% csrf_token %}
     <input type='hidden' name='current_sprint_end' value={{ prev | date:'c' }}>
-    <input type='submit' value='Prev'></input>
+    <input class='btn btn-primary btn-xs' type='submit' value='Prev'></input>
     </form>
     <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
       {% csrf_token %}
       <input type='hidden' name='current_sprint_end' value={{ next | date:'c' }}>
-      <input type='submit' value='Next'></input>
+      <input class='btn btn-primary btn-xs' type='submit' value='Next'></input>
     </form>
     {% if perms.projects.change_project %}
-      <a class='button' href="{% url "projects-edit-sprint" project.pk %}">Edit Sprint Dates</a>
+      <a class='btn btn-default btn-xs' href="{% url "projects-edit-sprint" project.pk %}">Edit Sprint Dates</a>
     {% endif %}
     </div>
 </div>
