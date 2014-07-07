@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% load tickets %}
 
@@ -26,29 +26,29 @@
 
 {% block content %}
 
-<h2>
-    <span class="lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
+<h3>
+    <span class="label lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
     #{{ ticket.pk }}: {{ ticket.title | truncatechars:50}} 
     {% if perms.tickets.change_ticket %}
-    <a href="{% url 'tickets-edit' ticket.pk %}" class="button">Edit</a>
+    <a href="{% url 'tickets-edit' ticket.pk %}" class="btn btn-primary btn-xs">Edit</a>
     {% endif %}
-    <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a> 
-</h2>
+    <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a> 
+</h3>
 
-<div class="left-section-wrapper">
-    <div class="ticket">
+<div class="col-md-8 left-section-wrapper">
+    <div class="well ticket">
         <div class="ticket-body">
             <div class="markdown">{{ ticket.body|frommarkdown }}</div>
         </div>
         <div class="ticket-info ticket-status">
-            <ul>
+            <ul class='col-md-4'>
                 <li><strong>Component:</strong> {{ ticket.component }} </li>
                 <li><strong>Status:</strong> {{ ticket.status }}</li>
                 {% if ticket.milestone %}
                     <li><strong>Milestone:</strong> {{ ticket.milestone.name }} </li>
                 {% endif %}
             </ul>
-            <ul>
+            <ul class='col-md-4'>
                 <li><strong>Assigned To:</strong> {{ ticket.assigned_to }}</li>
                 <li><strong>Created:</strong> <span class="timestamp">{{ ticket.created_on }}</span> by {{ ticket.created_by }}</li>
             </ul>
@@ -89,9 +89,9 @@
                         <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
                         {% if perms.tickets.change_comment %}
                             {% if comment.todo %}
-                              <li><a href="{% url 'comments-edit' comment.pk %}/?return_to={{ticket.pk}}" class="button">Edit</a></li>
+                              <li><a href="{% url 'comments-edit' comment.pk %}/?return_to={{ticket.pk}}" class="btn btn-primary btn-xs">Edit</a></li>
                             {% else %}
-                              <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
+                              <li><a href="{% url 'comments-edit' comment.pk %}" class="btn btn-primary btn-xs">Edit</a></li>
                             {% endif %}
                         {% endif %}
                     </ul>
@@ -112,14 +112,14 @@
             {{ comment_form.body.errors }}
             {{ comment_form.body }}
             {{comment_form.cc.label}}: {{ comment_form.cc }}
-            <input type="submit" name="submit" value="Add" class="submit float-right" />
+            <input class='btn btn-primary btn-xs'type="submit" name="submit" value="Add" class="submit float-right" />
         </form>
     </div>
 </div>
 
-<div class="right-section-wrapper">
+<div class="col-md-4 right-section-wrapper">
     <div class="right-section-block">
-        <h3>Running Work <a class="timer-clock-control button" href="{% url 'work-create' ticket.pk %}" id="timer-clock">Start Work</a></h3>
+        <h3>Running Work <a class="timer-clock-control btn btn-primary btn-xs" href="{% url 'work-create' ticket.pk %}" id="timer-clock">Start Work</a></h3>
         <table class="block-table">
         {% for w in running_work %}
             <tr class="{% cycle 'odd' 'even' %}">

@@ -11,6 +11,6 @@
       <li class='{% active_nav 'projects-dashboard' %}'><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
       <li class='{% active_nav 'projects-scrum' %}'><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
   {% endif %}
-  <form class='pull-right' action={% url 'projects-search' project.pk %} method='GET'>
+  <form class='project-search pull-right' action={% url 'projects-search' project.pk %} method='GET'>
     <input  type="text" name="contains" id='ticket-contains'  placeholder="Search Project" />
   </form>
