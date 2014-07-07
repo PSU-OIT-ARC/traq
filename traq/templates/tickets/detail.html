@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 
 {% load tickets %}
+{% load addcss %}
 
 {% block page_title %}{{ ticket.title }}{% endblock %}
 {% block breadcrums %}
@@ -146,7 +147,7 @@
     <div class="panel panel-default right-section-block">
       <div class='panel-heading' >Add Work </div>
       <div class='panel-body'>
-        <form id="work-form" action="" method="post">
+        <form id="work-form" class='form-group form-inline' action="" method="post">
             {% if work_form.errors %}
                 <p class="error">
                 {% for field in work_form %}
@@ -160,11 +161,10 @@
             {% endif %}
             <input type="hidden" name="form_type" value="work_form" />
             {% csrf_token %}
-            {{ work_form.time }}
-            {{ work_form.description }}
-            <label class="billable">{{ work_form.billable }} Billable</label>
-            {{ work_form.type }}
-            <input class='btn btn-primary btn-xs pull-right' type="submit" name="submit" value="Add" class="inline" />
+            <p>{{ work_form.time }} {{ work_form.description }}</p>
+            <p><label class="billable">{{ work_form.billable }} Billable</label>
+              {{ work_form.type |addcss:'form-control'}}
+              <input class='btn btn-primary btn-xs pull-right' type="submit" name="submit" value="Add" class="inline" /></p>
         </form>
       </div>
     </div>

@@ -1,7 +1,6 @@
 {% load tickets %}
 <div class='panel panel-default'>
 <div class='panel-heading'>Work Log</div>
-  <div class='panel-body'>
     <table class="table table-condensed table-bordered block-table">
     {% for w in work %}
         <tr class="{% cycle 'odd' 'even' %}">
@@ -37,5 +36,4 @@
         <tr><th class="center">No work logged</th></tr>
     {% endfor %}
   </table>
-</div>
 </div>

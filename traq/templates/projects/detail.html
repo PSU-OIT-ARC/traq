@@ -91,8 +91,8 @@ $(document).ready(function(){
 
     </div>
 
-    <div class="right-section-block">
-        <h3>Components <a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs">Create</a></h3>
+    <div class="panel panel-default right-section-block">
+        <div class='panel-heading'>Components <a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs pull-right ">Create</a></div>
         <table class="table table-condensed table-bordered block-table">
             {% for comp in components %}
                 <tr class="{% cycle 'odd' 'even' %}">
@@ -112,15 +112,13 @@ $(document).ready(function(){
     <div class="right-section-block">
         {% include 'tickets/_worklog.html' %}
     </div>
-    <div class="right-section-block">
-        <h3>Reports</h3>
-        <div class="inner">
+    <div class="panel panel-default right-section-block">
+      <div class='panel-heading'>Reports</div>
             <ul class='list-group'>
                 <li class='list-group-item'><a href="{% url 'projects-reports-grid' project.pk %}">People and Time</a></li>
                 <li class='list-group-item'><a href="{% url 'projects-reports-component' project.pk %}">Component Breakdown</a></li>
                 <li class='list-group-item'><a href="{% url 'projects-reports-invoice' project.pk %}">Invoice</a></li>
             </ul>
-        </div>
     </div>
 </div>
 {% endblock %}
