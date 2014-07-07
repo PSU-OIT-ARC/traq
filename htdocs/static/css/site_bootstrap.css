@@ -58,4 +58,6 @@ select.form-control {
     margin-top: 10px;
 }
 
-
+.ticket-add-comment textarea {
+    width:100%;
+}

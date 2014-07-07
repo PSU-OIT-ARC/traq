@@ -34,7 +34,7 @@
     {% endif %}
     <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a> 
 </h3>
-
+<hr>
 <div class="col-md-8 left-section-wrapper">
     <div class="well ticket">
         <div class="ticket-body">
@@ -118,9 +118,9 @@
 </div>
 
 <div class="col-md-4 right-section-wrapper">
-    <div class="right-section-block">
-        <h3>Running Work <a class="timer-clock-control btn btn-primary btn-xs" href="{% url 'work-create' ticket.pk %}" id="timer-clock">Start Work</a></h3>
-        <table class="block-table">
+    <div class="panel panel-default right-section-block">
+        <div class='panel-heading'>Running Work <a class="pull-right timer-clock-control btn btn-primary btn-xs" href="{% url 'work-create' ticket.pk %}" id="timer-clock">Start Work</a></div>
+        <table class="table block-table">
         {% for w in running_work %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td>{{ w.created_by }}</td>
@@ -143,8 +143,9 @@
         {% endfor %}
         </table>
     </div>
-    <div class="right-section-block">
-        <h3>Add Work </h3>
+    <div class="panel panel-default right-section-block">
+      <div class='panel-heading' >Add Work </div>
+      <div class='panel-body'>
         <form id="work-form" action="" method="post">
             {% if work_form.errors %}
                 <p class="error">
@@ -163,16 +164,16 @@
             {{ work_form.description }}
             <label class="billable">{{ work_form.billable }} Billable</label>
             {{ work_form.type }}
-            <input type="submit" name="submit" value="Add" class="inline" />
+            <input class='btn btn-primary btn-xs pull-right' type="submit" name="submit" value="Add" class="inline" />
         </form>
+      </div>
     </div>
 
-    <div class="right-section-block">
-        {% include 'tickets/_worklog.html' %}
-    </div>
+    {% include 'tickets/_worklog.html' %}
 
-    <div class="right-section-block">
-        <h3>Files</h3>
+    <div class="panel panel-default right-section-block">
+      <div class='panel-heading'>Files</div>
+      <div class='panel-body'>
         <table class="block-table">
         {% for tf in files %}
             <tr class="{% cycle 'odd' 'even' %}">
@@ -181,6 +182,7 @@
             </tr>
         {% endfor %}
         </table>
+      </div>  
     </div>
 </div>
 
