@@ -37,23 +37,23 @@
 </h3>
 <hr>
 <div class="col-md-8 left-section-wrapper">
-    <div class="panel panel-default  ticket">
+    <div class="panel panel-default pull-left  ticket">
         <div class="panel-body ticket-body">
             <div class="markdown">{{ ticket.body|frommarkdown }}</div>
         </div>
-        <div class="panel-footer ticket-info ticket-status">
-            <ul class='col-md-4 list-inline'>
+        <div class="panel-footer pull-left ticket-info ticket-status">
+            <ul class='col-md-3 '>
                 <li><strong>Component:</strong> {{ ticket.component }} </li>
                 <li><strong>Status:</strong> {{ ticket.status }}</li>
                 {% if ticket.milestone %}
                     <li><strong>Milestone:</strong> {{ ticket.milestone.name }} </li>
                 {% endif %}
             </ul>
-            <ul class='col-md-4 list-inline'>
+            <ul class='col-md-3 '>
                 <li><strong>Assigned To:</strong> {{ ticket.assigned_to }}</li>
                 <li><strong>Created:</strong> <span class="timestamp">{{ ticket.created_on | date:"SHORT_DATE_FORMAT"}}</span> by {{ ticket.created_by }}</li>
             </ul>
-            <ul class='list-inline'>
+            <ul class='col-md-3 '>
                 <li><strong>Estimated Time:</strong> {{ ticket.estimated_time|tickettime }}</li>
                 <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li>
                 {% if ticket.due_on %}
@@ -61,7 +61,7 @@
                 {% endif %}
             </ul>
             {% if ticket.branch or ticket.release %}
-                <ul class='list-inline'>
+                <ul class='col-md-3 '>
                     <li><strong>Branch:</strong> {{ ticket.branch }}</li>
                     <li><strong>Release:</strong> {{ ticket.release }}</li>
                 </ul>

@@ -44,6 +44,10 @@ select.form-control {
     height:25px;
 }
 
+ul li, li {
+    list-style:none;
+}
+
 /*traq */
 #ticket-list tr.odd {
     background-color: #F9F9F9;
