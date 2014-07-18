@@ -1,27 +1,24 @@
-{% extends "base.html" %}
-{% block page_title %}{% if todo %}Edit Request{% else %}Create a To Do Item{% endif %}{% endblock %}
-{% block breadcrums %}
-    {% if perms.projects.can_view_all %}
-        <li><a href="{% url 'projects-all' %}">Projects</a></li>
-        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    {% else %}
-        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
-        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
-     {% endif %}
-    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
-    {% if todo %}
-        <li><a href="{% url 'todos-detail' todo.pk %}">{{ todo.title }}</a></li>
-        <li>Edit</li>
-    {% else %}
-        <li>Create</li>
-    {% endif %}
+{% extends "project_base.html" %}
+{% block styles %}
+  <link rel='stylesheet' type='text/css' href="{{ STATIC_URL }}js/jquery-ui/css/smoothness/jquery-ui-1.10.3.custom.min.css">
 {% endblock %}
+
+{% block scripts %}
+  <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
+{% endblock %}
+
+{% load addcss %}
+
+{% block page_title %}{% if todo %}Edit Request{% else %}Create a To Do Item{% endif %}{% endblock %}
+
 {% block content %}
-{% if todo %}
-    <h2>Edit {{ todo.title }}</h2>
-{% else %}
+<div class='container'>
+  {% if todo %}
+    <h2><strong>Edit</strong> {{ todo.title }}</h2>
+  {% else %}
     <h2>Create a new To Do Item</h2>
-{% endif %}
+  {% endif %}
+</div>
 
 {% for field in form %}
     {% if field.errors %}
@@ -30,50 +27,27 @@
     {% endif %}
 {% endfor %}
 
-<form method="post" action="" enctype="multipart/form-data">
+<form class='todo-form' method="post" action="" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.title.label_tag }}
-    {{ form.title }}
-    <table>
-        <tr>
-            <td>Status</td>
-            <td>Priority</td>
-            <td>Component</td>
-        </tr>
-        <tr>
-            <td>{{ form.status }}</td>
-            <td>{{ form.priority }}</td>
-            <td>{{ form.component }}</td>
-        </tr>
-    </table>
-
-    <div class="clear"></div>
-    
-    <label class="roomy">{{ form.body.label }}</label>
-    {{ form.body }}
-    
-    <div class="clear"></div>
-    <table>
-        <tr class='tool-wrap'>
-            <td>{{ form.started_on.label }}</td>
-            <td class='tool'>{{ form.estimate.label }}{%if project.is_scrum %}<div class='question-mark'>?</div><div class="tip">Comma separated list of numbers are averaged on blur</div>{% endif %}</td>
-            <td>{{ form.due_on.label }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.started_on }}</td>
-            <td>{{ form.estimate }} </td>
-            <td>{{ form.due_on }}</td>
-        </tr>
-    </table>
-   <div class='clear' ></div>
+    {{ form.title | bs_group:'12' }}
+    {{ form.status | bs_group:'2' }}
+    {{ form.priority | bs_group:'2' }}
+    {{ form.component | bs_group:'2' }}
+    {{ form.body | bs_group:'12' }}
+    {{ form.started_on | bs_group:'2' }}
+    {{ form.estimate | bs_group:'2' }}
+    {{ form.due_on | bs_group:'2' }}
+   
     {% if perms.tickets.add_ticket %}
-        <table class='files-table'>
+        <table class='table'>
             <tr>
-                <td style='width:532px'><h3>Attach Existing Ticket</h3>
-                    {{ form.add_ticket }}
-                    {% if form.instance.pk and perms.tickets.add_ticket %}
-                       <p> <a class='button' style='padding-left:5px' href='{% url 'tickets-create' project.pk %}?todo_id={{ form.instance.pk }}'>Add New Ticket</a></p>
-                    {% endif %}
+                <td>
+                <h3>Attach Existing Ticket
+                {% if perms.tickets.add_ticket %}
+                  <a class='btn btn-primary btn-xs'  href='{% url 'tickets-create' project.pk %}?todo_id={{ form.instance.pk }}'>Add New Ticket</a>
+                {% endif %}
+                </h3>
+                    {{ form.add_ticket | bs_group:'8'}}
                 </td>
                 <td>
                     {% if todo.tickets.all %}
@@ -84,14 +58,17 @@
                     {% endif %}
                 </td>
             </tr>
+            <tr>
+                        </tr>
         </table>
-    {% endif %}    
-    <table class="files-table">
+    {% endif %}  
+
+    <table class="table">
         <tr>
             <td>
                 <h3>Upload Files</h3>
-                {{ form.files }}
-                {{ form.files.help_text}}
+                <div class='col-md-8 pull-left'>{{ form.files.help_text}}</div>
+                {{ form.files | bs_group:'6'}}
             </td>
             <td>
                 {% if form.hasFiles %}
@@ -104,14 +81,17 @@
         </tr>
     </table>
 
-    <label class="option float-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
 
-    <br />
-    <input type="submit" name="submit" value="Submit" class="float-left" />
+    <div class='col-md-1 form-group'> 
+      <input type="submit" name="submit" value="Submit" class="form-control btn btn-primary btn-sm" />
+    </div>
     {% if not form.instance.pk %}
-        <input type="submit" name="submit" value="Submit and Add new To Do Item" class="float-left" />
+    <div class='col-md-2'>
+        <input type="submit" name="submit" class='form-control btn btn-primary btn-sm' value="Submit & Add New To Do" class="float-left" />
+    </div>
     {% endif %}
 
+    <label class="option pull-left col-md-6">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
 
 </form>
 <script type='text/javascript'>

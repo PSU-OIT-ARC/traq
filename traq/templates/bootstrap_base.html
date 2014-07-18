@@ -14,7 +14,7 @@
     <!-- Bootstrap core CSS -->
     <link href="{{STATIC_URL}}bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/site_bootstrap.css" rel="stylesheet">
-
+    {% block styles %}{% endblock %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script type='text/javascript' src='{{ STATIC_URL }}js/cssua.min.js'></script>
     {% block scripts %}{% endblock %}

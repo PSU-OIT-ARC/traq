@@ -19,5 +19,6 @@ def addattr(field, args):
 def bootstrap(field, column):
     '''returns bootstrap form-group markup with a given column width. 
        usage: {{ form.field | bs_group:'4' }}'''
-    field.field.widget.attrs["class"] = "form-control"
+    classes = field.field.widget.attrs.get('class','')
+    field.field.widget.attrs["class"] = "%s form-control" % classes
     return mark_safe('<div class="form-group col-md-%s"><label>%s</label>%s</div>' % (column, field.label, field))

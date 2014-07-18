@@ -62,11 +62,11 @@
         </tr>
     </table>
     <div class='col-md-2 form-group'> 
-      <input type="submit" class='form-control btn btn-primary ' name="submit" value="Submit" class="pull-left" />
+      <input type="submit" class='form-control btn btn-primary btn-sm' name="submit" value="Submit" class="pull-left" />
     </div>
     {% if not form.instance.pk %}
     <div class='col-md-3 form-group'> 
-        <input type="submit" name="submit" class='form-control btn btn-primary' value="Submit and Add New Ticket" class="pull-left" />
+        <input type="submit" name="submit" class='form-control btn-primary btn-sm' value="Submit and Add New Ticket" class="pull-left" />
     </div>
     {% endif %}
       <label class="option pull-left checkbox-inline col-md-6">{{ form.is_deleted}}{{form.is_deleted.label }}</label>
