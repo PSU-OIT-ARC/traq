@@ -15,6 +15,10 @@ from .models import (
 )
 from ..projects.models import Component, Milestone
 
+def bootstrap_form(form):
+    for field in form:
+        field.field.widget.attrs = {'class':'form-control'}
+
 class TicketForm(forms.ModelForm):
     """Ticket creation and editing form"""
     # these are fields that aren't part of the Ticket model, so they need to be
@@ -31,7 +35,9 @@ class TicketForm(forms.ModelForm):
         self.user = kwargs.pop("user")
         self.todos = kwargs.pop('todo', None)
         super(TicketForm, self).__init__(*args, **kwargs)
+        
 
+        bootstrap_form(self)
         # if this is a new ticket, we need to set some additional fields
         if self.instance.pk is None:
             self.instance.created_by = self.user

@@ -1,4 +1,6 @@
-{% extends "base.html" %}
+{% extends "bootstrap_base.html" %}
+{% load addcss %}
+
 {% block page_title %}{% if ticket %}Edit Ticket{% else %}Create Ticket{% endif %}{% endblock %}
 {% block breadcrums %}
     <li><a href="{% url 'projects-all' %}">Projects</a></li>
@@ -12,11 +14,14 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-{% if ticket %}
-    <h2>Edit {{ ticket.title }}</h2>
-{% else %}
+
+<div class='container'>
+  {% if ticket %}
+    <h2><strong>Edit</strong> {{ ticket.title }}</h2>
+  {% else %}
     <h2>Create a new Ticket</h2>
-{% endif %}
+  {% endif %}
+</div>
 
 {% for field in form %}
     {% if field.errors %}
@@ -25,59 +30,35 @@
     {% endif %}
 {% endfor %}
 
-<form method="post" action="" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.title.label_tag }}
-    {{ form.title }}
-    <table>
-        <tr>
-            <td>Assigned to</td>
-            <td>Status</td>
-            <td>Priority</td>
-            <td>Component</td>
-            <td>Branch</td>
-            <td>Release</td>
-            <td class='tool'>Ticket Type<div class='question-mark'>?<div class='tip'>{{form.type.help_text|linebreaks}}</div></div></td>
-        </tr>
-        <tr>
-            <td>{{ form.assigned_to }}</td>
-            <td>{{ form.status }}</td>
-            <td>{{ form.priority }}</td>
-            <td>{{ form.component }}</td>
-            <td>{{ form.branch }}</td>
-            <td>{{ form.release }}</td>
-            <td>{{ form.type }}</td>
-        </tr>
-    </table>
-
-    <div class="clear"></div>
-    
+<form class='ticket-form' method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+    {{ form.title | bs_group:'12'}}
+    {{ form.assigned_to | bs_group:'2' }}
+    {{ form.status | bs_group:'2' }}
+    {{ form.priority | bs_group:'2' }}
+    {{ form.component | bs_group:'2' }}
+    {{ form.branch | bs_group:'2' }}
+    {{ form.release | bs_group:'2' }}
+  <div class='col-md-12 form-group'>
     <label class="roomy">{{ form.body.label }}</label>
-    {{ form.body }}
-
-    <div class="clear"></div>
-    <table>
-        <tr>
-            <td>{{ form.started_on.label }}</td>
-            <td>{{ form.estimated_time.label }}</td>
-            <td>{{ form.due_on.label }}</td>
-            <td>{{ form.milestone.label }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.started_on }}</td>
-            <td>{{ form.estimated_time }}</td>
-            <td>{{ form.due_on }}</td>
-            <td>{{ form.milestone }}</td>
-        </tr>
-    </table>
-
+    {{ form.body | addattr:'rows,10' }}
+  </div>
+    {{ form.started_on | bs_group:'2' }}
+    {{ form.estimated_time | bs_group:'2' }}
+    {{ form.due_on | bs_group:'2' }}
+    {{ form.milestone | bs_group:'2' }}
+    {{ form.type | bs_group:'2' }}
+       
     {% if not form.instance.pk %}
         <label class="option">{{ form.add_work }} Add work-line item to ticket</label>
     {% endif %}
-
-    <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
-    <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_internal }} {{ form.is_internal.label }}</label>
-
+    
+    <div class='col-md-12'>
+      <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
+    </div>
+    <div class='col-md-12'>
+      <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_internal }} {{ form.is_internal.label }}</label>
+    </div>
 
     <table class="files-table">
         <tr>
@@ -96,7 +77,7 @@
         </tr>
     </table>
 
-    <label class="option float-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
+    <label class="option pull-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
 
     <br />
     <input type="submit" name="submit" value="Submit" class="float-left" />
