@@ -176,8 +176,7 @@
 
     <div class="panel panel-default right-section-block">
       <div class='panel-heading'>Files</div>
-      <div class='panel-body'>
-        <table class="block-table">
+        <table class="table table-condensed">
         {% for tf in files %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td>{{ tf.uploaded_by }}</td>
@@ -185,7 +184,6 @@
             </tr>
         {% endfor %}
         </table>
-      </div>  
     </div>
 </div>
 

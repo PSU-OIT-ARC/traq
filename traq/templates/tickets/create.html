@@ -28,10 +28,7 @@
     {{ form.component | bs_group:'2' }}
     {{ form.branch | bs_group:'2' }}
     {{ form.release | bs_group:'2' }}
-  <div class='col-md-12 form-group'>
-    <label class="roomy">{{ form.body.label }}</label>
-    {{ form.body | addattr:'rows,10' }}
-  </div>
+    {{ form.body | bs_group:'12' }}
     {{ form.started_on | bs_group:'2' }}
     {{ form.estimated_time | bs_group:'2' }}
     {{ form.due_on | bs_group:'2' }}
@@ -43,17 +40,16 @@
     {% endif %}
     
     <div class='col-md-12'>
-      <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
+      <label class="option checkbox-inline" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
     </div>
     <div class='col-md-12'>
-      <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_internal }} {{ form.is_internal.label }}</label>
+      <label class="option checkbox-inline" style="margin-top:10px;margin-bottom:10px;">{{ form.is_internal }} {{ form.is_internal.label }}</label>
     </div>
-
-    <table class="files-table">
+    <table class="table files-table">
         <tr>
             <td>
                 <h3>Upload Files</h3>
-                {{ form.files }}
+                {{ form.files |bs_group:'8'}}
             </td>
             <td>
                 {% if form.hasFiles %}
@@ -65,17 +61,17 @@
             </td>
         </tr>
     </table>
-
-    <label class="option pull-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
-
-    <br />
-    <input type="submit" name="submit" value="Submit" class="float-left" />
+        
+    <div class='form-group col-md-1'>
+    <input type="submit" class='form-control btn btn-primary ' name="submit" value="Submit" class="pull-left" />
     {% if not form.instance.pk %}
-        <input type="submit" name="submit" value="Submit and Add New Ticket" class="float-left" />
+        <input type="submit" name="submit" class='form-control btn btn-primary' value="Submit and Add New Ticket" class="pull-left" />
     {% endif %}
-
+    </div>
+      <label class="option pull-left checkbox-inline col-md-8">{{ form.is_deleted}}{{form.is_deleted.label }}</label>
 
 </form>
+
 <script type='text/javascript'>
  $(document).ready(function(){
  if (parseFloat(cssua.ua.chrome) > 20.0) {
