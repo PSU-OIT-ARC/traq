@@ -1,20 +1,9 @@
-{% extends "bootstrap_base.html" %}
+{% extends "project_base.html" %}
 {% load addcss %}
 
 {% block page_title %}{% if ticket %}Edit Ticket{% else %}Create Ticket{% endif %}{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li>Tickets</li>
-    {% if ticket %}
-        <li><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></li>
-        <li>Edit</li>
-    {% else %}
-        <li>Create</li>
-    {% endif %}
-{% endblock %}
-{% block content %}
 
+{% block content %}
 <div class='container'>
   {% if ticket %}
     <h2><strong>Edit</strong> {{ ticket.title }}</h2>
