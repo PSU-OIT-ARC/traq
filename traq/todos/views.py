@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.db.models import Q
 from traq.tickets.forms import TicketForm, CommentForm
 from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
-from traq.utils import get_next_scrum_day
+from traq.utils import get_next_scrum_day, BootstrapErrorList
 from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.projects.models import Project
 from traq.tickets.models import Ticket
@@ -60,7 +60,7 @@ def listing(request, project_id):
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
-        form = ToDoForm(request.POST, request.FILES, user=request.user, project=project)
+        form = ToDoForm(request.POST, request.FILES, user=request.user, project=project, error_class=BootstrapErrorList)
         if form.is_valid():
             form.save()
             todo = form.instance

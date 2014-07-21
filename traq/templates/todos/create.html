@@ -4,7 +4,8 @@
 {% endblock %}
 
 {% block scripts %}
-  <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
+    {{ form.media }}
+    <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
 {% endblock %}
 
 {% load addcss %}
@@ -19,13 +20,6 @@
     <h2>Create a new To Do Item</h2>
   {% endif %}
 </div>
-
-{% for field in form %}
-    {% if field.errors %}
-        {{ field.name }}
-        {{ field.errors }}
-    {% endif %}
-{% endfor %}
 
 <form class='todo-form' method="post" action="" enctype="multipart/form-data">
     {% csrf_token %}
@@ -137,6 +131,16 @@
     });
     {% endif %}
  });
+    var errors = {}
+    {% for field in form %}
+        {% if field.errors %}
+         errors['#id_{{ field.name }}']=('{{ field.errors |safe }}');
+        {% endif %}
+    {% endfor %}
+    for (key in errors){
+        $(key).before(errors[key]).parent('.form-group').addClass('has-error');
+
+    }
 </script>
 {% endblock %}
 

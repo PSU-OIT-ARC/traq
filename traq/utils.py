@@ -2,6 +2,7 @@ import json
 import csv, codecs, cStringIO
 from datetime import timedelta, time, datetime
 from django.db import connection
+from django.forms.util import ErrorList
 
 def dictfetchall(cursor):
     "Returns all rows from a cursor as a dict"
@@ -63,3 +64,10 @@ def get_next_scrum_day(dates, day):
         if date.weekday() == day:
             return "%s" % date.date()
     return None 
+
+class BootstrapErrorList(ErrorList):
+    def __unicode__(self):
+        return self.as_divs()
+    def as_divs(self):
+        if not self: return u''
+        return u'<div class="errorlist text-danger">%s</div>' % ''.join([u'<div class="error">%s</div>' % e for e in self])

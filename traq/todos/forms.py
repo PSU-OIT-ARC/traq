@@ -134,6 +134,9 @@ class ToDoForm(forms.ModelForm):
             "due_on": forms.DateTimeInput(attrs={'type':'date'})
         }
 
+    class Media:
+        js = ('js/form.js',)
+
 class BulkToDoForm(BulkForm):
     def bulkUpdate(self, todo_ids):    
         # figure out all the fields that needs to be updated on a todo

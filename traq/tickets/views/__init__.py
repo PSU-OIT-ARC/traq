@@ -11,6 +11,7 @@ from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.todos.models import ToDo
+from traq.utils import BootstrapErrorList
 from traq.tickets.filters import TicketFilterSet
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
@@ -87,7 +88,7 @@ def create(request, project_id):
         todo = None
     
     if request.method == "POST":
-        form = TicketForm(request.POST, request.FILES, user=request.user, project=project, todo=todo)
+        form = TicketForm(request.POST, request.FILES, user=request.user, project=project, todo=todo, error_class=BootstrapErrorList)
         if form.is_valid():
             form.save()
             ticket = form.instance
@@ -126,7 +127,7 @@ def create(request, project_id):
         # them in the initial data on the form
         initial_data.pop("body", None)
         initial_data.pop("title", None)
-        form = TicketForm(initial=initial_data, user=request.user, project=project, todo=todo)
+        form = TicketForm(initial=initial_data, user=request.user, project=project, todo=todo, error_class=BoostrapErrorList)
 
     return render(request, 'tickets/create.html', {
         'form': form,
