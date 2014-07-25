@@ -1,15 +1,6 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% block page_title %}Create Project{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    {% if form.instance.pk %}
-        <li><a href="{% url 'projects-detail' form.instance.pk %}">{{ form.instance.name }}</a></li>
-        <li>Edit</li>  
-    {% else %}
-        <li>Create</li>
-    {% endif %}
-{% endblock %}
 {% block content %}
 {% if form.instance.pk %}
     <h2>Edit {{ form.instance.name }}</h2>
@@ -19,7 +10,7 @@
 <form method="post" action="">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" name="submit" value="Submit" />
+    <input type="submit" class='btn btn-primary btn-sm' name="submit" value="Submit" />
 </form>
 {% endblock %}
 

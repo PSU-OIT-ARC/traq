@@ -119,6 +119,7 @@ def edit(request, project_id):
 
     return render(request, 'projects/create.html', {
         'form': form,
+        'project': project,
     })
 
 @permission_required('projects.add_project')

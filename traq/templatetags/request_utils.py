@@ -298,10 +298,11 @@ def compile_current_location(parser, token):
     return CurrentLocationNode(as_var)
 
 @register.simple_tag(takes_context=True)
-def active_nav(context, pattern):
+def active_nav(context, args):
+        pattern = list(args.split(' '))
         request = context['request']
         url_name = resolve(request.path).url_name
-        if url_name == pattern:
+        if url_name in pattern:
             return 'active'
         return ''
 

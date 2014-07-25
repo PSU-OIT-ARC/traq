@@ -1,7 +1,7 @@
 {% load request_utils %}
 
   {% if perms.projects.can_view_all %}
-        <li class='{% active_nav 'projects-detail' %}'><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+        <li class='{% active_nav 'projects-detail projects-meta projects-edit' %}'><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
         <li class='{% active_nav 'tickets-list' %}'><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
   {% else %}
         <li class='{% active_nav 'projects-meta' %}'><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>

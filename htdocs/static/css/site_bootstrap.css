@@ -48,6 +48,17 @@ ul li, li {
     list-style:none;
 }
 
+textarea {
+    width:100%;
+}
+
+/* datatable overrides */
+.paginate_button{
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
 /*traq */
 #ticket-list tr.odd {
     background-color: #F9F9F9;
@@ -64,4 +75,8 @@ ul li, li {
 
 .ticket-add-comment textarea {
     width:100%;
+}
+
+.project-meta h3{
+    border-bottom: solid 1px #eee;
 }

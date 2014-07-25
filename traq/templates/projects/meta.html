@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% load tickets %}
 {% block page_title %}{{ project.name }}{% endblock %}
@@ -13,51 +13,43 @@
     <li>Meta</li>
 {% endblock %}
 {% block content %}
-
-<h2>{{ project.name }} 
-{% if perms.projects.change_project %}
-        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+<div class='project-meta container'>
+    <h2>{{ project.name }} 
+    {% if perms.projects.change_project %}
+            <a href="{% url 'projects-edit' project.pk %}" class="btn btn-primary btn-xs">Edit</a>
+        {% endif %}
+    </h2>
+    <hr>
+    {% if perms.projects.can_view_all %}
+        {% if project.team_dynamix_id %}
+            Team Dynamix Id: {{project.team_dynamix_id }}
+        {% endif %}
     {% endif %}
-</h2>
-{% if perms.projects.can_view_all %}
-    {% if project.team_dynamix_id %}
-        Team Dynamix Id: {{project.team_dynamix_id }}
+    {% if target_completion %}
+        <h3>Target Completion</h3>
+        <p>{{ target_completion }}</p>
     {% endif %}
-{% endif %}
 
-{% if perms.tickets.add_ticket %}
-    <h3><a href="{% url 'projects-detail' project.pk %}">Project Tickets</a></h3>
-{% endif %}
-
-{% if perms.todos.add_todo %}
-    <h3><a href="{% url 'todos-list' project.pk %}">Project To Do List</a></h3>
-{% endif %}
-
-
-{% if target_completion %}
-    <h3>Target Completion</h3>
-    <p>{{ target_completion }}</p>
-{% endif %}
-
-{% if project.description %}
-    <h3>Description</h3>
-    <div class="markdown">{{ project.description|frommarkdown }}</div>
-{% endif %}
-
-{% if project.point_of_contact %}
-    <h3>Point of Contact</h3>
-    <div class="markdown">{{ project.point_of_contact|frommarkdown }}</div>
-{% endif %}
-
-{% if perms.projects.can_view_all %}
-    {% if project.technical %}
-        <h3>Technical</h3>
-        <div class="markdown">{{ project.technical|frommarkdown }}</div>
+    {% if project.description %}
+        <h3>Description</h3>
+        <div class="markdown">{{ project.description|frommarkdown }}</div>
     {% endif %}
-{% endif %}
 
-{% if project.catch_all %}
-    <h3>Catch All</h3>
-    <div class="markdown">{{ project.catch_all|frommarkdown }}</div>
-{% endif %}
+    {% if project.point_of_contact %}
+        <h3>Point of Contact</h3>
+        <div class="markdown">{{ project.point_of_contact|frommarkdown }}</div>
+    {% endif %}
+
+    {% if perms.projects.can_view_all %}
+        {% if project.technical %}
+            <h3>Technical</h3>
+            <div class="markdown">{{ project.technical|frommarkdown }}</div>
+        {% endif %}
+    {% endif %}
+
+    {% if project.catch_all %}
+        <h3>Catch All</h3>
+        <div class="markdown">{{ project.catch_all|frommarkdown }}</div>
+    {% endif %}
+</div>
 {% endblock %}
