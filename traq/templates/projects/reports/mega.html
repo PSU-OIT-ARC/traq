@@ -1,27 +1,27 @@
-{% extends "base.html" %}
+{% extends "bootstrap_base.html" %}
 
 {% load tickets %}
+{% load addcss %}
+
 {% block page_title %}Mega Report{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li>Reports</li>
-    <li>Mega</li>
-{% endblock %}
 {% block content %}
 
 <h2>Projects</h2>
-<div class="print-hide">
+<div class="hidden-print clearfix">
     <form id='mega-form' method="get" action="">
-        {{ form.as_p }}
-        {{ filter_form.as_p }}
-        <input type="submit" name='submit' value="submit" />
+        {{ form.start |bs_group:'3'}}
+        {{ form.end | bs_group:'3'}}
+        {{ filter_form.status |bs_group:'3'}}
+        <div class='col-md-12'>
+          <input class='btn btn-primary btn-sm' type="submit" name='submit' value="submit" />
+        </div>
     </form>
 </div>
 
 <h3>Grid</h3>
 <p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1 | date:'N d, Y'}}</span></p>
 <div class="table-scroller">
-    <table class="report time-grid">
+    <table class="table table-striped table-condensed report time-grid">
         <thead>
             <tr>
                 <td>&nbsp;</td>
@@ -32,9 +32,9 @@
             </tr>
             <tr>
                 <td>&nbsp;</td>
-                <td class="border-left">Total</td>
+                <td class="small border-left">Total</td>
                 {% for project in projects %}
-                    <td class="border-left">Total</td>
+                    <td class="small border-left">Total</td>
                 {% endfor %}
             </tr>
         </thead>
@@ -58,10 +58,10 @@
                 {% endfor %}
             </tr>
             -->
-            <tr>
-                <th colspan="2">Total (hours)</th>
+            <tr class='border-top'>
+                <th class='bg-info'colspan="2">Total (hours)</th>
                 {% for project in projects %}
-                    <td class="time-cell border-left">{{ project.total_time|fractionsofhours }}</td>
+                    <td class="bg-info time-cell border-left">{{ project.total_time|fractionsofhours }}</td>
                 {% endfor %}
             </tr>
             <tr>

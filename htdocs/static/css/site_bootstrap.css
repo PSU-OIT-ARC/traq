@@ -92,7 +92,9 @@ textarea {
 .border-right {
     border-right:1px solid black;
 }
-
+tr.border-top {
+    border-top:1px solid black;
+}
 .time-cell.border-right {
     padding-right:5px;
 }
@@ -102,4 +104,8 @@ textarea {
 
 tr.subheader th{
     background-color:#F5F5F5;
+}
+
+td.small {
+    font-size:0.8em'
 }
