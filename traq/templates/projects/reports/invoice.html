@@ -1,20 +1,20 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% load tickets %}
+{% load addcss %}
+
 {% block page_title %}Invoice Report{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li>Reports</li>
-    <li>Invoice</li>
-{% endblock %}
 {% block content %}
 
-<div class="print-hide">
-    <form method="get" action="">
-        {{ form.as_p }}
-        <input type="submit" name="submit" value="submit" />
-    </form>
+<div class="clearfix hidden-print">
+  <h2>{{project.name}}</h2>
+  <form method="get" action="">
+        {{ form.start | bs_group:'3' }}
+        {{ form.end | bs_group:'3' }}
+        <div class='col-md-12'>
+          <input class='btn btn-primary btn-sm' type="submit" name="submit" value="submit" />
+        </div>
+   </form>
 </div>
 
 <div class="letterhead right">
@@ -65,5 +65,4 @@ tel 503-725-4441 | fax 503-725-6487
         </tr>
     </tfoot>
 </table>
-
 {% endblock %}

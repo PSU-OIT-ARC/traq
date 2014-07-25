@@ -57,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^projects/reports/summary/?$', projects.views.reports.summary, name='projects-reports-summary'),
     
     # milestones
-    url(r'^projects/(\d+)/milestons/create/?$', projects.views.milestones.create, name='milestones-create'),
+    url(r'^projects/(\d+)/milestones/create/?$', projects.views.milestones.create, name='milestones-create'),
     url(r'^milestones/(\d+)/edit/?$', projects.views.milestones.edit, name='milestones-edit'),
 
     # tickets

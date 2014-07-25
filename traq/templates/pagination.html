@@ -3,11 +3,11 @@
 
 {% clone_query_dict request.GET as "params" %}
 
-<div class="traq-pagination col-md-12" style="margin-top: 0.5em;background-color: #ccc; padding: 0.5em 1em;">
-  <span class="current">
+<ul  class="traq-pagination pager col-md-12" >
+  <li class="current pull-left">
     Page {{ page.number }} of {{ page.paginator.num_pages }} <em>({{ page.paginator.count }} results</em>)
-  </span>
-  <span class="step-links" style="float: right">
+  </li>
+  <li class="step-links" style="float: right">
     {% if page.has_previous %}
       {% with page.previous_page_number as pnum %}
 	{% replace_key params "page" pnum %}
@@ -30,5 +30,5 @@
     {% else %}
       next
     {% endif %}
-  </span>	
-</div>
+  </li>	
+</ul>
