@@ -127,7 +127,7 @@ def create(request, project_id):
         # them in the initial data on the form
         initial_data.pop("body", None)
         initial_data.pop("title", None)
-        form = TicketForm(initial=initial_data, user=request.user, project=project, todo=todo, error_class=BoostrapErrorList)
+        form = TicketForm(initial=initial_data, user=request.user, project=project, todo=todo, error_class=BootstrapErrorList)
 
     return render(request, 'tickets/create.html', {
         'form': form,

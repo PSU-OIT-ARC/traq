@@ -12,13 +12,6 @@
   {% endif %}
 </div>
 
-{% for field in form %}
-    {% if field.errors %}
-        {{ field.name }}
-        {{ field.errors }}
-    {% endif %}
-{% endfor %}
-
 <form class='ticket-form' method="post" action="" enctype="multipart/form-data">
   {% csrf_token %}
     {{ form.title | bs_group:'12'}}
@@ -86,6 +79,15 @@
     });
   }    
  });
+    var errors = {};
+    {% for field in form %}
+        {% if field.errors %}
+           errors['#id_{{ field.name }}']=('{{ field.errors |safe }}');
+        {% endif %}
+    {% endfor %}
+    for (key in errors){
+        $(key).before(errors[key]).parent('.form-group').addClass('has-error');
+    }
 </script>
 {% endblock %}
 
