@@ -90,7 +90,7 @@
                 {% for ticket in todo.tickets.all %}
                     <tr>
                         {% if perms.tickets.add_ticket %}
-                            <td> <a class='hover' data-toggle='tooltip' data-placement='left' title='{{ ticket.title|escape |truncatechars:50}}'> href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></td>
+                            <td> <a class='hover' data-toggle='tooltip' data-placement='left' title='{{ ticket.title|escape |truncatechars:50}}' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></td>
                         {% else %}
                             <td class='hover' data-toggle='tooltip' data-placement='left' title='{{ ticket.title|escape |truncatechars:50}}'>#{{ ticket.pk }}: {{ ticket.status }}</td>
                         {% endif %}

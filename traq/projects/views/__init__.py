@@ -166,7 +166,9 @@ def edit_sprint(request, project_id):
     else:
         form = ProjectSprintForm(instance=project)
     return render(request, 'projects/edit_sprint.html', {
-        'form': form,})
+        'form': form,
+        'project':project,
+        })
 
 def match_results(q, tickets):
     for ticket in tickets:
