@@ -53,10 +53,12 @@
             {% endblock navigation %}
             </ul>
             <!--account menu-->
+            {% if request.user.is_authenticated %}
             <ul class='nav navbar-nav navbar-right'>
                 <li class='pull-left account-link'><a href="{% url 'accounts-profile' %}">{{ request.user }}</a></li>
                 <li class='pull-right'><a href="{% url 'accounts-logout' %}"><span class='glyphicon glyphicon-log-out'></span></a></li>
             </ul>
+            {% endif %}
             {% if project.pk %}
             <form class='navbar-right navbar-form project-search' action={% url 'projects-search' project.pk %} method='GET'>
               <input class='form-control' type="text" name="contains" id='ticket-contains'  placeholder="Search Project" />
