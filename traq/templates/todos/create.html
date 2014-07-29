@@ -29,7 +29,11 @@
     {{ form.component | bs_group:'2' }}
     {{ form.body | bs_group:'12' }}
     {{ form.started_on | bs_group:'2' }}
-    {{ form.estimate | bs_group:'2' }}
+    <div class='col-md-2 form-group'>
+      <label>{{ form.estimate.label }}</label>
+      <span data-toggle='tooltip' data-placement='right' title='comma separated numbers will be averaged on blur' class='hover glyphicon glyphicon-question-sign'></span>
+      {{ form.estimate | addcss:'form-control'}}
+    </div>
     {{ form.due_on | bs_group:'2' }}
    
     {% if perms.tickets.add_ticket %}
@@ -101,6 +105,8 @@
     $('.autocomplete').autocomplete({
         source: tickets
         });
+    
+    $('.hover').tooltip();
 
       /* Workaround: Chrome 20.0 and newer only support 
                  ISO-formatted dates in value attribute. */
