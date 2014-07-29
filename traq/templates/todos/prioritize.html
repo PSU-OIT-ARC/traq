@@ -18,14 +18,17 @@
 {%block content %}
     <div id='content-wrapper' style='min-height:400px;'>
     <h2> {{ project.name }}</h2>
+    <hr> 
     <h3 >To Do Items
     <a href="{% url 'todos-create' project.pk %}" class="btn btn-primary btn-xs button">New To Do</a>
     <button class='pull-right btn btn-primary btn-sm' style='float:right' id='order'>Rank 'Em</button>
     </h3>
-    <form id='rank-form' method='POST'>{% csrf_token %}<input type='hidden' name='pk' id='field'/></form>
+    <form id='rank-form' method='POST'>
+      {% csrf_token %}
+      <input type='hidden' name='pk' id='field'/>
+    </form>
     {% include 'filterset.html' %}
-    
-    <table cellpadding='5px' id='todo-table' class='table table-striped tablesorter' style='width:100%;'>
+    <table cellpadding='5px' id='todo-table' class='table table-striped tablesorter' style='margin-top:20px;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
             <th>&nbsp</th><th>To Do Item</th><th>Status</th><th>Due On</td><th>Estimate</td><th>Rank</th>
         </thead>
