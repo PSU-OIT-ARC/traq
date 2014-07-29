@@ -2,18 +2,8 @@
 {% block scripts %}
 <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
 {% endblock %}
+
 {% block page_title %}To Do Items{% endblock %}
-{% block breadcrums %}
-    {% if perms.projects.can_view_all %}
-        <li><a href="{% url 'projects-all' %}">Projects</a></li>
-        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    {% else %}
-        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
-        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
-     {% endif %}
-    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
-    <li><a href="{% url 'todos-prioritize' project.pk %}?sprint_end={{project.backlog}}">Prioritize</a></li>
-{% endblock %}
 
 {%block content %}
     <div id='content-wrapper' style='min-height:400px;'>
