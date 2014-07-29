@@ -9,11 +9,12 @@
 
 
 {% block page_title %}{{ project.name }}{% endblock %}
-<div class='pull-right iblock small'><a href="{% url "accounts-profile" %}assigned?sprint_end={{ sprint_end | date:'c'}}">My Tickets</a></div>
 
 {% block content %}
-<div style='display:inline-block' class='h2'>{{ project.name }}</div>
-    {% include '_sprint_end_form.html' %}
+<div style='display:inline-block' class='h2 pull-left'>{{ project.name }}</div>
+<div class='well pull-right col-md-4'>    
+  {% include '_sprint_end_form.html' %}
+</div>
 <div class='col-md-6 pull-left' style=' margin-top:0px; clear:both'>
     <h3>
     {% if perms.tickets.change_ticket %}
@@ -23,6 +24,7 @@
     {% endif %}
     <div class='pull-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
     </h3>
+    <hr>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
     <table class='data-table table table-striped table-info'>
@@ -48,6 +50,7 @@
     <h3><a href="{% url "todos-list" project.pk%}?sprint_end={{ sprint_end | date:'c'}}">To Do's</a> 
     <div class='pull-right small'>{{todos_completed}}/{{todos.count}} Completed</div>
     </h3>
+    <hr>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
     <table class='data-table table table-striped table-info'>
@@ -74,60 +77,58 @@
 </div>
 <div style='clear:both' class='row'>
 <hr>
-<div class='pull-left col-md-4' style='clear:both;'>
-<h3>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs">Create</a>{% endif %}</h3>
-        <table class="table table-condensed table-bordered block-table">
-            {% for comp in components %}
-                <tr class="{% cycle 'odd' 'even' %}">
-                    <td>
-                        {% if perms.projects.change_component %}
-                            <a href="{% url 'components-edit' comp.pk %}" class="discrete">{{ comp.name }}</a></td>
-                        {% else %}
-                            {{ comp.name }}
-                        {% endif %}
-                    <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
-                </tr>
-            {% endfor %}
-        </table>
+
+<div class='pull-left col-md-4'> 
+  <div class='panel panel-default' style='clear:both;'>
+    <div class='panel-heading'>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs">Create</a>{% endif %}</div>
+      <table class="table table-condensed table-bordered block-table">
+        {% for comp in components %}
+          <tr class="{% cycle 'odd' 'even' %}">
+            <td>
+            {% if perms.projects.change_component %}
+              <a href="{% url 'components-edit' comp.pk %}" class="discrete">{{ comp.name }}</a></td>
+            {% else %}
+              {{ comp.name }}
+            {% endif %}
+              <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
+          </tr>
+        {% endfor %}
+    </table>
+  </div>
 </div>
+
 <div class='pull-left col-md-4'>
-    <div class="table block-table">
-        {% include 'tickets/_worklog.html' %}
+    <div class="block-table">
+      {% include 'tickets/_worklog.html' %}
     </div>
 </div>
-<div class='pull-left col-md-4'>
-  <h3>Upcoming ToDo's</h3>
-  <div style="max-height:325px; overflow:auto;">
-  <table class='table data-table table-condensed table-bordered block-table'>
-    {% for todo in upcoming %}
-        <tr class="{% cycle 'odd' 'even' %}">
+
+<div class='pull-left col-md-4 '>
+  <div class='panel panel-default'>
+    <div class='panel-heading'>Upcoming ToDo's</div>
+    <div style="max-height:325px; overflow:auto;">
+      <table class='table data-table table-condensed block-table'>
+        {% for todo in upcoming %}
+          <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{% url "todos-detail" todo.pk %}">{{todo }}</a></td>
             <td>{{todo.due_on |date:"SHORT_DATE_FORMAT"}}</td>
-        {% empty %}
-        No more todos
-        {% endfor %}
+            {% empty %}
+              No more todos
+            {% endfor %}
         </tr>
-    </table>
+      </table>
     </div>
+  </div>
 </div>
 
 </div>
 
 <script type='text/javascript'>
-  /*  //sticky table headers 
-    var width = [];
-    $(document).ready(function(){
-        $.each($('thead.sticky th'), function(k,v){
-            w = $(v).width();
-            width.push(w);});
-        $('thead.sticky').css('position', 'absolute');
-        $.each($('thead.sticky th'), function(k,v){
-            $(v).width(width[k]);});
-    });*/
-
 $(document).ready( function () {
-    $('.data-table').DataTable(
-      { "bLengthChange": false } );
+    $('.data-table').DataTable({ 
+        "bLengthChange": false,
+        "bFilter": false 
+        });
     });
 
 

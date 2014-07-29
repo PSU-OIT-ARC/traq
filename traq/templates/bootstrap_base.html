@@ -51,9 +51,19 @@
               <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
             {% endif %}
             {% endblock navigation %}
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
+            </ul>
+            <!--account menu-->
+            <ul class='nav navbar-nav navbar-right'>
+                <li class='pull-left account-link'><a href="{% url 'accounts-profile' %}">{{ request.user }}</a></li>
+                <li class='pull-right'><a href="{% url 'accounts-logout' %}"><span class='glyphicon glyphicon-log-out'></span></a></li>
+            </ul>
+            {% if project.pk %}
+            <form class='navbar-right navbar-form project-search' action={% url 'projects-search' project.pk %} method='GET'>
+              <input class='form-control' type="text" name="contains" id='ticket-contains'  placeholder="Search Project" />
+          </form>
+          {% endif %}
+          </div><!--/.nav-collapse -->
+        </div>
     </div>
 
     <div class="container-fluid">
