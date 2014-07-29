@@ -69,8 +69,8 @@ $(document).ready(function(){
 </div>
 
 <div class="col-md-4 right-section-wrapper">
-    <div class="right-section-block">
-        <h3>Milestones <a href="{% url 'milestones-create' project.pk %}" class="btn btn-primary btn-xs">Create</a></h3>
+    <div class="panel panel-default right-section-block">
+      <div class='panel-heading' >Milestones <a href="{% url 'milestones-create' project.pk %}" class="pull-right btn btn-primary btn-xs">Create</a></div>
         <table class="table table-condensed table-bordered block-table">
             {% for milestone in milestones %}
                 <tr class="{% cycle 'odd' 'even' %}">
