@@ -47,8 +47,8 @@ $(document).ready(function(){
     <a href="{% url 'tickets-bulk' project.pk %}" class="btn btn-primary btn-xs" id="bulk-action">Bulk Action</a>
   </h3>
       <form class='iblock pull-right' style='margin-top:20px;' method='GET'>
-    <input  type="text" name="contains" id='ticket-contains'  placeholder="Search" />
-    </form>
+        <input class='form-control' type="text" name="contains" id='ticket-contains'  placeholder="Search" />
+      </form>
     </div>
     <br>
     <div class='panel panel-default'>
