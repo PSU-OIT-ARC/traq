@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView
 
 import views
 
@@ -35,6 +36,7 @@ urlpatterns = patterns('',
     url(r'^projects/(\d+)/edit/?$', projects.views.edit, name='projects-edit'),
     url(r'^projects/(\d+)/meta/?$', projects.views.meta, name='projects-meta'),
     url(r'^projects/(\d+)/edit_sprint/?$', projects.views.edit_sprint, name='projects-edit-sprint'),
+    url(r'^projects/(\d+)/search/?$', projects.views.search, name='projects-search'),
     
     #scrum
     url(r'^projects/(\d+)/dashboard/?$', projects.views.scrum.dashboard, name='projects-dashboard'),
@@ -55,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^projects/reports/summary/?$', projects.views.reports.summary, name='projects-reports-summary'),
     
     # milestones
-    url(r'^projects/(\d+)/milestons/create/?$', projects.views.milestones.create, name='milestones-create'),
+    url(r'^projects/(\d+)/milestones/create/?$', projects.views.milestones.create, name='milestones-create'),
     url(r'^milestones/(\d+)/edit/?$', projects.views.milestones.edit, name='milestones-edit'),
 
     # tickets

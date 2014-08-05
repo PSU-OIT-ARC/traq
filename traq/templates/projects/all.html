@@ -1,18 +1,17 @@
-{% extends "base.html" %}
+{% extends "bootstrap_base.html" %}
 
 {% block page_title %}Projects{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-{% endblock %}
 {% block content %}
-<h2>Projects <a class="button" href="{% url 'projects-create' %}">New Project</a></h2>
-
-<table class="table-info project-list active">
+<h2>Projects <small class='pull-right' ><a class="btn btn-primary btn-xs" href="{% url 'projects-create' %}">New Project</a></small></h2>
+<hr>
+<div class='row'>
+<table class="table table-striped  project-list active">
     <thead>
         <tr>
             <th>Name</th>
-            <th>Status</th>
-            <th>Description</th>
+            <th class='hidden-xs'>Edit</th>
+            <th class='hidden-xs' >Status</th>
+            <th class='hidden-xs'>Description</th>
         </tr>
     </thead>
     <tbody>
@@ -20,24 +19,27 @@
             <tr class="{% cycle 'odd' 'even' %}">
                 <td style="min-width:200px">
                     <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> {% if project.team_dynamix_id %}({{project.team_dynamix_id}}){% endif %}
-                    {% if perms.projects.change_project %}
-                        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+                </td>
+                <td class='hidden-xs' >{% if perms.projects.change_project %}
+                        <a href="{% url 'projects-edit' project.pk %}" class="btn btn-primary btn-xs">Edit</a>
                     {% endif %}
                 </td>
-                <td>{{ project.get_status_display }}</td>
-                <td>{{ project.description|truncatechars:80 }} <a href="{% url 'projects-meta' project.pk %}">Read more</a></td>
+                <td class='hidden-xs' >{{ project.get_status_display }}</td>
+                <td class='hidden-xs'>{{ project.description|truncatechars:80 }} <a href="{% url 'projects-meta' project.pk %}">Read more</a></td>
+
             </tr>
         {% endfor %}
     </tbody>
 </table>
-<a href='#' class='button inactive-toggle'>Show Inactive Projects</a>
-<a href='#' style='display:none' class='button inactive-toggle'>Hide Inactive Projects</a>
-<table style='display:none' class="table-info project-list inactive">
+<a href='#' class='btn btn-primary btn-xs inactive-toggle'>Show Inactive Projects</a>
+<a href='#' style='display:none' class='btn btn-primary btn-xs inactive-toggle'>Hide Inactive Projects</a>
+<table style='display:none' class="table table-info project-list inactive">
     <thead>
         <tr>
             <th>Name</th>
-            <th>Status</th>
-            <th>Description</th>
+            <th class='hidden-xs'>Edit</th>
+            <th class='hidden-xs'>Status</th>
+            <th class='hidden-xs'>Description</th>
         </tr>
     </thead>
     <tbody>
@@ -45,18 +47,20 @@
             <tr class="{% cycle 'odd' 'even' %}">
                 <td style="min-width:200px">
                     <a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a> 
-                    {% if perms.projects.change_project %}
-                        <a href="{% url 'projects-edit' project.pk %}" class="button">Edit</a>
+                </td>
+                <td class='hidden-xs'>{% if perms.projects.change_project %}
+                        <a href="{% url 'projects-edit' project.pk %}" class="btn btn-primary btn-xs">Edit</a>
                     {% endif %}
                 </td>
-                <td>{{ project.get_status_display }}</td>
-                <td>{{ project.description|truncatechars:80 }} <a href="{% url 'projects-meta' project.pk %}">Read more</a></td>
+                <td class='hidden-xs'>{{ project.get_status_display }}</td>
+                <td class='hidden-xs'>{{ project.description|truncatechars:80 }} <a href="{% url 'projects-meta' project.pk %}">Read more</a></td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
-
-<h2>Report</h2>
+</div>
+<hr>
+<h2>Reports</h2>
 <p><a href="{% url 'projects-reports-mega' %}">Mega</a></p>
 <p><a href="{% url 'projects-reports-summary' %}">Summary</a></p>
 

@@ -1,0 +1,14 @@
+{% load request_utils %}
+
+  {% if perms.projects.can_view_all %}
+        <li class='{% active_nav 'projects-detail projects-meta projects-edit' %}'><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
+        <li class='{% active_nav 'tickets-list' %}'><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
+  {% else %}
+        <li class='{% active_nav 'projects-meta' %}'><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+  {% endif %}
+        <li class='{% active_nav 'todos-list' %}'><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
+  {% if project.is_scrum %} 
+      <li class='{% active_nav 'projects-dashboard' %}'><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
+      <li class='{% active_nav 'projects-scrum' %}'><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
+  {% endif %}
+ 

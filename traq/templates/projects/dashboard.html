@@ -1,26 +1,33 @@
-{% extends "scrum_base.html" %}
+{% extends "project_base.html" %}
 
 {% load tickets %}
 
+{% block scripts %}
+<script type='text/javascript' src='{{ STATIC_URL }}datatables/js/jquery.dataTables.min.js'></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/datatables/css/jquery.dataTables.min.css">
+{% endblock %}
+
+
 {% block page_title %}{{ project.name }}{% endblock %}
-<div class='float-right iblock small'><a href="{% url "accounts-profile" %}assigned?sprint_end={{ sprint_end | date:'c'}}">My Tickets</a></div>
 
 {% block content %}
-<h2>{{ project.name }} 
-{% include '_sprint_end_form.html' %}
-</h2>
-<div class='split float-left' style=' margin-top:0px; clear:both'>
+<div style='display:inline-block' class='h2 pull-left'>{{ project.name }}</div>
+<div class='well pull-right col-md-4'>    
+  {% include '_sprint_end_form.html' %}
+</div>
+<div class='col-md-6 pull-left' style=' margin-top:0px; clear:both'>
     <h3>
     {% if perms.tickets.change_ticket %}
       <a href="{% url "tickets-list" project.pk %}?sprint_end={{ sprint_end | date:'c'}}">Tickets</a> 
     {% else %}
       Tickets 
     {% endif %}
-    <div class='float-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
+    <div class='pull-right small'>{{tix_completed}}/{{tickets.count}} Completed</div>
     </h3>
+    <hr>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
-    <table class='table-info'>
+    <table class='data-table table table-striped table-info'>
     <thead class='sticky'><th>Title</th><th>Assignee</th><th>Status</th></thead>
     {% for ticket in tickets %}
         <tr class="{% cycle 'even' 'odd' %}">
@@ -32,21 +39,23 @@
         <td>{{ticket.assigned_to}}</td>
         <td>{{ticket.status}}</td></tr>
     {% empty %}
-        <tr><td>Well, there aren't any. click link above to find what you're looking for </td></tr>
+        <tr><td>Well, there aren't any. click link above to find what you're looking for </td><td></td><td></td></tr>
     {% endfor %}
 
     </table>
   </div>
 </div>
 </div>
-<div class='split float-right' style='margin-top:0px;'>
+<div class='col-md-6 pull-right' style='margin-top:0px;'>
     <h3><a href="{% url "todos-list" project.pk%}?sprint_end={{ sprint_end | date:'c'}}">To Do's</a> 
-    <div class='float-right small'>{{todos_completed}}/{{todos.count}} Completed</div>
+    <div class='pull-right small'>{{todos_completed}}/{{todos.count}} Completed</div>
     </h3>
+    <hr>
     <div style='position:relative'>
     <div class='scroll-table-wrap'>
-    <table class='table-info'>
-    <thead class='sticky'><th>Title</th><th>Status</th><th>Tickets</th></thead>
+    <table class='data-table table table-striped table-info'>
+    <thead class='sticky'>
+    <th>Title</th><th>Status</th><th>Tickets</th></thead>
     {% for todo in todos %}
         <tr class="{% cycle 'even' 'odd' %}">
           <td><a href="{% url "todos-detail" todo.pk %}">{{todo}}</a></td>
@@ -60,62 +69,68 @@
           </td>
           </tr>
     {% empty %}
-        <tr><td>Well, there aren't any. click link above to find what you're looking for </td></tr>
+        <tr><td>Well, there aren't any. click link above to find what you're looking for </td><td></td><td></td></tr>
     {% endfor %}
     </table>
   </div>
 </div>
 </div>
-<div style='width:100%;clear:right'>
+<div style='clear:both' class='row'>
 <hr>
-<div class='float-left triptych' style='clear:both;'>
-<h3>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="button">Create</a>{% endif %}</h3>
-        <table class="block-table">
-            {% for comp in components %}
-                <tr class="{% cycle 'odd' 'even' %}">
-                    <td>
-                        {% if perms.projects.change_component %}
-                            <a href="{% url 'components-edit' comp.pk %}" class="discrete">{{ comp.name }}</a></td>
-                        {% else %}
-                            {{ comp.name }}
-                        {% endif %}
-                    <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
-                </tr>
-            {% endfor %}
-        </table>
-</div>
-<div class='float-left triptych'>
-    <div class="block-table">
-        {% include 'tickets/_worklog.html' %}
-    </div>
-</div>
-<div class='float-left triptych'>
-  <h3>Upcoming ToDo's</h3>
-  <div style="max-height:325px; overflow:auto;">
-  <table class='block-table'>
-    {% for todo in upcoming %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td><a href="{% url "todos-detail" todo.pk %}">{{todo }}</a></td>
-            <td>{{todo.due_on |date:"SHORT_DATE_FORMAT"}}</td>
-        {% empty %}
-        No more todos
+
+<div class='pull-left col-md-4'> 
+  <div class='panel panel-default' style='clear:both;'>
+    <div class='panel-heading'>Components {% if perms.projects.change_project %}<a href="{% url 'components-create' project.pk %}" class="btn btn-primary btn-xs">Create</a>{% endif %}</div>
+      <table class="table table-condensed table-bordered block-table">
+        {% for comp in components %}
+          <tr class="{% cycle 'odd' 'even' %}">
+            <td>
+            {% if perms.projects.change_component %}
+              <a href="{% url 'components-edit' comp.pk %}" class="discrete">{{ comp.name }}</a></td>
+            {% else %}
+              {{ comp.name }}
+            {% endif %}
+              <td>{{ comp.total|tickettime }} ({{ comp.billable|tickettime }} billable)</td>
+          </tr>
         {% endfor %}
-        </tr>
     </table>
+  </div>
+</div>
+
+<div class='pull-left col-md-4'>
+    <div class="block-table">
+      {% include 'tickets/_worklog.html' %}
     </div>
 </div>
 
+<div class='pull-left col-md-4 '>
+  <div class='panel panel-default'>
+    <div class='panel-heading'>Upcoming ToDo's</div>
+    <div style="max-height:325px; overflow:auto;">
+      <table class='table data-table table-condensed block-table'>
+        {% for todo in upcoming %}
+          <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{% url "todos-detail" todo.pk %}">{{todo }}</a></td>
+            <td>{{todo.due_on |date:"SHORT_DATE_FORMAT"}}</td>
+            {% empty %}
+              No more todos
+            {% endfor %}
+        </tr>
+      </table>
+    </div>
+  </div>
 </div>
+
+</div>
+
 <script type='text/javascript'>
-    //sticky table headers 
-    var width = [];
-    $(document).ready(function(){
-        $.each($('thead.sticky th'), function(k,v){
-            w = $(v).width();
-            width.push(w);});
-        $('thead.sticky').css('position', 'absolute');
-        $.each($('thead.sticky th'), function(k,v){
-            $(v).width(width[k]);});
+$(document).ready( function () {
+    $('.data-table').DataTable({ 
+        "bLengthChange": false,
+        "bFilter": false 
+        });
     });
+
+
 </script>
 {% endblock %}

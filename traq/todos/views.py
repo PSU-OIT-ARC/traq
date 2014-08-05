@@ -1,15 +1,17 @@
-from traq.projects.models import Project
-from traq.tickets.models import Ticket
-from traq.todos.models import ToDo
-from traq.todos.forms import *
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db.models import Q
 from traq.tickets.forms import TicketForm, CommentForm
 from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
-from traq.utils import get_next_scrum_day
+from traq.utils import get_next_scrum_day, BootstrapErrorList
+from traq.tickets.constants import TICKETS_PAGINATE_BY
+from traq.projects.models import Project
+from traq.tickets.models import Ticket
+from traq.todos.models import ToDo
+from traq.todos.forms import *
 from django.contrib.auth.decorators import permission_required
 from traq.permissions.decorators import can_view_project, can_view_todo
 import datetime
@@ -29,11 +31,27 @@ def listing(request, project_id):
     q = request.GET.get('q', '')
     if request.GET.get('q'):
         todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    if not request.GET.get('showall', False):
+        paginator = Paginator(todos, TICKETS_PAGINATE_BY)
+        page = request.GET.get('page')
+
+        try:
+            todos = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            todos = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            todos = paginator.page(paginator.num_pages)
+        finally:
+            do_pagination = True
 
     return render(request, 'todos/list.html', {
         'todos': todos,
         'project': project,
         'backlog': backlog,
+        'page':todos,
+        'do_pagination': do_pagination,
         'filterset': todo_filterset,
         })
 
@@ -42,7 +60,7 @@ def listing(request, project_id):
 def create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == "POST":
-        form = ToDoForm(request.POST, request.FILES, user=request.user, project=project)
+        form = ToDoForm(request.POST, request.FILES, user=request.user, project=project, error_class=BootstrapErrorList)
         if form.is_valid():
             form.save()
             todo = form.instance

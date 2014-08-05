@@ -1,89 +1,48 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
+{% load addcss %}
+
 {% block page_title %}{% if ticket %}Edit Ticket{% else %}Create Ticket{% endif %}{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li>Tickets</li>
-    {% if ticket %}
-        <li><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></li>
-        <li>Edit</li>
-    {% else %}
-        <li>Create</li>
-    {% endif %}
-{% endblock %}
+
 {% block content %}
-{% if ticket %}
-    <h2>Edit {{ ticket.title }}</h2>
-{% else %}
+<div class='container'>
+  {% if ticket %}
+    <h2><strong>Edit</strong> {{ ticket.title }}</h2>
+  {% else %}
     <h2>Create a new Ticket</h2>
-{% endif %}
+  {% endif %}
+</div>
 
-{% for field in form %}
-    {% if field.errors %}
-        {{ field.name }}
-        {{ field.errors }}
-    {% endif %}
-{% endfor %}
-
-<form method="post" action="" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.title.label_tag }}
-    {{ form.title }}
-    <table>
-        <tr>
-            <td>Assigned to</td>
-            <td>Status</td>
-            <td>Priority</td>
-            <td>Component</td>
-            <td>Branch</td>
-            <td>Release</td>
-            <td class='tool'>Ticket Type<div class='question-mark'>?<div class='tip'>{{form.type.help_text|linebreaks}}</div></div></td>
-        </tr>
-        <tr>
-            <td>{{ form.assigned_to }}</td>
-            <td>{{ form.status }}</td>
-            <td>{{ form.priority }}</td>
-            <td>{{ form.component }}</td>
-            <td>{{ form.branch }}</td>
-            <td>{{ form.release }}</td>
-            <td>{{ form.type }}</td>
-        </tr>
-    </table>
-
-    <div class="clear"></div>
-    
-    <label class="roomy">{{ form.body.label }}</label>
-    {{ form.body }}
-
-    <div class="clear"></div>
-    <table>
-        <tr>
-            <td>{{ form.started_on.label }}</td>
-            <td>{{ form.estimated_time.label }}</td>
-            <td>{{ form.due_on.label }}</td>
-            <td>{{ form.milestone.label }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.started_on }}</td>
-            <td>{{ form.estimated_time }}</td>
-            <td>{{ form.due_on }}</td>
-            <td>{{ form.milestone }}</td>
-        </tr>
-    </table>
-
+<form class='ticket-form' method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+    {{ form.title | bs_group:'12'}}
+    {{ form.assigned_to | bs_group:'2' }}
+    {{ form.status | bs_group:'2' }}
+    {{ form.priority | bs_group:'2' }}
+    {{ form.component | bs_group:'2' }}
+    {{ form.branch | bs_group:'2' }}
+    {{ form.release | bs_group:'2' }}
+    {{ form.body | bs_group:'12' }}
+    {{ form.started_on | bs_group:'2' }}
+    {{ form.estimated_time | bs_group:'2' }}
+    {{ form.due_on | bs_group:'2' }}
+    {{ form.milestone | bs_group:'2' }}
+    {{ form.type | bs_group:'2' }}
+       
     {% if not form.instance.pk %}
         <label class="option">{{ form.add_work }} Add work-line item to ticket</label>
     {% endif %}
-
-    <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
-    <label class="option" style="margin-top:10px;margin-bottom:10px;">{{ form.is_internal }} {{ form.is_internal.label }}</label>
-
-
-    <table class="files-table">
+    
+    <div class='col-md-12'>
+      <label class="option checkbox-inline" style="margin-top:10px;margin-bottom:10px;">{{ form.is_extra }} {{ form.is_extra.label }}</label>
+    </div>
+    <div class='col-md-12'>
+      <label class="option checkbox-inline" style="margin-top:10px;margin-bottom:10px;">{{ form.is_internal }} {{ form.is_internal.label }}</label>
+    </div>
+    <table class="table files-table">
         <tr>
             <td>
                 <h3>Upload Files</h3>
-                {{ form.files }}
+                {{ form.files |bs_group:'8'}}
             </td>
             <td>
                 {% if form.hasFiles %}
@@ -95,17 +54,18 @@
             </td>
         </tr>
     </table>
-
-    <label class="option float-right">{{ form.is_deleted }} {{ form.is_deleted.label }}</label>
-
-    <br />
-    <input type="submit" name="submit" value="Submit" class="float-left" />
+    <div class='col-md-2 form-group'> 
+      <input type="submit" class='form-control btn btn-primary btn-sm' name="submit" value="Submit" class="pull-left" />
+    </div>
     {% if not form.instance.pk %}
-        <input type="submit" name="submit" value="Submit and Add New Ticket" class="float-left" />
+    <div class='col-md-3 form-group'> 
+        <input type="submit" name="submit" class='form-control btn-primary btn-sm' value="Submit and Add New Ticket" class="pull-left" />
+    </div>
     {% endif %}
-
+      <label class="option pull-left checkbox-inline col-md-6">{{ form.is_deleted}}{{form.is_deleted.label }}</label>
 
 </form>
+
 <script type='text/javascript'>
  $(document).ready(function(){
  if (parseFloat(cssua.ua.chrome) > 20.0) {
@@ -119,6 +79,15 @@
     });
   }    
  });
+    var errors = {};
+    {% for field in form %}
+        {% if field.errors %}
+           errors['#id_{{ field.name }}']=('{{ field.errors |safe }}');
+        {% endif %}
+    {% endfor %}
+    for (key in errors){
+        $(key).before(errors[key]).parent('.form-group').addClass('has-error');
+    }
 </script>
 {% endblock %}
 

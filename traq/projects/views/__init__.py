@@ -1,3 +1,4 @@
+import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
@@ -16,6 +17,7 @@ from ..forms import ProjectForm, ProjectSprintForm
 from ..models import Project, Milestone
 from ..views import scrum
 from traq.todos.models import ToDo
+from traq.todos.models import Ticket
 
 # there's an annoying circular dependency between the ticket and project apps 
 # so this import needs to be after project models are imported
@@ -117,6 +119,7 @@ def edit(request, project_id):
 
     return render(request, 'projects/create.html', {
         'form': form,
+        'project': project,
     })
 
 @permission_required('projects.add_project')
@@ -134,6 +137,24 @@ def create(request):
         'form': form,
     })
 
+@permission_required('projects.can_view_all', raise_exception=True)
+def search(request, project_id):
+    project = get_object_or_404(Project,pk= project_id)
+    q = request.GET.get('contains', '')
+    tickets = Ticket.objects.filter(project=project).filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    todos = ToDo.objects.filter(project=project).filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    tickets = match_results(q, tickets)
+    todos = match_results(q, todos)
+    results = tickets.count() + todos.count()
+    
+    return render(request, 'projects/search-results.html', {
+        'tickets': tickets,
+        'todos': todos,
+        'project': project,
+        'results': results,
+    })
+
+
 @permission_required('projects.change_project')
 def edit_sprint(request, project_id):
     project = get_object_or_404(Project,pk= project_id)
@@ -145,6 +166,26 @@ def edit_sprint(request, project_id):
     else:
         form = ProjectSprintForm(instance=project)
     return render(request, 'projects/edit_sprint.html', {
-        'form': form,})
+        'form': form,
+        'project':project,
+        })
 
-
+def match_results(q, tickets):
+    for ticket in tickets:
+        match = re.search(q, ticket.body, re.IGNORECASE) 
+        if match is not None:
+            start = match.start() - 20 if (match.start() -20) > 0 else match.start() 
+            end = match.end() + 20 if (match.end() + 20 is not None) else match.end() 
+            repl = '<strong>%s</strong>' % match.group()
+            pat = re.compile(q, re.I)
+            body = pat.sub(repl, ticket.body, 1)
+            ticket.match = body[start:end+20]
+        match = re.search(q, ticket.title, re.IGNORECASE )
+        if match is not None:    
+            start = match.start() - 20 if (match.start() -20) > 0 else match.start() 
+            end = match.end() + 20 if (match.end() + 20 is not None) else match.end() 
+            repl = '<strong>%s</strong>' % match.group()
+            pat = re.compile(q, re.I)
+            title = pat.sub(repl, ticket.title, 1)
+            ticket.match = title[start:end+20]
+    return tickets

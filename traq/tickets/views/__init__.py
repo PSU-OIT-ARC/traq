@@ -1,5 +1,6 @@
 from datetime import datetime, time
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -8,7 +9,9 @@ from django.db.models import Q
 from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
 from traq.projects.models import Project
+from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.todos.models import ToDo
+from traq.utils import BootstrapErrorList
 from traq.tickets.filters import TicketFilterSet
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
@@ -85,7 +88,7 @@ def create(request, project_id):
         todo = None
     
     if request.method == "POST":
-        form = TicketForm(request.POST, request.FILES, user=request.user, project=project, todo=todo)
+        form = TicketForm(request.POST, request.FILES, user=request.user, project=project, todo=todo, error_class=BootstrapErrorList)
         if form.is_valid():
             form.save()
             ticket = form.instance
@@ -124,7 +127,7 @@ def create(request, project_id):
         # them in the initial data on the form
         initial_data.pop("body", None)
         initial_data.pop("title", None)
-        form = TicketForm(initial=initial_data, user=request.user, project=project, todo=todo)
+        form = TicketForm(initial=initial_data, user=request.user, project=project, todo=todo, error_class=BootstrapErrorList)
 
     return render(request, 'tickets/create.html', {
         'form': form,
@@ -185,10 +188,28 @@ def listing(request, project_id):
     q = request.GET.get('q', '')
     if request.GET.get('q'):
         tickets = tickets.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+    
+    do_pagination = False
+    if not request.GET.get('showall', False):
+        paginator = Paginator(tickets, TICKETS_PAGINATE_BY)
+        page = request.GET.get('page')
+
+        try:
+            tickets = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            tickets = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            tickets = paginator.page(paginator.num_pages)
+        finally:
+            do_pagination = True
 
     return render(request, 'tickets/list.html', {
         'tickets': tickets,
         'project': project,
+        'do_pagination': do_pagination,
+        'page':tickets,
         'filterset':ticket_filterset,})
 
 

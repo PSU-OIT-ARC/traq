@@ -31,7 +31,7 @@ class TicketForm(forms.ModelForm):
         self.user = kwargs.pop("user")
         self.todos = kwargs.pop('todo', None)
         super(TicketForm, self).__init__(*args, **kwargs)
-
+        
         # if this is a new ticket, we need to set some additional fields
         if self.instance.pk is None:
             self.instance.created_by = self.user
@@ -55,7 +55,7 @@ class TicketForm(forms.ModelForm):
             self.fields['type'].initial = 1
             
         if self.todos:
-            self.fields['body'].initial = "from todo: \n%s " % self.todos.body
+            self.fields['body'].initial = "%s " % self.todos.body
 
         # one of these fields will be required, but we handle that in the clean
         # method
@@ -146,7 +146,8 @@ class TicketForm(forms.ModelForm):
         widgets = {
             "release": forms.TextInput(attrs={"placeholder": "release"}),
             "branch": forms.TextInput(attrs={"placeholder": "branch"}),
-            "due_on": forms.DateTimeInput(attrs={'type':'date'})
+            "due_on": forms.DateTimeInput(attrs={'type':'date'}),
+            "body": forms.Textarea(attrs={'rows':8, }),
         }
 
 class CommentForm(forms.ModelForm):

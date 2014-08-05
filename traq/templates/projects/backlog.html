@@ -1,25 +1,18 @@
-{% extends 'scrum_base.html' %}
+{% extends 'project_base.html' %}
 {% block scripts %}
+<script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
 {% endblock %}
-{% block page_title %}To Do Items{% endblock %}
-{% block breadcrums %}
-    {% if perms.projects.can_view_all %}
-        <li><a href="{% url 'projects-all' %}">Projects</a></li>
-        <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    {% else %}
-        <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
-        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
-     {% endif %}
-    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
-    <li><a href="{% url 'todos-prioritize' project.pk %}?sprint_end={{project.backlog}}">Prioritize</a></li>
-{% endblock %}
+
+{% block page_title %}Backlog Refinement - To Do Items{% endblock %}
 
 {%block content %}
     <div id='content-wrapper' style='min-height:400px;'>
-    <h2> {{ project.name }}</h2>
-    <h2 >To Do Items</h2>
+      <h2> {{ project.name }}</h2>
+      <hr>
+      <h3 >To Do Items</h3>
     {% include 'filterset.html' %}
-    <table cellpadding='5px' id='todo-table' class='tablesorter' style='width:100%;'>
+
+    <table cellpadding='5px' id='todo-table' class='table table-striped tablesorter' style='margin-top:20px;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
             <th>To Do Item</th><th>Status</th><th>Due On</td><th>Estimate</td><th>Rank</th>
         </thead>
@@ -35,8 +28,7 @@
     {% endfor %}
     </tbody>    
     </table>
-    </div>
-    
+ </div>   
     <script type='text/javascript' src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
     
 {% endblock %}

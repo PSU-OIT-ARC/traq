@@ -1,19 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'bootstrap_base.html' %}
 
 {% load tickets %}
 
 {% block page_title %}My Projects{% endblock %}
-
-{% block breadcrums %}
-    <li><a href="{% url 'accounts-profile' %}">My Projects</a></li>
-{% endblock %}
-
 {% block content %}
-<h1>{{ user.username }},</h2>
+<h3>{{ user.username }}</h3>
 
-<ul>
+<ul class=list-group'>
     {% for project in projects %}
-        <li><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
+        <li class='list-group-item'><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
     {% endfor %}
 </ul>
 {% endblock %}

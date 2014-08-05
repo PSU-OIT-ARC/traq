@@ -1,11 +1,7 @@
-{% extends 'base.html' %}
+{% extends 'project_base.html' %}
 {% block scripts %}
 {% endblock %}
 {% block page_title %}Tickets{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-{% endblock %}
 
 {%block content %}
     <script type='text/javascript' src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
@@ -16,16 +12,23 @@
     </script>
 
     <div id='content-wrapper' style='min-height:400px;'>
+    <div class='row'>
     <h2> {{ project.name }}</h2>
-    <h2 >Tickets
-    <a href="{% url 'tickets-create' project.pk %}" class="button">New Ticket</a>
-    <form style='display:inline-block;float:right;margin-top:5px;' id='search' method='GET'>
+    <hr>
+    <h2 class='col-md-5'>Tickets
+    <small><a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a></small>
+    </h2>
+    <form class='pull-right' style='margin-top:20px' id='search' method='GET'>
       <input type='text' name='q' placeholder='Search'></input>
     </form>
-    </h2>
+    </div>
     {% include 'filterset.html' %}
-   
-    <table cellpadding='5px' id='ticket-table' class='tablesorter' style='width:100%;'>
+   {% if do_pagination %}
+    <div class="clear"></div>
+    {% include 'pagination.html' %}
+  {% endif %}
+
+    <table cellpadding='5px' id='ticket-table' class='table table-striped tablesorter' style='width:100%;'>
         <thead  style='background:rgb(106, 127, 16);border-bottom:solid 1px grey;padding:5px;color:white'>
             <th>Ticket</th>
             <th>Status</th>
