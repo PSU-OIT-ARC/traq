@@ -105,6 +105,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'djangocas.middleware.CASMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'cloak.middleware.CloakMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -144,6 +145,7 @@ INSTALLED_APPS = (
     'traq.permissions',
     'traq',
     'south',
+    'cloak',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
