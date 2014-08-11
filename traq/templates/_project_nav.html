@@ -6,9 +6,22 @@
   {% else %}
         <li class='{% active_nav 'projects-meta' %}'><a href="{% url 'projects-meta' project.pk %}">{{ project.name }}</a></li>
   {% endif %}
-        <li class='{% active_nav 'todos-list' %}'><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
+        <li class='{% active_nav 'todos-list todos-prioritize' %}'><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
   {% if project.is_scrum %} 
       <li class='{% active_nav 'projects-dashboard' %}'><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
-      <li class='{% active_nav 'projects-scrum' %}'><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
+      <li class='hidden-lg hidden-md {% active_nav 'projects-scrum' %}'><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
+      <li class='hidden-xs hidden-sm dropdown {% active_nav 'projects-scrum projects-backlog projects-sprint-planning' %}'>
+        <a class='dropdown-toggle' data-toggle='dropdown' href="#">Scrum<span class='caret'></span></a>
+        <ul class='dropdown-menu'>
+            <li><a href="{% url 'todos-prioritize' project.pk %}">Prioritize ToDos</a><li>
+            <li><a href="{% url 'projects-backlog' project.pk %}">Backlog Meeting</a><li>
+            <li><a href="{% url 'projects-sprint-planning' project.pk %}">Sprint Planning</a><li>
+            <li><a href="{% url 'projects-dashboard' project.pk %}">Sprint Review</a><li>
+            <li class="divider"></li>
+            <li><a href="#">Scrum Stats</a><li>
+            <li><a href="{% url 'projects-scrum' project.pk %}">Scrum Home</a><li>
+        </ul>
+      </li>
+    
   {% endif %}
  
