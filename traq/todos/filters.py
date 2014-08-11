@@ -45,7 +45,7 @@ class BacklogFilterSet(ToDoPriorityFilterSet):
         super(ToDoFilterSet, self).__init__(*args, **kwargs)
         extra ={'status':1}
         if not self.data:
-            qdict = QueryDict('sprint_end=%s' % project.current_sprint_end) 
+            qdict = QueryDict('sprint_end=%s' % project.backlog()) 
             print qdict
             self.data = qdict
         self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project, extra)) 

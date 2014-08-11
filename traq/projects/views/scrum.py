@@ -82,7 +82,7 @@ def backlog(request, project_id):
 def sprint_planning(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     #open or in progress todos not completed but with an estimate
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id=5), project_id=project_id)
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id__in=[4,5]), project_id=project_id)
     todos = todo_filterset
     for todo in todos:
         print todo.estimate
