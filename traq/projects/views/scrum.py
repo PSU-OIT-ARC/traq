@@ -8,7 +8,7 @@ from django.db.models import Count
 from ..models import Project, Milestone
 from traq.tickets.models import Ticket
 from traq.tickets.filters import TicketFilterSet
-from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet
+from traq.todos.filters import ToDoFilterSet, ToDoPriorityFilterSet, BacklogFilterSet
 from traq.todos.models import ToDo
 from traq.permissions.decorators import can_view_project
 
@@ -62,9 +62,10 @@ def dashboard(request, project_id):
 @can_view_project
 @permission_required('todos.change_todo')
 def backlog(request, project_id):
+    '''todos with no estimates''' 
     project = get_object_or_404(Project, pk=project_id)
-    #todos with no estimates 
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True).order_by('rank'), project_id=project_id)
+    
+    todo_filterset = BacklogFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True).order_by('rank'), project_id=project_id)
     todos = todo_filterset
     q = request.GET.get('q', None) 
     if q is not None:
@@ -80,9 +81,11 @@ def backlog(request, project_id):
 @permission_required('todos.change_todo')
 def sprint_planning(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    #todos with no tickets 
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, tickets__isnull=True), project_id=project_id)
+    #open or in progress todos not completed but with an estimate
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id=5), project_id=project_id)
     todos = todo_filterset
+    for todo in todos:
+        print todo.estimate
     q = request.GET.get('q', None) 
     if q is not None:
         todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))

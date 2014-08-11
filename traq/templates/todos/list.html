@@ -33,7 +33,7 @@
     {% for todo in todos %}
         <tr class='{% cycle 'odd' 'even' %}'>
             <td> <input type='checkbox' name='todo' value={{todo.pk}}></input></td>
-            <td style='padding:5px'><a href="{% url "todos.views.detail" todo.pk %}">#{{todo.pk}} {{ todo.title }}</a> </td>
+            <td style='padding:5px'><a href="{% url "todos-detail" todo.pk %}">#{{todo.pk}} {{ todo.title }}</a> </td>
             <td style='padding:5px'>{{ todo.status }}</td>
             <td style='padding:5px'>{{ todo.due_on |date:"M d, Y" }}</td>
             <td style='padding:5px;'>{{ todo.priority }}</td> 
