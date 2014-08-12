@@ -12,7 +12,7 @@
     <small><a href="{% url 'todos-create' project.pk %}" class="btn btn-primary btn-xs">New To Do</a></small>
     <small><a href="{% url 'todos-bulk' project.pk %}" class="btn btn-primary btn-xs" id="bulk-action">Bulk Action</a></small>
     {% if project.is_scrum %}
-        <small><a href="{% url 'todos-prioritize' project.pk %}/?sprint_end={{backlog | date:'c'}}" class="btn btn-primary btn-xs">Prioritize</a></small>
+        <small><a href="{% url 'todos-prioritize' project.pk %}" class="btn btn-primary btn-xs">Prioritize</a></small>
     {% endif %}
     </h2>
       <form style='margin-top:20px;' class='pull-right' id='search' method='GET'>
