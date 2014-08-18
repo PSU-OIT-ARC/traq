@@ -28,3 +28,11 @@ Create a settings file from the template, and fill in the blanks:
 
     cp traq/demo_settings.py traq/local_settings.py
     vim traq/local_settings.py
+
+## Running
+If running VM using Vagrant (e.g. with port forwarding guest: 8000 -> host: 8088), to be able to open the site from the host OS, run the site (in the VM) using:
+
+    python manage.py runserver 0.0.0.0:8000
+
+In host, open browser to URL: localhost:8088
+[[Source](http://stackoverflow.com/questions/5984217/vagrants-port-forwarding-not-working)]
