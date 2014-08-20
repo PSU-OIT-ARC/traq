@@ -38,11 +38,7 @@ $(document).ready(function(){
 <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
 <div class="col-md-8 pull-left-section-wrapper">
  <div class='row'>
-  {% if project.is_scrum %}
-    <h3 class='pull-left col-md-5 iblock pad5'><a href="{% url 'tickets-list' project.pk%}/?sprint_end={{project.current_sprint_end|date:'c'}}">Tickets</a> 
-  {% else %}
     <h3 class='pull-left col-md-5 iblock pad5'><a href="{% url 'tickets-list' project.pk%}">Tickets</a> 
-  {% endif %}
     <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a> |
     <a href="{% url 'tickets-bulk' project.pk %}" class="btn btn-primary btn-xs" id="bulk-action">Bulk Action</a>
   </h3>

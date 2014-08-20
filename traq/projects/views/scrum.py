@@ -65,7 +65,8 @@ def backlog(request, project_id):
     '''todos with no estimates''' 
     project = get_object_or_404(Project, pk=project_id)
     
-    todo_filterset = BacklogFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True).order_by('rank'), project_id=project_id)
+    #todo_filterset = BacklogFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True).order_by('rank'), project_id=project_id)
+    todo_filterset = BacklogFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'), project_id=project_id)
     todos = todo_filterset
     q = request.GET.get('q', None) 
     if q is not None:
@@ -74,6 +75,7 @@ def backlog(request, project_id):
     return render(request, 'projects/backlog.html', {
         'todos': todos,
         'project': project,
+        'page':u'Backlog',
         'filterset': todo_filterset,
         })
 
@@ -82,7 +84,7 @@ def backlog(request, project_id):
 def sprint_planning(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     #open or in progress todos not completed but with an estimate
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id=5), project_id=project_id)
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id__in=[4,5]).order_by('rank'), project_id=project_id)
     todos = todo_filterset
     for todo in todos:
         print todo.estimate
@@ -93,6 +95,7 @@ def sprint_planning(request, project_id):
     return render(request, 'projects/backlog.html', {
         'todos': todos,
         'project': project,
+        'page':u'Sprint Planning',
         'filterset': todo_filterset,
         })
 

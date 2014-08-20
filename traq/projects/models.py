@@ -10,6 +10,8 @@ from ..utils import dictfetchall, jsonhandler
 
 
 class ProjectManager(models.Manager):
+    
+    
     def get_query_set(self):
         return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
 
@@ -55,6 +57,11 @@ class ProjectManager(models.Manager):
 class Project(models.Model):
     ACTIVE = 1
     INACTIVE = 0
+
+    '''scrum stuff'''
+    BACKLOG_DAYS_BEFORE_SPRINT_END = 2
+    SPRINT_LENGTH = 14 #in days 
+
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     team_dynamix_id = models.IntegerField(default=None, blank=True, null=True)
@@ -198,13 +205,14 @@ class Project(models.Model):
         return queryset
 
     def get_next_sprint(self):
-        return (self.current_sprint_end or now().date()) + timedelta(days=14)
+        return (self.current_sprint_end or now().date()) + timedelta(days=self.SPRINT_LENGTH)
      
     def get_prev_sprint(self):
-        return (self.current_sprint_end or now().date()) - timedelta(days=14)
+        return (self.current_sprint_end or now().date()) - timedelta(days=self.SPRINT_LENGTH)
         
     def backlog(self):
-        return (self.current_sprint_end - timedelta(days=2)).strftime('%Y-%m-%d')
+        '''returns date BACKLOG_DAYS_BEFORE_SPRINT_END days before current sprint end'''
+        return (self.current_sprint_end - timedelta(days=self.BACKLOG_DAYS_BEFORE_SPRINT_END)).strftime('%Y-%m-%d')
 
     class Meta:
         db_table = 'project'
