@@ -17,6 +17,9 @@ class CustomBooleanFilter(django_filters.BooleanFilter):
         return qs
 
 class ToDoFilterSet(TicketFilterSet):
+
+    sprint_end = django_filters.DateFilter('due_on', label=_('Due On'))
+
     def __init__(self, *args, **kwargs):
             super(ToDoFilterSet, self).__init__(*args, **kwargs)
             self.filters.pop('priority')
