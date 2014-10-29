@@ -29,24 +29,24 @@ def get_choices(model, project=None, extra=None):
         items = items.filter(**extra)
 
     # Get the explicitly set due dates
-    dates = set(
+    dates = set(d.date() for d in (
         items
         .filter(due_on__isnull=False)
         .distinct()
         .values_list('due_on', flat=True)
-    )
+    ))
 
     if hasattr(model, 'milestone'):
         # Add milestone due dates (but only for tickets that don't also
         # have an explicitly set due date)
-        dates |= set(
+        dates |= set(d.date() for d in (
             items
             .filter(due_on__isnull=True, milestone__isnull=False)
             .distinct()
             .values_list('milestone__due_on', flat=True)
-        )
+        ))
 
-    my_choices = [('', "Any Time")] + sorted((d.date(), d.strftime('%b %d, %Y')) for d in dates)
+    my_choices = [('', "Any Time")] + sorted((d, d.strftime('%b %d, %Y')) for d in dates)
     return my_choices
 
     
