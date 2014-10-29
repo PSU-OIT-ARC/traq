@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 from django.db.models.loading import get_model
 from django.template.defaultfilters import date
 import django_filters
@@ -21,22 +22,33 @@ def range_from_today(interval):
 
 
 def get_choices(model, project=None, extra=None):      
-    my_choices= []
-    my_choices.append( ('', "Any Time") )
-    last_month = now() - datetime.timedelta(days=30)
+    items = model.objects.filter(is_deleted=False)
     if project:
-        items = model.objects.filter(project_id=project.pk, is_deleted=False).order_by('-due_on')
-    else:
-        items = model.objects.filter(is_deleted=False).order_by('-due_on')
+        items = model.objects.filter(project_id=project.pk)
     if extra:
         items = items.filter(**extra)
 
-    dates = items.values_list('due_on', flat='true').distinct()
-    for due in dates:
-        if due is not None:
-            pretty_date = due.strftime('%b %d, %Y')
-            my_choices.append( (due.date(), pretty_date) )
+    # Get the explicitly set due dates
+    dates = set(
+        items
+        .filter(due_on__isnull=False)
+        .distinct()
+        .values_list('due_on', flat=True)
+    )
+
+    if hasattr(model, 'milestone'):
+        # Add milestone due dates (but only for tickets that don't also
+        # have an explicitly set due date)
+        dates |= set(
+            items
+            .filter(due_on__isnull=True, milestone__isnull=False)
+            .distinct()
+            .values_list('milestone__due_on', flat=True)
+        )
+
+    my_choices = [('', "Any Time")] + sorted((d.date(), d.strftime('%b %d, %Y')) for d in dates)
     return my_choices
+
     
 class StartDateRangeFilter(django_filters.DateRangeFilter):
     options = {
@@ -65,11 +77,41 @@ class StartDateRangeFilter(django_filters.DateRangeFilter):
                     })),
         }
 
+
+class DueOnFilter(django_filters.DateFilter):
+
+    def filter(self, qs, value):
+        if isinstance(value, django_filters.fields.Lookup):
+            lookup = unicode(value.lookup_type)
+            value = value.value
+        else:
+            lookup = self.lookup_type
+        if value in ([], (), {}, None, ''):
+            return qs
+        # Custom
+        tzinfo = now().tzinfo
+        value = (
+            datetime.datetime.combine(value, datetime.time.min).replace(tzinfo=tzinfo),
+            datetime.datetime.combine(value, datetime.time.max).replace(tzinfo=tzinfo),
+        )
+        method = qs.exclude if self.exclude else qs.filter
+        q = Q(**{'%s__%s' % (self.name, lookup): value})
+        q |= Q(
+            due_on__isnull=True,
+            milestone__isnull=False,
+            **{'milestone__%s__%s' % (self.name, lookup): value}
+        )
+        # /Custom
+        qs = method(q)
+        if self.distinct:
+            qs = qs.distinct()
+        return qs
+
     
 class TicketFilterSet(django_filters.FilterSet):
     status = django_filters.ModelChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all())
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
-    sprint_end = django_filters.DateFilter('due_on', label=_('Due On'),) 
+    sprint_end = DueOnFilter('due_on', label=_('Due On'), lookup_type='range', distinct=True)
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
     assigned_to = django_filters.ModelChoiceFilter('assigned_to', label='Assigned to', queryset=User.objects.filter(is_active=True).filter(groups__name='arc')) 
 
@@ -80,7 +122,7 @@ class TicketFilterSet(django_filters.FilterSet):
         else:
             project = None
         super(TicketFilterSet, self).__init__(*args, **kwargs)
-        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project=project),) 
+        self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project=project),)
 
     class Meta:
         model = Ticket
