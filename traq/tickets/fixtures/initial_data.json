@@ -1,23 +1,23 @@
 [
-  {
-  "model":"tickets.TicketType",
-  "pk":1,
-  "fields": {
-    "name":"New Feature"
+    {
+        "model":"tickets.TicketType",
+        "pk":1,
+        "fields": {
+            "name":"New Feature"
+        }
+    },
+    {
+        "model":"tickets.TicketType",
+        "pk":2,
+        "fields": {
+            "name":"Bug Fixes"
+        }
+    },
+    {
+        "model":"tickets.TicketType",
+        "pk":3,
+        "fields": {
+            "name":"Code Maintenance"
+        }
     }
-  },
-  {
-  "model":"tickets.TicketType",
-  "pk":2,
-  "fields": {
-    "name":"Bug Fixes"
-    }
-  },
-  {
-  "model":"tickets.TicketType",
-  "pk":3,
-  "fields": {
-    "name":"Code Maintenance"
-    }
-  }
 ]
