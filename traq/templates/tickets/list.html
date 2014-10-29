@@ -42,7 +42,7 @@
             <td style='padding:5px'><a href="{% url "tickets.views.detail" ticket.pk %}">#{{ticket.pk}} {{ ticket.title }}</a> </td>
             <td style='padding:5px'>{{ ticket.status }}</td>
             <td style='padding:5px;'>{{ ticket.assigned_to }}</td> 
-            <td style='padding:5px'>{{ ticket.due_on |date:"M d, Y" }}</td>
+            <td style='padding:5px'>{{ ticket.due |date:"M d, Y" }}</td>
             <td style='padding:5px;'>{{ ticket.priority }}</td> 
         </tr>
     {% empty %}

@@ -106,6 +106,14 @@ class Ticket(models.Model):
     
     objects = TicketManager()
 
+    @property
+    def due(self):
+        """Return due_on or milestone.due_on or None."""
+        if self.due_on:
+            return self.due_on
+        elif self.milestone:
+            return self.milestone.due_on
+
     def isOverDue(self):
         return self.due_on < datetime.utcnow().replace(tzinfo=utc)
 
@@ -413,7 +421,7 @@ class Comment(models.Model):
 def my_handler(sender, instance, **kwargs):
     if instance.todos.all():
         for todo in instance.todos.all():
-            todo.due_on = instance.due_on
+            todo.due_on = instance.due
             tic = Ticket.objects.filter(todos=todo).values_list('status', flat=True)
             print instance.status
             print tic

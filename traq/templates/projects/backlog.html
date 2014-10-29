@@ -21,7 +21,7 @@
         <tr id='{{ todo.pk }}' class='{% cycle 'odd' 'even' %}'>
             <td style='padding:5px'><a href="{% url "todos-detail" todo.pk %}?return_to=prioritize">#{{todo.pk}} {{ todo.title }}</a> </td>
             <td style='padding:5px'>{{ todo.status }}</td>
-            <td style='padding:5px'>{{ todo.due_on |date:"M d, Y" }}</td>
+            <td style='padding:5px'>{{ todo.due |date:"M d, Y" }}</td>
             <td style='padding:5px;'>{{ todo.estimate }}</td> 
             <td style='padding:5px;'>{{ todo.rank }}</td> 
         </tr>

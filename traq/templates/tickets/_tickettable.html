@@ -54,7 +54,7 @@ $(document).ready(function(){
                         {{ ticket.assigned_to }}
                     {% endif %}
                 </td>
-                <td class="center {% if ticket.isOverDue %}error{% endif %}" >{{ ticket.due_on|default:"" }}</td>
+                <td class="center {% if ticket.isOverDue %}error{% endif %}" >{{ ticket.due|default:"" }}</td>
             </tr>
         {% empty %}
             <tr><td class="center" colspan="4">No tickets</td></td>
