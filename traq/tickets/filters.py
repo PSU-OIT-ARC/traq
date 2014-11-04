@@ -21,7 +21,12 @@ def range_from_today(interval):
     )
 
 
-def get_choices(model, project=None, extra=None):      
+def date_from_datetime(dt):
+    tz = get_current_timezone()
+    return tz.normalize(dt.astimezone(tz)).date()
+
+
+def get_choices(model, project=None, extra=None):
     items = model.objects.filter(is_deleted=False)
     if project:
         items = model.objects.filter(project_id=project.pk)
@@ -29,7 +34,7 @@ def get_choices(model, project=None, extra=None):
         items = items.filter(**extra)
 
     # Get the explicitly set due dates
-    dates = set(d.date() for d in (
+    dates = set(date_from_datetime(dt) for dt in (
         items
         .filter(due_on__isnull=False)
         .distinct()
@@ -39,7 +44,7 @@ def get_choices(model, project=None, extra=None):
     if hasattr(model, 'milestone'):
         # Add milestone due dates (but only for tickets that don't also
         # have an explicitly set due date)
-        dates |= set(d.date() for d in (
+        dates |= set(date_from_datetime(dt) for dt in (
             items
             .filter(due_on__isnull=True, milestone__isnull=False)
             .distinct()
@@ -49,7 +54,7 @@ def get_choices(model, project=None, extra=None):
     my_choices = [('', "Any Time")] + sorted((d, d.strftime('%b %d, %Y')) for d in dates)
     return my_choices
 
-    
+
 class StartDateRangeFilter(django_filters.DateRangeFilter):
     options = {
         '': (_('Any Date'), lambda qs, name: qs.all()),
@@ -89,7 +94,7 @@ class DueOnFilter(django_filters.DateFilter):
         if value in ([], (), {}, None, ''):
             return qs
         # Custom
-        tzinfo = now().tzinfo
+        tzinfo = get_current_timezone()
         value = (
             datetime.datetime.combine(value, datetime.time.min).replace(tzinfo=tzinfo),
             datetime.datetime.combine(value, datetime.time.max).replace(tzinfo=tzinfo),
@@ -107,13 +112,13 @@ class DueOnFilter(django_filters.DateFilter):
             qs = qs.distinct()
         return qs
 
-    
+
 class TicketFilterSet(django_filters.FilterSet):
     status = django_filters.ModelChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all())
-    priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())  
+    priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())
     sprint_end = DueOnFilter('due_on', label=_('Due On'), lookup_type='range', distinct=True)
-    due_range = StartDateRangeFilter('due_on', label=_('Due Date'))   
-    assigned_to = django_filters.ModelChoiceFilter('assigned_to', label='Assigned to', queryset=User.objects.filter(is_active=True).filter(groups__name='arc')) 
+    due_range = StartDateRangeFilter('due_on', label=_('Due Date'))
+    assigned_to = django_filters.ModelChoiceFilter('assigned_to', label='Assigned to', queryset=User.objects.filter(is_active=True).filter(groups__name='arc'))
 
     def __init__(self, *args, **kwargs):
         project_id = kwargs.pop('project_id', None)
