@@ -1,0 +1,19 @@
+{% extends "project_base.html" %}
+
+{% block content %}
+    <h2>Milestone: {{ milestone.name|title }}</h2>
+    <p>
+        <a href="{% url 'projects-detail' project.pk %}"
+            ><span class="glyphicon glyphicon-arrow-left"></span>
+            Return to project</a>
+        &nbsp;
+        <a href="{% url 'milestones-edit' milestone.pk %}"
+            ><span class="glyphicon glyphicon-edit"></span>
+            Edit</a>
+    </p>
+    <p>
+        <strong>Due</strong>: {{ milestone.due_on|date }} at {{ milestone.due_on|time }}
+    </p>
+    <h3>Tickets</h3>
+    {% include 'tickets/_tickettable.html' with tickets=milestone.ticket_set.all %}
+{% endblock %}

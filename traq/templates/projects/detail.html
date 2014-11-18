@@ -72,7 +72,7 @@ $(document).ready(function(){
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td>
                         {% if perms.projects.change_milestone %}
-                            <a href="{% url 'milestones-edit' milestone.pk %}" class="discrete">{{ milestone.name }}</a></td>
+                            <a href="{% url 'milestones-detail' milestone.pk %}" class="discrete">{{ milestone.name }}</a></td>
                         {% else %}
                             {{ milestone.name }}
                         {% endif %}

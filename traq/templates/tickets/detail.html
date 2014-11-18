@@ -25,7 +25,7 @@
                 <li><strong>Component:</strong> {{ ticket.component }} </li>
                 <li><strong>Status:</strong> {{ ticket.status }}</li>
                 {% if ticket.milestone %}
-                    <li><strong>Milestone:</strong> {{ ticket.milestone.name }} </li>
+                    <li><strong>Milestone:</strong> <a href="{% url 'milestones-detail' ticket.milestone.pk %}">{{ ticket.milestone.name }}</a></li>
                 {% endif %}
             </ul>
             <ul class='col-md-3 '>
