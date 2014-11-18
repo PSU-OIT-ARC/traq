@@ -129,7 +129,7 @@
     <div class="panel panel-default right-section-block">
       <div class='panel-heading' >Add Work </div>
       <div class='panel-body'>
-        <form id="work-form" class='form-group form-inline' action="" method="post">
+        <form id="work-form" method="post" action="">
             {% if work_form.errors %}
                 <p class="error">
                 {% for field in work_form %}
@@ -141,12 +141,25 @@
                 {% endfor %}
                 </p>
             {% endif %}
-            <input type="hidden" name="form_type" value="work_form" />
             {% csrf_token %}
-            <p>{{ work_form.time }} {{ work_form.description }}</p>
-            <p><label class="billable">{{ work_form.billable }} Billable</label>
-              {{ work_form.type |addcss:'form-control'}}
-              <input class='btn btn-primary btn-xs pull-right' type="submit" name="submit" value="Add" class="inline" /></p>
+            <input type="hidden" name="form_type" value="work_form" />
+            <div class="form-group">
+                {{ work_form.time|addcss:'form-control' }}
+            </div>
+            <div class="form-group">
+                {{ work_form.description|addcss:'form-control' }}
+            </div>
+            <div class="form-inline">
+                <div class="form-group">
+                    <label class="billable">{{ work_form.billable }} Billable</label>
+                </div>
+                <div class="form-group">
+                    {{ work_form.type|addcss:'form-control' }}
+                </div>
+                <div class="form-group pull-right">
+                    <input class='btn btn-primary btn-xs' type="submit" name="submit" value="Add" />
+                </div>
+            </div>
         </form>
       </div>
     </div>
