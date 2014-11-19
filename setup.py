@@ -17,7 +17,7 @@ setup(
         'django-extensions',
         'django_filter',
         'Markdown==2.3.1',
-        'MySQL-python==1.2.5',
+        'PyMySQL',
         'python-ldap==2.3.13',
         'pytz>=2013b',
         'shortuuid',

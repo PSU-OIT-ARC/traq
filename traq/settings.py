@@ -2,6 +2,10 @@ import os
 from fnmatch import fnmatch
 from django.conf import global_settings
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
 PROJECT_DIR = os.path.dirname(__file__)
 HOME_DIR = os.path.normpath(os.path.join(PROJECT_DIR, '../'))
 
