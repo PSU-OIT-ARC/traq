@@ -12,6 +12,7 @@ setup(
     install_requires=[
         'django==1.5.6',
         'djangocas',
+        'django-arcutils',
         'django-cloak',
         'django-extensions',
         'django_filter',

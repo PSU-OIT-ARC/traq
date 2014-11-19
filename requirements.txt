@@ -1,2 +1,3 @@
 -e .
 -e git+https://github.com/mdj2/djangocas.git#egg=djangocas
+-e git+https://github.com/PSU-OIT-ARC/django-arcutils.git#egg=django-arcutils

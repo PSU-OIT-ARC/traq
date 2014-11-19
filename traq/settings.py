@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'arcutils',
     'traq.projects',
     'traq.todos',
     'traq.tickets',
