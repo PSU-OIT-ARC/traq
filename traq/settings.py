@@ -149,7 +149,7 @@ INSTALLED_APPS = (
     'traq.accounts',
     'traq.permissions',
     'traq',
-    'south',
+    #'south', <-- no need in django 1.7
     'cloak',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
@@ -188,4 +188,4 @@ LOGGING = {
 }
 
 #SECRET_KEY = 'changeme'
-from local_settings import *
+from .local_settings import *
