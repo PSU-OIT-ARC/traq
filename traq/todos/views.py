@@ -196,7 +196,7 @@ def prioritize(request, project_id):
             todo = get_object_or_404(ToDo, pk=pk)
             todo.rank = index
             todo.save()
-    	messages.success(request, 'To Do Items Prioritized')
+        messages.success(request, 'To Do Items Prioritized')
 
     
     project = get_object_or_404(Project, pk=project_id)
