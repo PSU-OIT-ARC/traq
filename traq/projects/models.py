@@ -12,8 +12,8 @@ from ..utils import dictfetchall, jsonhandler
 class ProjectManager(models.Manager):
     
     
-    def get_query_set(self):
-        return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(ProjectManager, self).get_queryset().filter(is_deleted=False)
 
     def timeByUser(self, user, interval=()):
         sql_where = "(1 = 1)"
@@ -222,8 +222,8 @@ class Project(models.Model):
                 )
 
 class ComponentManager(models.Manager):
-    def get_query_set(self):
-        return super(ComponentManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(ComponentManager, self).get_queryset().filter(is_deleted=False)
 
     def timeByUser(self, project, user, interval=()):
         sql_where = "(1 = 1)"
@@ -318,8 +318,8 @@ class Component(models.Model):
         return u'%s' % (self.name)
 
 class MilestoneManager(models.Manager):
-    def get_query_set(self):
-        return super(MilestoneManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(MilestoneManager, self).get_queryset().filter(is_deleted=False)
 
 class Milestone(models.Model):
     milestone_id = models.AutoField(primary_key=True)
