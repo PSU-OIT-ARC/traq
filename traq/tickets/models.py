@@ -49,8 +49,8 @@ class TicketType(models.Model):
         return u'%s' % (self.name)
 
 class TicketManager(models.Manager):
-    def get_query_set(self):
-        return super(TicketManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(TicketManager, self).get_queryset().filter(is_deleted=False)
 
     def tickets(self):
         """Return a query set of tickets with all the useful related fields and
@@ -254,8 +254,8 @@ class WorkType(models.Model):
         return u'%s' % (self.name)
 
 class WorkManager(models.Manager):
-    def get_query_set(self):
-        return super(WorkManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(WorkManager, self).get_queryset().filter(is_deleted=False)
 
     def pauseRunning(self, created_by):
         """Sets the state to pause for all running work created by `created_by`.
@@ -346,8 +346,8 @@ class Work(models.Model):
     objects = WorkManager()
 
 class CommentManager(models.Manager):
-    def get_query_set(self):
-        return super(CommentManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(CommentManager, self).get_queryset().filter(is_deleted=False)
 
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
@@ -423,8 +423,8 @@ def my_handler(sender, instance, **kwargs):
         for todo in instance.todos.all():
             todo.due_on = instance.due
             tic = Ticket.objects.filter(todos=todo).values_list('status', flat=True)
-            print instance.status
-            print tic
+            print(instance.status)
+            print(tic)
             if 1 in tic or 2 in tic or 3 in tic: 
                 todo.status_id=2
             else: 

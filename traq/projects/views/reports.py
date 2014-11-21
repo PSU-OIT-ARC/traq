@@ -151,7 +151,7 @@ def invoice(request, project_id):
 
 def _intervalHelper(request, project_id=None):
     interval = ()
-    print project_id
+    print(project_id)
     if request.GET.get('submit'):
         form = ReportIntervalForm(request.GET)
         if form.is_valid():

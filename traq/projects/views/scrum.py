@@ -87,7 +87,7 @@ def sprint_planning(request, project_id):
     todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id__in=[4,5]).order_by('status','rank', 'due_on'), project_id=project_id)
     todos = todo_filterset
     for todo in todos:
-        print todo.estimate
+        print(todo.estimate)
     q = request.GET.get('q', None) 
     if q is not None:
         todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
