@@ -5,6 +5,9 @@
     {% for w in work %}
         <tr class="{% cycle 'odd' 'even' %}">
             <th>
+                <a href="{% url 'tickets-detail' w.ticket.pk %}" title="Ticket: {{ w.ticket }}">#{{ w.ticket.pk }}</a>
+            </th>
+            <th>
                 {{ w.created_by }} 
                 - 
                 <span class="timestamp">{{ w.started_on }}</span> 
@@ -29,7 +32,7 @@
             </th>
         </tr>
         {% if w.description %}<tr class="{% cycle 'odd' 'even' %}">
-            <td colspan="3">{{ w.description }}</td>
+            <td colspan="4">{{ w.description }}</td>
         </tr>
         {% endif %}
     {% empty %}
