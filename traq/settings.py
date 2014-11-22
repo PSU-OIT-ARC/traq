@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'traq',
     #'south', <-- no need in django 1.7
     'cloak',
+    'coverage',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
