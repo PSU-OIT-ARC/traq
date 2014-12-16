@@ -26,5 +26,5 @@ class ToDo(models.Model):
     priority = models.ForeignKey(TicketPriority)
     component = models.ForeignKey(Component)
 
-    def __unicode__(self):
+    def __str__(self):
         return "#%d: %s" % (self.pk, self.title)

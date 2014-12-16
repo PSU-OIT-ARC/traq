@@ -91,7 +91,7 @@ class Project(models.Model):
     current_sprint_end= models.DateField(null=True, blank=True, verbose_name="Sprint End")  
     
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.name
 
     def createDefaultComponents(self):
@@ -314,7 +314,7 @@ class Component(models.Model):
         db_table = 'component'
         ordering = ['rank']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class MilestoneManager(models.Manager):
@@ -337,7 +337,7 @@ class Milestone(models.Model):
         db_table = 'milestone'
         ordering = ['due_on']
 
-    def __unicode__(self):
+    def __str__(self):
         utc_date = self.due_on.replace(tzinfo=utc)
         tz = timezone(SETTINGS.TIME_ZONE)
         return u'%s %s' % (self.name, utc_date.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")) 

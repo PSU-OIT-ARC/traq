@@ -24,7 +24,7 @@ class TicketStatus(models.Model):
         ordering = ['rank']
         db_table = 'ticket_status'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketPriority(models.Model):
@@ -37,7 +37,7 @@ class TicketPriority(models.Model):
         ordering = ['rank']
         db_table = 'ticket_priority'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketType(models.Model):
@@ -45,7 +45,7 @@ class TicketType(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, null=True, blank=True, default=None)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketManager(models.Manager):
@@ -115,7 +115,7 @@ class Ticket(models.Model):
             return self.milestone.due_on
 
     def isOverDue(self):
-        return self.due_on < datetime.utcnow().replace(tzinfo=utc)
+        return str(self.due_on) < str(datetime.utcnow().replace(tzinfo=utc))
 
     def finishWork(self):
         work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
@@ -207,7 +207,7 @@ class Ticket(models.Model):
             msg.attach_alternative(html_content, "text/html")
             msg.send()
     
-    def __unicode__(self):
+    def __str__(self):
         return u'#%s: %s' % (self.pk, self.title) 
 
     class Meta:
@@ -226,7 +226,7 @@ class TicketFile(models.Model):
         db_table = "ticket_file"
         ordering = ['file']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.file.name)
 
 class WorkTypeManager(models.Manager):
@@ -250,7 +250,7 @@ class WorkType(models.Model):
         ordering = ['rank']
         db_table = 'work_type'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class WorkManager(models.Manager):
