@@ -66,7 +66,7 @@ def get_next_scrum_day(dates, day):
     return None 
 
 class BootstrapErrorList(ErrorList):
-    def __unicode__(self):
+    def __str__(self):
         return self.as_divs()
     def as_divs(self):
         if not self: return u''
