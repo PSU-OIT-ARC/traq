@@ -38,7 +38,6 @@ def detail(request, ticket_id):
     work = Work.objects.filter(ticket=ticket).filter(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
-    
     return_to = request.GET.get('return_to', None)
 
     # this view has two forms on it. We multiplex between the two using a
@@ -101,7 +100,7 @@ def create(request, project_id):
             # future. Save the data on a per project basis (using the project's pk)
             if "ticket_form" not in request.session:
                 request.session['ticket_form'] = {}
-            request.session['ticket_form'][project.pk] = form.cleaned_data
+            request.session['ticket_form'][project.pk] = list(form.cleaned_data)
             # Django won't know to save the session because we are modifying a
             # 2D dictionary
             request.session.modified = True
