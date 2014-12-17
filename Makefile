@@ -10,6 +10,7 @@
         run \
         shell \
         test \
+		coverage \
 
 .DEFAULT_GOAL := run
 
@@ -104,5 +105,10 @@ shell:
 # use `make test test=path.to.test` if you want to run a specific test
 test:
 	$(MANAGE) test $(test)
+
+# run the unit tests with coverage. 
+# go to `0.0.0.0:8000/htmlcov/index.html` to view test coverage
+coverage:
+	coverage run $(MANAGE) test $(test) && coverage html
 
 ## /Django
