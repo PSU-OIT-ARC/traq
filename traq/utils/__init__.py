@@ -71,3 +71,4 @@ class BootstrapErrorList(ErrorList):
     def as_divs(self):
         if not self: return u''
         return u'<div class="errorlist text-danger">%s</div>' % ''.join([u'<div class="error">%s</div>' % e for e in self])
+
