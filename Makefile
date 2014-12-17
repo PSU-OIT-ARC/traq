@@ -109,6 +109,6 @@ test:
 # run the unit tests with coverage. 
 # go to `0.0.0.0:8000/htmlcov/index.html` to view test coverage
 coverage:
-	coverage run $(MANAGE) test $(test) && coverage html
+	coverage run --source=$(MANAGE) test $(test) && coverage html
 
 ## /Django
