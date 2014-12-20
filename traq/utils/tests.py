@@ -1,21 +1,31 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from traq.projects.models import Project, Component
 from traq.tickets.models import Ticket, TicketStatus, TicketPriority
-
+from traq.todos.models import ToDo
 
 class TraqCustomTest(TestCase):
     def setUp(self):
         super(TraqCustomTest, self).setUp()
+        arc_client_group = Group(name='arcclient')
+        arc_client_group.save()
+        self.arc_client_group = arc_client_group
 
         user = User(username='raygun', first_name='bob', last_name='dole', email='bobdole@bobdole.com')
         user.set_password('foo')
         user.save()
-        self.user = user
+        user.groups.add(arc_client_group)
+        self.user = user 
 
+        arc_group = Group(name='arc')
+        arc_group.save()
+        self.arc_group = arc_group
+
+        # yes, that is the name of a pokemon
         admin = User(username='moltres', first_name='franklin', last_name='benjamin', email='lightningkeys@gmail.com', is_staff=True)
         admin.set_password('foo')
         admin.save()
+        admin.groups.add(arc_group)
         self.admin = admin
 
         project = Project(
@@ -49,3 +59,19 @@ class TraqCustomTest(TestCase):
                 )
         ticket.save()
         self.ticket = ticket
+
+        todo = ToDo(
+                title='todo',
+                body='body',
+                created_by=self.admin,
+                status_id=1,
+                priority_id=TicketPriority.objects.first().pk,
+                rank=1,
+                component_id=self.component.pk,
+                project_id=self.project.pk,
+                )
+        todo.save()
+        self.todo = todo
+
+        #self.todo.tickets.add(self.ticket)
+        self.todo.save()
