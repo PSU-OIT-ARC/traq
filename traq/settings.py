@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'traq.accounts',
     'traq.permissions',
     'traq',
+    'model_mommy',
     #'south', <-- no need in django 1.7
     'cloak',
     'coverage',
