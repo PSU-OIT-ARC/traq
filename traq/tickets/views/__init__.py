@@ -137,7 +137,11 @@ def create(request, project_id):
 @permission_required('tickets.change_ticket')
 def bulk(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    ticket_ids = request.GET['tickets'].split(",")
+    # handled via javascript in the template, but still needs to check during tests.
+    if 'tickets' in request.GET:
+        ticket_ids = request.GET['tickets'].split(",")
+    else:
+        ticket_ids = [] 
     # TODO add permissions checking on a ticket level. 
 
     if request.method == "POST":
