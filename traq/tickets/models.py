@@ -24,7 +24,7 @@ class TicketStatus(models.Model):
         ordering = ['rank']
         db_table = 'ticket_status'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketPriority(models.Model):
@@ -37,7 +37,7 @@ class TicketPriority(models.Model):
         ordering = ['rank']
         db_table = 'ticket_priority'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketType(models.Model):
@@ -45,12 +45,12 @@ class TicketType(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, null=True, blank=True, default=None)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketManager(models.Manager):
-    def get_query_set(self):
-        return super(TicketManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(TicketManager, self).get_queryset().filter(is_deleted=False)
 
     def tickets(self):
         """Return a query set of tickets with all the useful related fields and
@@ -115,7 +115,7 @@ class Ticket(models.Model):
             return self.milestone.due_on
 
     def isOverDue(self):
-        return self.due_on < datetime.utcnow().replace(tzinfo=utc)
+        return str(self.due_on) < str(datetime.utcnow().replace(tzinfo=utc))
 
     def finishWork(self):
         work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
@@ -207,7 +207,7 @@ class Ticket(models.Model):
             msg.attach_alternative(html_content, "text/html")
             msg.send()
     
-    def __unicode__(self):
+    def __str__(self):
         return u'#%s: %s' % (self.pk, self.title) 
 
     class Meta:
@@ -226,7 +226,7 @@ class TicketFile(models.Model):
         db_table = "ticket_file"
         ordering = ['file']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.file.name)
 
 class WorkTypeManager(models.Manager):
@@ -250,12 +250,12 @@ class WorkType(models.Model):
         ordering = ['rank']
         db_table = 'work_type'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class WorkManager(models.Manager):
-    def get_query_set(self):
-        return super(WorkManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(WorkManager, self).get_queryset().filter(is_deleted=False)
 
     def pauseRunning(self, created_by):
         """Sets the state to pause for all running work created by `created_by`.
@@ -346,8 +346,8 @@ class Work(models.Model):
     objects = WorkManager()
 
 class CommentManager(models.Manager):
-    def get_query_set(self):
-        return super(CommentManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(CommentManager, self).get_queryset().filter(is_deleted=False)
 
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
@@ -423,8 +423,8 @@ def my_handler(sender, instance, **kwargs):
         for todo in instance.todos.all():
             todo.due_on = instance.due
             tic = Ticket.objects.filter(todos=todo).values_list('status', flat=True)
-            print instance.status
-            print tic
+            print(instance.status)
+            print(tic)
             if 1 in tic or 2 in tic or 3 in tic: 
                 todo.status_id=2
             else: 

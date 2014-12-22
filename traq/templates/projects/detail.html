@@ -14,7 +14,8 @@
 <hr>
 
 <script type="text/javascript">
-//TICKETS = {{ tickets_json|safe }};
+
+//TICKETS={{ tickets_json|safe }};
 
 $(document).ready(function(){
     $('#bulk-action').click(function(e){
@@ -28,12 +29,11 @@ $(document).ready(function(){
             return;
         }
         var query = vals.join(",");
-
         var href = $(this).attr('href');
         href += "?tickets=" + query;
         window.location = href;
     });
-})
+});
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
 <div class="col-md-8 pull-left-section-wrapper">

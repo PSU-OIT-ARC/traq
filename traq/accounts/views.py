@@ -17,6 +17,10 @@ from ..tickets.filters import TicketFilterSet
 
 @login_required
 def profile(request, tickets=''):
+    """
+    Redirect user to correct view based
+    on their group.
+    """
     user = request.user
     if user.groups.filter(name='arc'):
         return _tickets(request, tickets)
@@ -32,7 +36,7 @@ def _tickets(request, tickets=''):
         tickets = Ticket.objects.tickets().filter(Q(created_by=user))
     elif(tickets =='assigned'):
         tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))
-    else:    
+    else:
         tickets = Ticket.objects.tickets().filter(Q(created_by=user) | Q(assigned_to=user))
 
     ticket_filterset = TicketFilterSet(request.GET, queryset=tickets)
@@ -86,9 +90,9 @@ def _invoices(request):
 def _projects(request):
     user = request.user
     if user.groups.filter(name=STAFF_GROUP):
-	projects = Project.objects.all()
+	    projects = Project.objects.all()
     else:
-	projects = Project.objects.filter(clients=request.user)
+	    projects = Project.objects.filter(clients=request.user)
     return render(request, "accounts/projects.html", {
         "projects": projects,
     })

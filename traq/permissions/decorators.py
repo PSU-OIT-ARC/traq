@@ -1,4 +1,4 @@
-from urllib import urlencode
+from urllib.parse import urlencode
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import REDIRECT_FIELD_NAME

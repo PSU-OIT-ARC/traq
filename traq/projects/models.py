@@ -12,8 +12,8 @@ from ..utils import dictfetchall, jsonhandler
 class ProjectManager(models.Manager):
     
     
-    def get_query_set(self):
-        return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(ProjectManager, self).get_queryset().filter(is_deleted=False)
 
     def timeByUser(self, user, interval=()):
         sql_where = "(1 = 1)"
@@ -91,7 +91,7 @@ class Project(models.Model):
     current_sprint_end= models.DateField(null=True, blank=True, verbose_name="Sprint End")  
     
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.name
 
     def createDefaultComponents(self):
@@ -222,8 +222,8 @@ class Project(models.Model):
                 )
 
 class ComponentManager(models.Manager):
-    def get_query_set(self):
-        return super(ComponentManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(ComponentManager, self).get_queryset().filter(is_deleted=False)
 
     def timeByUser(self, project, user, interval=()):
         sql_where = "(1 = 1)"
@@ -314,12 +314,12 @@ class Component(models.Model):
         db_table = 'component'
         ordering = ['rank']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class MilestoneManager(models.Manager):
-    def get_query_set(self):
-        return super(MilestoneManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(MilestoneManager, self).get_queryset().filter(is_deleted=False)
 
 class Milestone(models.Model):
     milestone_id = models.AutoField(primary_key=True)
@@ -337,7 +337,7 @@ class Milestone(models.Model):
         db_table = 'milestone'
         ordering = ['due_on']
 
-    def __unicode__(self):
+    def __str__(self):
         utc_date = self.due_on.replace(tzinfo=utc)
         tz = timezone(SETTINGS.TIME_ZONE)
         return u'%s %s' % (self.name, utc_date.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")) 

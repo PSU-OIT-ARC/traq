@@ -72,7 +72,7 @@ def create(request, project_id):
             # future. Save the data on a per project basis (using the project's pk)
             if "todo_form" not in request.session:
                 request.session['todo_form'] = {}
-            request.session['todo_form'][project.pk] = form.cleaned_data
+            request.session['todo_form'][project.pk] = list(form.cleaned_data)
             # Django won't know to save the session because we are modifying a
             # 2D dictionary
             request.session.modified = True
@@ -80,7 +80,7 @@ def create(request, project_id):
             # Go to the ticket detail page, or if they clicked the "Save and
             # add another ticket button, display the ticket form again
             if request.POST.get("submit", "submit").lower() == "submit":
-                return HttpResponseRedirect(reverse("todos-detail", args=(todo.pk,)))
+                return HttpResponseRedirect(reverse("todos-detail", args=[todo.pk,]))
                 #return HttpResponseRedirect(request.path)
             else:
                 return HttpResponseRedirect(request.path)
@@ -196,7 +196,7 @@ def prioritize(request, project_id):
             todo = get_object_or_404(ToDo, pk=pk)
             todo.rank = index
             todo.save()
-    	messages.success(request, 'To Do Items Prioritized')
+        messages.success(request, 'To Do Items Prioritized')
 
     
     project = get_object_or_404(Project, pk=project_id)
