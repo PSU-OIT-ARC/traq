@@ -28,6 +28,7 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = (
             'name',
+            'team_dynamix_id',
             'description',
             'point_of_contact',
             'invoice_description',
@@ -36,7 +37,9 @@ class ProjectForm(forms.ModelForm):
             'status',
             'is_deleted',
             'pm_email',
-            'pm'
+            'pm',
+            'estimated_hours',
+            'is_scrum',
         )
 
 class ComponentForm(forms.ModelForm):
@@ -94,8 +97,8 @@ class MilestoneForm(forms.ModelForm):
 
 class ReportIntervalForm(forms.Form):
     """Simple little form to select a datetime range"""
-    start = forms.DateTimeField()
-    end = forms.DateTimeField()
+    start = forms.DateField(widget=forms.widgets.DateInput(attrs={"type": "date"}))
+    end = forms.DateField(widget=forms.widgets.DateInput(attrs={"type": "date"}))
 
     def clean(self):
         cleaned = super(ReportIntervalForm, self).clean()
@@ -105,3 +108,23 @@ class ReportIntervalForm(forms.Form):
             if end < start:
                 raise forms.ValidationError("The start must be less than the end")
         return cleaned
+
+class ReportFilterForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.status = kwargs.pop('status')
+        super(ReportFilterForm, self).__init__(*args, **kwargs)
+        choices = self.fields['status'].choices 
+        choices.insert(2,('All', 'All')) 
+        self.fields['status'].choices = choices 
+        self.fields['status'].initial = self.status
+
+    class Meta:
+        model = Project
+        fields = ['status',]
+
+
+class ProjectSprintForm(forms.ModelForm):
+
+    class Meta:
+        model = Project
+        fields = ('current_sprint_end',)

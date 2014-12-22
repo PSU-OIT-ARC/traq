@@ -9,7 +9,8 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from ..projects.models import Project, Component, Milestone
 from django.core.mail import EmailMultiAlternatives
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 import re
 
 class TicketStatus(models.Model):
@@ -23,7 +24,7 @@ class TicketStatus(models.Model):
         ordering = ['rank']
         db_table = 'ticket_status'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketPriority(models.Model):
@@ -36,12 +37,20 @@ class TicketPriority(models.Model):
         ordering = ['rank']
         db_table = 'ticket_priority'
 
-    def __unicode__(self):
+    def __str__(self):
+        return u'%s' % (self.name)
+
+class TicketType(models.Model):
+    ticket_type_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, null=True, blank=True, default=None)
+
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketManager(models.Manager):
-    def get_query_set(self):
-        return super(TicketManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(TicketManager, self).get_queryset().filter(is_deleted=False)
 
     def tickets(self):
         """Return a query set of tickets with all the useful related fields and
@@ -93,10 +102,20 @@ class Ticket(models.Model):
     component = models.ForeignKey(Component)
     milestone = models.ForeignKey(Milestone, null=True, default=None, blank=True)
 
+    type = models.ForeignKey(TicketType, null=True, blank=True)
+    
     objects = TicketManager()
 
+    @property
+    def due(self):
+        """Return due_on or milestone.due_on or None."""
+        if self.due_on:
+            return self.due_on
+        elif self.milestone:
+            return self.milestone.due_on
+
     def isOverDue(self):
-        return self.due_on < datetime.utcnow().replace(tzinfo=utc)
+        return str(self.due_on) < str(datetime.utcnow().replace(tzinfo=utc))
 
     def finishWork(self):
         work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
@@ -118,10 +137,13 @@ class Ticket(models.Model):
         super(Ticket, self).save(*args, **kwargs)
 
         is_new = original.pk is None
+        is_done = self.status_id == 4 or self.status_id == 5
 
         # send a notification for a new ticket, or one that was assigned
         if is_new or original.assigned_to_id != self.assigned_to_id:
-            self.sendNotification()
+            self.sendNotification('New')
+        if is_done:
+            self.sendNotification(self.status)
 
         if not is_new:
             # close all the running work on this ticket if it just turned to Completed or closed
@@ -130,6 +152,7 @@ class Ticket(models.Model):
                 status = self.status.name
                 if status in ['Completed', 'Closed']:
                     self.finishWork()
+
 
     def totalTimes(self, interval=()):
         """Return a dict containing timedelta objects that indicate how much
@@ -164,9 +187,10 @@ class Ticket(models.Model):
             'non_billable': non_billable,
         }
 
-    def sendNotification(self):
+    def sendNotification(self, *args):
+        status = args[0]
         """Send a notification email to the person assigned to this ticket"""
-        if self.assigned_to is not None:
+        if self.assigned_to:
             to = self.assigned_to.username + "@" + SETTINGS.EMAIL_DOMAIN
             ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(self.pk,))
             context = {
@@ -177,13 +201,13 @@ class Ticket(models.Model):
             text_content = render_to_string('tickets/notification.txt', context)
             html_content = render_to_string('tickets/notification.html', context)
             clean_title = re.sub(r"[\r\n]+", "; ", self.title)
-            subject = 'Traq Ticket #%d %s' % (self.pk, clean_title)
+            subject = 'Traq: %s Ticket #%d %s' % (status, self.pk, clean_title)
 
             msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
     
-    def __unicode__(self):
+    def __str__(self):
         return u'#%s: %s' % (self.pk, self.title) 
 
     class Meta:
@@ -202,7 +226,7 @@ class TicketFile(models.Model):
         db_table = "ticket_file"
         ordering = ['file']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.file.name)
 
 class WorkTypeManager(models.Manager):
@@ -226,12 +250,12 @@ class WorkType(models.Model):
         ordering = ['rank']
         db_table = 'work_type'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class WorkManager(models.Manager):
-    def get_query_set(self):
-        return super(WorkManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(WorkManager, self).get_queryset().filter(is_deleted=False)
 
     def pauseRunning(self, created_by):
         """Sets the state to pause for all running work created by `created_by`.
@@ -322,8 +346,8 @@ class Work(models.Model):
     objects = WorkManager()
 
 class CommentManager(models.Manager):
-    def get_query_set(self):
-        return super(CommentManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(CommentManager, self).get_queryset().filter(is_deleted=False)
 
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
@@ -334,29 +358,37 @@ class Comment(models.Model):
     todo = models.ForeignKey('todos.ToDo', null=True)
     ticket = models.ForeignKey(Ticket, null=True)
     created_by = models.ForeignKey(User, related_name='+')
-
     objects = CommentManager()
     
 
-    def sendNotification(self):
+    def sendNotification(self, cc=None):
         """Send a notification email to the pm when a comment is made on  this ticket"""
+        to = []
         if self.body is not None:
+            if self.cc is not None:
+                for cc in self.cc:
+                    to.append(cc.username + '@' + SETTINGS.EMAIL_DOMAIN)
             if self.ticket is not None:
                 item = 'Ticket'
                 ticket = self.ticket or None
                 ticket_url = SETTINGS.BASE_URL + reverse('tickets-detail', args=(ticket.pk,))
+                if self.ticket.assigned_to:
+                    if not self.created_by == self.ticket.assigned_to:
+                        to.append(self.ticket.assigned_to.username +"@" + SETTINGS.EMAIL_DOMAIN)
             else:
                 item = 'To Do'
-                #call this todo a ticket jsut for shorter code
                 ticket = self.todo or None  
                 ticket_url = SETTINGS.BASE_URL + reverse('todos-detail', args=(ticket.pk,))
-            
             project = ticket.project
-           
+            if project.clients:
+                if self.todo:
+                    for client in project.clients.all():
+                        to.append(client.username + "@" + SETTINGS.EMAIL_DOMAIN)
+
            # if there is no PM, there is no place to send the email
             if project.pm is None:
                 return
-            to = project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN
+            to.append(project.pm.username + "@" + SETTINGS.EMAIL_DOMAIN)
             
             body = render_to_string('tickets/comment_notification.txt', {
                 "ticket": ticket,
@@ -364,11 +396,13 @@ class Comment(models.Model):
                 "author" : self.created_by,
                 "comment_body": self.body,
             })
-            subject = 'Traq %s #%d %s' % (item, ticket.pk, ticket.title)
+
+            clean_title = re.sub(r"[\r\n]+", "; ", ticket.title)
+            subject = 'Traq New Comment: %s #%d %s' % (item, ticket.pk, clean_title)
             if project.pm_email:
                 text_content = body
                 html_content = body
-                msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', [to])
+                msg = EmailMultiAlternatives(subject, text_content, 'traq@pdx.edu', to)
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
@@ -381,4 +415,19 @@ class Comment(models.Model):
     class Meta:
         ordering = ['created_on']
         db_table = 'comment'
+
+
+@receiver(post_save, sender=Ticket)
+def my_handler(sender, instance, **kwargs):
+    if instance.todos.all():
+        for todo in instance.todos.all():
+            todo.due_on = instance.due
+            tic = Ticket.objects.filter(todos=todo).values_list('status', flat=True)
+            print(instance.status)
+            print(tic)
+            if 1 in tic or 2 in tic or 3 in tic: 
+                todo.status_id=2
+            else: 
+                todo.status_id = 5
+            todo.save()
 

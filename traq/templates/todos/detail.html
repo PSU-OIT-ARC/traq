@@ -1,101 +1,98 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% load tickets %}
 
 {% block page_title %}{{ todo.title }}{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li><a href="{% url 'todos-list' project.pk %}">To Do Items</a></li>
-    <li>{{ todo.title }}</li>
-{% endblock %}
-
 {% block content %}
 
-<h2>
-    <span class="ticket-priority-{{ todo.priority|slugify }} ticket-status-{{ todo.status|slugify }}">{{ todo.priority }}</span>
-    #{{ todo.pk }}: {{ todo.title }} 
+<h3>
+    #{{ todo.pk }}: {{ todo.title |truncatechars:50}} 
     {% if perms.todos.change_todo %}
-    <a href="{% url 'todos-edit' todo.pk %}" class="button">Edit</a>
+        {% if return_to %}
+        <a href="{% url 'todos-edit' todo.pk %}?return_to=prioritize" class="btn btn-primary btn-xs">Edit</a>
+        {% else %}
+        <a href="{% url 'todos-edit' todo.pk %}" class="btn btn-primary btn-xs">Edit</a>
+        {% endif %}
     {% endif %}
-    <a href="{% url 'todos-create' project.pk %}" class="button">New ToDo</a> 
-</h2>
-
-<div class="left-section-wrapper">
-    <div class="ticket">
-        <div class="ticket-body">
+        <a href="{% url 'todos-create' project.pk %}" class="btn btn-primary btn-xs">New ToDo</a> 
+</h3>
+<hr>
+<div class="col-md-8 left-section-wrapper clearfix">
+    <div class="panel panel-default pull-left ticket">
+        <div class="panel-body ticket-body">
             <div class="markdown">{{ todo.body|frommarkdown }}</div>
         </div>
-        <div class="ticket-info ticket-status">
-            <ul>
+        <div class="panel-footer pull-left ticket-info ticket-status">
+            <ul class='col-md-3'>
                 <li><strong>Component:</strong> {{ todo.component }} </li>
                 <li><strong>Status:</strong> {{ todo.status }}</li>
                 {% if todo.milestone %}
                     <li><strong>Milestone:</strong> {{ todo.milestone.name }} </li>
                 {% endif %}
             </ul>
-            <ul>
+            <ul class='col-md-3'>
                 <li><strong>Created:</strong> <span class="timestamp">{{ todo.created_on }}</span> by {{ todo.created_by }}</li>
             </ul>
-            <ul>
+            <ul class='col-md-3'>
                 <li><strong>Estimate:</strong> {{ todo.estimate }}</li>
-                {% comment %} <li><strong>Current Time:</strong> {{ times.total|tickettime }} ({{ times.billable|tickettime }} billable)</li> {% endcomment %}
                 {% if todo.due_on %}
                     <li><strong>Due On:</strong> {{ todo.due_on }} </li>
                 {% endif %}
             </ul>
-            <div class="clear"></div>
         </div>
     </div>
 
-    <h3>Comments</h3>
+    <h4>Comments</h4>
     <div class="ticket-comments">
         {% for comment in comments %}
-            <div class="ticket">
-                <div class="comment-info">
-                    <ul>
+            <div class="panel panel-default ticket">
+                <div class="panel-heading comment-info">
+                    <ul class='list-inline'>
                         <li><strong>Author:</strong> {{ comment.created_by }}</li>
                         <li><strong>Created On:</strong> <span class="timestamp">{{ comment.created_on }}</span></li>
                         {% if perms.todos.change_todo %}
-                        <li><a href="{% url 'comments-edit' comment.pk %}" class="button">Edit</a></li>
+                        <li><a href="{% url 'comments-edit' comment.pk %}" class="btn-primary btn-xs btn">Edit</a></li>
                         {% endif %}
                     </ul>
                     <div class="clear"></div>
                 </div>
-                <div class="ticket-body">
+                <div class="panel-body ticket-body">
                     <div class="markdown">{{ comment.body|frommarkdown }}</div>
                 </div>
             </div>
         {% endfor %}
     </div>
 
-    <div class="ticket-add-comment">
+    <div class="panel panel-default ticket-add-comment">
+        <div class='panel-heading'><strong>Add Comment</strong></div>
         <form method="post" action="">
             <input type="hidden" name="form_type" value="comment_form" />
             {% csrf_token %}
-            <h4>Add Comment</h4>
             {{ comment_form.body.errors }}
             {{ comment_form.body }}
-            <input type="submit" name="submit" value="Add" class="submit" />
+        <div class='panel-footer'>
+            {{ comment_form.cc.label }}: {{ comment_form.cc }}
+            <input type="submit" name="submit" value="Add" class="btn btn-xs btn-primary submit float-right" />
         </form>
+       </div>
     </div>
 </div>
 
-<div class="right-section-wrapper">
-    <div class="right-section-block">
-        <h3>This Item's Tickets
+<div class="col-md-4 right-section-wrapper">
+    <div class="panel panel-default right-section-block">
+        <div class='panel-heading'>This Item's Tickets
         {% if perms.tickets.add_ticket %}
-            <a class='button' style='padding-left:5px' href='{% url 'tickets-create' project.pk %}?todo_id={{ todo.pk }}'>Add New Ticket</a>
+            <a class='btn btn-xs btn-primary pull-right' href='{% url 'tickets-create' project.pk %}?todo_id={{ todo.pk }}'>Add New Ticket</a>
         {% endif %}
-        </h3>
-        <table class="block-table">
+        </div>
+        <table class="table block-table">
             <tbody>
                 {% for ticket in todo.tickets.all %}
                     <tr>
                         {% if perms.tickets.add_ticket %}
-                            <td class='hover' title="{{ ticket.title|escape }}"><a class='button' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></td>
+                            <td> <a class='hover' data-toggle='tooltip' data-placement='left' title='{{ ticket.title|escape |truncatechars:50}}' href='{% url 'tickets-detail' ticket.ticket_id %}'>#{{ ticket.pk }}: {{ ticket.status }}</a></td>
                         {% else %}
-                            <td class='hover' title="{{ ticket.title|escape }}"><a class='button' href=#>#{{ ticket.pk }}: {{ ticket.status }}</a></td>
+                            <td class='hover' data-toggle='tooltip' data-placement='left' title='{{ ticket.title|escape |truncatechars:50}}'>#{{ ticket.pk }}: {{ ticket.status }}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -103,9 +100,9 @@
         </table>
     </div>
     
-    <div class="right-section-block">
-        <h3>Files</h3>
-        <table class="block-table">
+    <div class="panel panel-default right-section-block">
+        <div class='panel-heading' >Files</div>
+        <table class="table table-condensed block-table">
         {% for tf in files %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td>{{ tf.uploaded_by }}</td>
@@ -118,7 +115,7 @@
 
 <script type='text/javascript'>
     $(document).ready(function(){
-        $('li.hover').tooltip();   
+        $('.hover').tooltip();   
     });
 </script>
 {% endblock %}

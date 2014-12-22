@@ -1,0 +1,23 @@
+{% extends "bootstrap_base.html" %}
+{% block page_title %}Scrum Workflow{%endblock%}
+{% block navigation %}
+{{ block.super }} 
+{% include '_project_nav.html' %}
+{% endblock %}
+{% block content %}
+<h2>{{ project.name }}</h2>
+<hr>
+<h3 class='col-md-8'>Scrum Workflow</h3>
+<div class='col-md-8 pull-left panel panel-default scrum-workflow clearfix'>
+  <ul class='list-group'>
+    <li class="list-group-item"><a href='{% url 'todos-prioritize' project.pk %}'>Prioritize ToDos</a></li>
+    <li class="list-group-item" ><a href='{% url 'projects-backlog' project.pk %}'>Backlog Refinement Meeting</a></li>
+    <li class="list-group-item" ><a href='{% url 'projects-sprint-planning' project.pk %}'>Sprint Planning Meeting</a></li>
+    <li class="list-group-item" ><a href='{% url 'projects-dashboard' project.pk %}'>Sprint Review Meeting</a></li>
+    <li class="list-group-item" ><a href='{% url 'todos-list' project.pk %}'>Scrum Stats</a></li>
+  </ul>
+</div>
+<div class='well col-md-4'>
+  {% include '_sprint_end_form.html' %}
+</div>
+{% endblock %}

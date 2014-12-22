@@ -1,59 +1,82 @@
-{% extends "base.html" %}
+{% extends "bootstrap_base.html" %}
 
 {% load tickets %}
+{% load addcss %}
+
 {% block page_title %}Mega Report{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li>Reports</li>
-    <li>Mega</li>
-{% endblock %}
 {% block content %}
 
 <h2>Projects</h2>
-<div class="print-hide">
-    <form method="get" action="">
-        {{ form.as_p }}
-        <input type="submit" name="submit" value="submit" />
+<div class="hidden-print clearfix">
+    <form id='mega-form' method="get" action="">
+        {{ form.start |bs_group:'3'}}
+        {{ form.end | bs_group:'3'}}
+        {{ filter_form.status |bs_group:'3'}}
+        <div class='col-md-12'>
+          <input class='btn btn-primary btn-sm' type="submit" name='submit' value="submit" />
+        </div>
     </form>
 </div>
 
 <h3>Grid</h3>
-<p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1 }}</span></p>
-<table class="report time-grid">
-    <thead>
-        <tr>
-            <td>&nbsp;</td>
-            <th colspan="3">Total</th>
-            {% for project in projects %}
-                <th colspan="3">{{ project.name }}</th>
+<p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1 | date:'N d, Y'}}</span></p>
+<div class="table-scroller">
+    <table class="table table-striped table-condensed report time-grid">
+        <thead>
+            <tr>
+                <td>&nbsp;</td>
+                <th>Total</th>
+                {% for project in projects %}
+                    <th>{{ project.name }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td class="small border-left">Total</td>
+                {% for project in projects %}
+                    <td class="small border-left">Total</td>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td class="username">{{ user.username }}</td>
+                <td class="time-cell border-left">{{ user.totals.total|fractionsofhours }}</td>
+                {% for project in user.projects %}
+                    <td class="time-cell border-left">{{ project.total|fractionsofhours }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td class="border-left">Total</td>
-            <td class="">Billable</td>
-            <td class="border-right">Non-billable</td>
-            {% for project in projects %}
-                <td class="border-left">Total</td>
-                <td class="">Billable</td>
-                <td class="border-right">Non-billable</td>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td class="username">{{ user.username }}</td>
-            <td class="time-cell border-left">{{ user.totals.total|tickettimepretty }}</td>
-            <td class="time-cell">{{ user.totals.billable|tickettimepretty }}</td>
-            <td class="time-cell border-right">{{ user.totals.non_billable|tickettimepretty }}</td>
-            {% for project in user.projects %}
-                <td class="time-cell border-left">{{ project.total|tickettimepretty }}</td>
-                <td class="time-cell">{{ project.billable|tickettimepretty }}</td>
-                <td class="time-cell border-right">{{ project.non_billable|tickettimepretty }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-</tbody>
-</table>
+        </tbody>
+        <tfoot>
+            <!--
+            <tr>
+                <th colspan="2">Total (hh:mm)</th>
+                {% for project in projects %}
+                    <td class="time-cell border-left">{{ project.total_time|tickettimepretty }}</td>
+                {% endfor %}
+            </tr>
+            -->
+            <tr class='border-top'>
+                <th class='bg-info'colspan="2">Total (hours)</th>
+                {% for project in projects %}
+                    <td class="bg-info time-cell border-left">{{ project.total_time|fractionsofhours }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th colspan="2">Estimated Hours</th>
+                {% for project in projects %}
+                    <td class="time-cell border-left">{{ project.estimated_hours }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th colspan="2">Hours Remaining</th>
+                {% for project in projects %}
+                    <td class="{% if project.in_red %}red {% endif %}time-cell border-left">{{ project.hours_remaining|fractionsofhours }}</td>
+                {% endfor %}
+            </tr>
+        </tfoot>
+    </table>
+</div>
 {% endblock %}

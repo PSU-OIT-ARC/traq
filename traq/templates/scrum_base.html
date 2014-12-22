@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block page_title %}Default Title{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/main.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/markdown.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/print.css" media="print">
+        <link rel='stylesheet' type='text/css' href="{{ STATIC_URL }}js/jquery-ui/css/smoothness/jquery-ui-1.10.3.custom.min.css">
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+        <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-ui/js/jquery-ui-1.10.3.custom.min.js'></script>
+        <script type='text/javascript' src='{{ STATIC_URL }}js/cssua.min.js'></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/main.js"></script>
+        {% block scripts %}{% endblock %}
+    </head>
+    <body>
+        {% block body %}
+            <div id="page">
+                <div id="header">
+                    {% block header %}
+                        {% if show_logo %}
+                            <img src="http://www.pdx.edu/sites/all/themes/pdx_primary/logo.png" />
+
+                        {% endif %}
+                        <!-- yes, I spelled breadcumbs wrong -->
+                        <ul class="scrum-nav">
+                        {% block navigation %}
+                         <li><a href="{% url 'projects-all' %}">Projects</a></li>
+                          <li><a href="{% url 'projects-dashboard' project.pk %}">Dashboard</a></li>
+                          <li><a href="{% url 'tickets-list' project.pk %}">Tickets</a></li>
+                          <li><a href="{% url 'todos-list' project.pk %}">ToDos</a></li>
+                          <li><a href="{% url 'projects-scrum' project.pk %}">Scrum</a></li>
+                        {% endblock navigation %}
+                        </ul>
+
+                        {% block nav %}
+                            {% if user.is_authenticated %}
+                                <ul class="scrum-nav float-right">
+                                    <li><a href="{% url 'accounts-profile' %}">{{ user.username }}</a></li>
+                                    <li><a href="{% url 'accounts-logout' %}">Logout</a></li>
+                                </ul>
+                            {% endif %}
+                        {% block search %}
+                            <form style='display:inline-block;float:right;margin-top:5px;' id='search' method='GET'>
+                              <input type='text' name='q' placeholder='Search'></input>
+                            </form>
+                        
+                        {% endblock %}
+                        {% endblock %}
+                        <div class="clear"></div>
+                    {% endblock %}
+                </div>
+
+                <div id="content">
+                    <!-- django messanging tool --> 
+                    {% if messages %}
+                        <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message|safe }}</div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% block content %}{% endblock %}
+                    <div class="clear"></div>
+                </div>
+
+                <div id="footer">
+                    {% block footer %}
+                    <hr />
+                    {% endblock %}
+                </div>
+            </div> <!-- /wrapper -->
+        {% endblock %}
+
+        <!-- print debug queries -->
+        {% if debug and request.GET.debug  %}
+            <ul>
+            {% for q in sql_queries %}
+                <li><pre>{{ q.sql }}</pre></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+    </body>
+</html>

@@ -8,3 +8,6 @@ logs/*
 htdocs/media
 bin/manage
 bin/driver
+.coverage
+ngrok
+htmlcov/

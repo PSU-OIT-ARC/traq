@@ -1,45 +1,44 @@
-{% extends 'base.html' %}
+{% extends 'bootstrap_base.html' %}
 
 {% load tickets %}
 
 {% block page_title %}Your Tickets{% endblock %}
 
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-{% endblock %}
-
 {% block content %}
-<h1>{{ user.username }},</h2>
+<h2>{{ user.username }}</h2>
 
-<div class="left-section-wrapper">
+<div class="col-md-8 left-section-wrapper">
   <script type="text/javascript">
     TICKETS = {{ tickets_json|safe }};
   </script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
-  <h2>
+  <div class='row'>
+  <h3 class='pull-left'>
     Tickets <a href="{% url 'accounts-profile' tickets='assigned'%}">Assigned To </a> or <a href="{% url 'accounts-profile' tickets='created_by'%}">Created By </a>You
-    <input type="text" name="search" id="ticket-search" placeholder="Search" />
-  </h2>
+  </h3>
+    <form class='pull-right' style='margin-top:20px;' method='GET'>
+      <input class='form-control' type="text" name="contains" id="ticket-contains" placeholder="Search" />
+    </form>
+    </div>
 
-  <div class="clear"></div>
-  {% include 'filterset.html' %}
-
-  {% if do_pagination %}
-    <div class="clear"></div>
-    {% include 'pagination.html' %}
-  {% endif %}
+  <div class='panel panel-default'>
+      <div class='col-md-12 panel-heading'>
+      {% include 'filterset.html' %}
+      </div>
+      {% if do_pagination %}
+        <div class='panel-body'>
+          {% include 'pagination.html' %}
+        </div>
+     {% endif %}
+     </div>
 
   {% include 'tickets/_tickettable.html' %}
+  </div>
 
-  {% if do_pagination %}
-    {% include 'pagination.html' %}
-  {% endif %}
-</div>
-
-<div class="right-section-wrapper">
-    <div class="right-section-block">
-        <h3>Your Running Work</h3>
-        <table class="block-table">
+<div class="col-md-4 right-section-wrapper">
+    <div class="panel panel-default right-section-block">
+        <div class='panel-heading'>Your Running Work</div>
+        <table class="table table-condensed">
         {% for w in running_work %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td><a href="{% url 'tickets-detail' w.ticket.pk %}">{{ w.ticket.title }}</a></td>

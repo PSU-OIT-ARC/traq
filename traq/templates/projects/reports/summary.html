@@ -1,0 +1,51 @@
+{% extends "project_base.html" %}
+
+{% load tickets %}
+{% block page_title %}Summary Report{% endblock %}
+{% block navigation %}
+  <li><a href="{% url 'projects-all' %}">Projects</a></li>
+{% endblock %}
+{% block search %}
+
+{% endblock %}
+{% block content %}
+
+<h2>Projects Summary</h2>
+<hr>
+<br>
+<div class="table">
+    <table class="table table-striped table-condensed report summary">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Deadline</th>
+            <th>Project Lead/PM</th>
+            <th>Point of Contact</th>
+            <th>Hours Worked</th>
+            <th>Estimated </th>
+            <th>Percentage</th>
+            <th>Programmers</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td class=""><a href='{% url 'projects-detail' project.pk %}'>{{ project }}</a> <a class='button'href='{% url 'projects-edit' project.pk %}'>Edit</a></td>
+                <td class="">{{ project.milestone.0|date:'M d, Y' |default:'–' }}</td>
+                <td class="">{{ project.pm | default:'–'}}</td>
+                <td class="">{{ project.point_of_contact | default:'–'}}</td>
+                <td class="">{{ project.total_time|fractionsofhours| default:'–'}}</td>
+                <td class="">{{ project.estimated_hours | default:'–'}}</td>
+                <td class="">{{ project.percent |fractionsofhours| default:'–'}}%</td>
+                <td class="">
+                  {% for user in project.users %}
+                    {{ user }},
+                  {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -17,11 +17,22 @@ import os
 import site
 import sys
 
+prev_sys_path = list(sys.path)
 root = os.path.normpath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(root)
 site.addsitedir(os.path.join(root, ".env/lib/python2.6/site-packages"))
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "traq.settings")
+# addsitedir adds its directories at the end, but we want our local stuff
+# to take precedence over system-installed packages.
+# See http://code.google.com/p/modwsgi/issues/detail?id=112
+new_sys_path = []
+for item in list(sys.path):
+  if item not in prev_sys_path:
+    new_sys_path.append(item)
+    sys.path.remove(item)
+sys.path[:0] = new_sys_path
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "traq.production")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION

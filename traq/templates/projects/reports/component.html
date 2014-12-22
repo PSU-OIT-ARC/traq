@@ -1,47 +1,49 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% load tickets %}
+{% load addcss %}
 {% block page_title %}Component Report{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li>Reports</li>
-    <li>Components</li>
-{% endblock %}
+
 {% block content %}
-
-
-<h2>{{ project.name }}</h2>
-<p class="float-right"><a href="{{ request.path }}?{{ request.META.QUERY_STRING }}&format=csv">To CSV</a></p>
-<div class="print-hide">
+<h2>{{ project.name }}
+  <small class="pull-right"><a class='btn btn-primary btn-xs' href="{{ request.path }}?{{ request.META.QUERY_STRING }}&format=csv">To CSV</a></small>
+</h2>
+<div class="clearfix hidden-print">
     <form method="get" action="">
-        {{ form.as_p }}
-        <input type="submit" name="submit" value="submit" />
+        {{ form.start |bs_group:'3' }}
+        {{ form.end |bs_group:'3' }}
+        <div class='col-md-12'>
+          <input class='btn btn-primary btn-sm' type="submit" name="submit" value="submit" />
+        </div>
     </form>
 </div>
 
 
-<table class="report">
-    <tr>
-        <th colspan="2">&nbsp;</th>
-        <th>Total Hours</th>
-        <th>Billable Hours</th>
-    </tr>
-{% for comp in components %}
-    <tr>
-        <th colspan="2">{{ comp.name }}</th>
-        <th class="right">{{ comp.total|tickettimepretty }}</th>
-        <th class="right">{{ comp.billable|tickettimepretty }}</th>
-    </tr>
-    {% for ticket in comp.tickets %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td>&nbsp;</td>
-            <td><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></td>
-            <td class="right">{{ ticket.times.total|tickettimepretty }}</td>
-            <td class="right">{{ ticket.times.billable|tickettimepretty }}</td>
+<div class="table-scroller">
+    <table class="table table-condensed report">
+      <thead>  
+        <tr>
+            <th colspan="2">&nbsp;</th>
+            <th>Total Hours</th>
+            <th>Billable Hours</th>
         </tr>
+        </thead>
+    {% for comp in components %}
+        <tr class='subheader component-row'>
+            <th class='' colspan="2">{{ comp.name }}</th>
+            <th class="right ">{{ comp.total|tickettimepretty }}</th>
+            <th class="right">{{ comp.billable|tickettimepretty }}</th>
+        </tr>
+        {% for ticket in comp.tickets %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>&nbsp;</td>
+                <td><a href="{% url 'tickets-detail' ticket.pk %}">{{ ticket.title }}</a></td>
+                <td class="right">{{ ticket.times.total|tickettimepretty }}</td>
+                <td class="right">{{ ticket.times.billable|tickettimepretty }}</td>
+            </tr>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
-</table>
+    </table>
+</div>
 
 {% endblock %}

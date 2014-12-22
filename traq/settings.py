@@ -2,11 +2,16 @@ import os
 from fnmatch import fnmatch
 from django.conf import global_settings
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
 PROJECT_DIR = os.path.dirname(__file__)
 HOME_DIR = os.path.normpath(os.path.join(PROJECT_DIR, '../'))
 
-LDAP_URL = "ldap://ldap.oit.pdx.edu"
+LDAP_URL = "ldap://ldap-login.oit.pdx.edu"
 LDAP_BASE_DN = 'dc=pdx,dc=edu'
+LDAP_DISABLED = False
 
 # When an email is sent to a user, the address is formed by username@EMAIL_DOMAIN
 EMAIL_DOMAIN = 'pdx.edu'
@@ -104,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'djangocas.middleware.CASMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'cloak.middleware.CloakMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -136,12 +142,17 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'arcutils',
     'traq.projects',
     'traq.todos',
     'traq.tickets',
     'traq.accounts',
     'traq.permissions',
     'traq',
+    'model_mommy',
+    #'south', <-- no need in django 1.7
+    'cloak',
+    'coverage',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -179,4 +190,4 @@ LOGGING = {
 }
 
 #SECRET_KEY = 'changeme'
-from local_settings import *
+from .local_settings import *

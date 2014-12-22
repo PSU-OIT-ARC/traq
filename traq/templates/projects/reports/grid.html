@@ -1,60 +1,62 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% load tickets %}
+{% load addcss %}
+
 {% block page_title %}Grid Report{% endblock %}
-{% block breadcrums %}
-    <li><a href="{% url 'projects-all' %}">Projects</a></li>
-    <li><a href="{% url 'projects-detail' project.pk %}">{{ project.name }}</a></li>
-    <li>Reports</li>
-    <li>Components</li>
-{% endblock %}
+
 {% block content %}
 
 <h2>{{ project.name }}</h2>
-<div class="print-hide">
-    <form method="get" action="">
-        {{ form.as_p }}
-        <input type="submit" name="submit" value="submit" />
+<div class="hidden-print print-hide">
+    <form class='formi clearfix' method="get" action="">
+        {{ form.start | bs_group:'3' }}
+        {{ form.end | bs_group:'3' }}
+        <div class='col-md-12'>
+        <input class='btn btn-primary btn-sm' type="submit" name="submit" value="submit" />
+        </div>
     </form>
 </div>
-
+<hr>
 <h3>Grid</h3>
-<p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1 }}</span></p>
-<table class="report time-grid">
-    <thead>
-        <tr>
-            <td>&nbsp;</td>
-            <th colspan="3">Total</th>
-            {% for comp in components %}
-                <th colspan="3">{{ comp.name }}</th>
-            {% endfor %}
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td class="border-left">Total</td>
-            <td class="">Billable</td>
-            <td class="border-right">Non-billable</td>
-            {% for comp in components %}
+<p><span class="timestamp">{{ interval.0 }}</span> to <span class="timestamp">{{ interval.1| date:'N d, Y' }}</span></p>
+<div class="table-scroller">
+    <table class="table table-condensed table-striped table-responsive report time-grid">
+        <thead>
+            <tr>
+                <td>&nbsp;</td>
+                <th colspan="3">Total</th>
+                {% for comp in components %}
+                    <th colspan="3">{{ comp.name }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
                 <td class="border-left">Total</td>
                 <td class="">Billable</td>
                 <td class="border-right">Non-billable</td>
+                {% for comp in components %}
+                    <td class="border-left">Total</td>
+                    <td class="">Billable</td>
+                    <td class="border-right">Non-billable</td>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td class="username">{{ user.username }}</td>
+                <td class="time-cell border-left">{{ user.totals.total|tickettimepretty }}</td>
+                <td class="time-cell">{{ user.totals.billable|tickettimepretty }}</td>
+                <td class="time-cell border-right">{{ user.totals.non_billable|tickettimepretty }}</td>
+                {% for comp in user.components %}
+                    <td class="time-cell border-left">{{ comp.total|tickettimepretty }}</td>
+                    <td class="time-cell">{{ comp.billable|tickettimepretty }}</td>
+                    <td class="time-cell border-right">{{ comp.non_billable|tickettimepretty }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td class="username">{{ user.username }}</td>
-            <td class="time-cell border-left">{{ user.totals.total|tickettimepretty }}</td>
-            <td class="time-cell">{{ user.totals.billable|tickettimepretty }}</td>
-            <td class="time-cell border-right">{{ user.totals.non_billable|tickettimepretty }}</td>
-            {% for comp in user.components %}
-                <td class="time-cell border-left">{{ comp.total|tickettimepretty }}</td>
-                <td class="time-cell">{{ comp.billable|tickettimepretty }}</td>
-                <td class="time-cell border-right">{{ comp.non_billable|tickettimepretty }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-</tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 {% endblock %}

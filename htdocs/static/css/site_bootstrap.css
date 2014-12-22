@@ -1,0 +1,112 @@
+body {
+    padding-top: 50px;
+}
+.content {
+    margin-top: 50px;
+}
+
+.navbar-inverse {
+    background-color: #6A7F10;
+    border-color: #566E10;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus {
+    background-color: #566E10;
+}
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus {
+    background-color: #566E10;
+}
+.navbar-inverse .navbar-nav>li>a, .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+    color: white;
+}
+
+
+.btn-primary {
+    background-color:#6A7F10;
+    border-color: #5D700D;
+}
+
+.ticket-priority-low {
+    background-color:#5BC0DE;
+}
+
+.ticket-priority-normal {
+    background-color:#F0AD4E;
+}
+
+.ticket-priority-high {
+    background-color: #D9534F;
+}
+
+.table-condensed {
+    font-size: 13px;
+}
+
+select.form-control {
+    height:25px;
+}
+
+ul li, li {
+    list-style:none;
+}
+
+textarea {
+    width:100%;
+}
+
+/* datatable overrides */
+.paginate_button{
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+/*traq */
+.account-link {
+    text-transform:uppercase;
+}
+
+#ticket-list tr.odd {
+    background-color: #F9F9F9;
+}
+
+#ticket-list tr td{
+    border:none;
+}
+
+.ticket-add-comment textarea {
+    width:100%;
+}
+
+.project-meta h3{
+    border-bottom: solid 1px #eee;
+}
+
+/*tables */
+.table-scroller {
+    overflow:scroll;
+}
+.border-left {
+    border-left:1px solid black;
+}
+
+.border-right {
+    border-right:1px solid black;
+}
+tr.border-top {
+    border-top:1px solid black;
+}
+.time-cell.border-right {
+    padding-right:5px;
+}
+.time-cell.border-left {
+    padding-left:5px;
+}
+
+tr.subheader th{
+    background-color:#F5F5F5;
+}
+
+td.small {
+    font-size:0.8em'
+}

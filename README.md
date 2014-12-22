@@ -12,7 +12,7 @@ And when you install python-ldap with pip, you need to set these envars:
 
 Create a virtual environment, and install the required packages in it:
 
-    virtualenv-2.6 --no-site-packages .env
+    virtualenv-3.3 --no-site-packages .env
     source .env/bin/activate
     pip install -r requirements.txt
 

@@ -31,17 +31,20 @@ class TicketForm(forms.ModelForm):
         self.user = kwargs.pop("user")
         self.todos = kwargs.pop('todo', None)
         super(TicketForm, self).__init__(*args, **kwargs)
-
+        
         # if this is a new ticket, we need to set some additional fields
         if self.instance.pk is None:
             self.instance.created_by = self.user
             self.instance.project = project
-
+        
+        if project.is_scrum:
+            self.fields['due_on'].initial = project.current_sprint_end 
         # remove the blank choices from the fields
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
         self.fields['component'].empty_label = None
-
+        self.fields['assigned_to'].queryset = User.objects.filter(is_active=True, groups__name='arc')
+        
         # set some sensible default values
         if not self.is_bound:
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
@@ -49,6 +52,10 @@ class TicketForm(forms.ModelForm):
             self.fields['component'].initial = project.defaultComponent()
             self.fields['estimated_time'].initial = "1:00"
             self.fields['assigned_to'].initial = self.user
+            self.fields['type'].initial = 1
+            
+        if self.todos:
+            self.fields['body'].initial = "%s " % self.todos.body
 
         # one of these fields will be required, but we handle that in the clean
         # method
@@ -60,6 +67,8 @@ class TicketForm(forms.ModelForm):
         self.fields['milestone'].queryset = Milestone.objects.filter(project=project)
         self.fields['existing_files'].queryset = TicketFile.objects.filter(ticket=self.instance)
 
+        self.fields['type'].help_text = u"New: Client-driven feature work. \nCode Maintenace: Refactoring and revisions. \nBug Fixes: yep."
+    
     def hasFiles(self):
         # does this Ticket have any files associated with it?
         return self.fields['existing_files'].queryset.count() != 0
@@ -130,16 +139,20 @@ class TicketForm(forms.ModelForm):
             'due_on',
             'release',
             'branch',
+            'type',
             
         )
 
         widgets = {
             "release": forms.TextInput(attrs={"placeholder": "release"}),
             "branch": forms.TextInput(attrs={"placeholder": "branch"}),
-            "due_on": forms.DateTimeInput(attrs={'type':'date'})
+            "due_on": forms.DateTimeInput(attrs={'type':'date'}),
+            "body": forms.Textarea(attrs={'rows':8, }),
         }
 
 class CommentForm(forms.ModelForm):
+    cc = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True).exclude(groups__isnull=True), required=False)
+    
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
         # the caller
@@ -155,12 +168,18 @@ class CommentForm(forms.ModelForm):
         self.instance.todo = todo
         self.instance.ticket = ticket
 
+    def save(self, *args, **kwargs):
+        self.instance.cc = self.cleaned_data['cc']
+        super(CommentForm, self).save(*args, **kwargs)
+
     class Meta:
         model = Comment
         fields = (
+            'cc',
             'body',
             'is_deleted',
-        )
+            )
+
 
 class WorkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -277,4 +296,6 @@ class BulkForm(forms.Form):
                 setattr(ticket, k, v)
 
             ticket.save()
+
+
 

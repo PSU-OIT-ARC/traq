@@ -1,0 +1,23 @@
+    <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
+      {% csrf_token %}
+      <div class='form-group'>
+        <label>For Sprint Ending:</label>
+        <input  style='display:inline-block; line-height:25px;' name='current_sprint_end' type='date' value='{{sprint_end|date:'c' }}'></input>
+        <input class='btn btn-primary btn-sm' style='display:inline-block' type='submit' value='Go'></input>
+    </div>
+     </form>
+     <div class='form-group pull-right'>
+     <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
+      {% csrf_token %}
+    <input type='hidden' name='current_sprint_end' value={{ prev | date:'c' }}>
+    <input class='btn btn-primary btn-xs' type='submit' value='Prev'></input>
+    </form>
+    <form style='display:inline-block' method="POST" action="{% url "projects-which-sprint" project.pk %}">
+      {% csrf_token %}
+      <input type='hidden' name='current_sprint_end' value={{ next | date:'c' }}>
+      <input class='btn btn-primary btn-xs' type='submit' value='Next'></input>
+    </form>
+    {% if perms.projects.change_project %}
+      <a class='btn btn-default btn-xs' href="{% url "projects-edit-sprint" project.pk %}">Edit Sprint Dates</a>
+    {% endif %}
+    </div>

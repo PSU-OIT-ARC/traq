@@ -97,11 +97,21 @@ p.error {
     float:right;
 }
 
+.split {
+    width:48%;
+    margin: 1%;
+}
+
+.table-scroller {
+    overflow:scroll;
+}
+
 .report {
     background-color:#fff;
     border-spacing:0;
     border-collapse:collapse;
     width:100%;
+    overflow:scroll;
 }
 
 .report th {
@@ -118,6 +128,17 @@ p.error {
 
 .report tr.odd td {
     background-color:#efefef;
+}
+
+.report.summary td {
+    padding: 5px;
+}
+#mega-form p, #mega-form input {
+    display: inline-block;
+}
+
+td.time-cell.red {
+    color:red;
 }
 
 /* these colors are from twitter bootstrap */
@@ -138,7 +159,7 @@ p.error {
 }
 
 .label-info {
-    background-color:##3a87ad;
+    background-color:#3a87ad;
 }
 
 .alert {
@@ -385,6 +406,7 @@ p.error {
 .block-table td {
     padding-bottom:3px;
     padding-left:3px;
+    word-break:break-all;
 }
 
 .block-table th:first-child {
@@ -463,6 +485,10 @@ p.error {
 .time-grid {
 }
 
+.time-grid tfoot th, .time-grid tfoot td{
+    border:1px solid black;
+}
+
 .time-grid th {
     text-align:center;
     padding-left:3px;
@@ -512,22 +538,6 @@ p.error {
     vertical-align:top;
 }
 
-.tip {
-    display:none;
-    padding-bottom: 10px;
-}
-
-li.hover {
-    color:white;
-    padding: 5px 5px 5px 5px;
-    list-style: none;
-}
-
-.tip-show {
-    background:#87983F;
-    border-radius: 3px;
-    width:100%;
-}
 
 /*tablesorter css*/
 th.header { 
@@ -553,4 +563,110 @@ th.headerSortUp {
 
 #ticket-table tr.odd, #todo-table tr.odd {
     background-color:rgb(239, 239, 239);
+}
+
+/*scrum styles */
+.small {
+    font-size: .75em;}
+
+ul.stripe {
+    list-style: none;
+    padding:3px;}
+
+li.odd {
+    background-color:rgb(239, 239, 239);
+}
+
+#page {
+    width:90%;
+    margin:auto;
+    background:white;}
+
+#page #header{
+    padding: 0px;
+}
+
+div.triptych {
+    width:31%;
+    margin: 1%;
+}
+
+div.triptych h3 {
+    margin-bottom: 8px;
+}
+
+.scrum-nav  {
+    padding: 0px;
+    margin: 0px;
+    
+}
+
+.scrum-nav li {
+    list-style: none;
+    padding: 8px;
+    float:left;
+    border-right: 2px solid #5E700E;
+}
+
+
+.scrum-nav li a {
+    text-decoration: none;
+}
+.scrum-nav li a:hover{
+    text-decoration: underline;
+}
+
+.question-mark {
+    color: white;
+    display: inline-block;
+    background: #6A7F10;
+    border-radius: 15px;
+    padding: 2px 5px;
+    margin-left: 3px;
+    font-size: 0.8em;
+}
+
+.tool {
+    position:relative;}
+
+.tip {
+    position: absolute;
+    left: 35px;
+    bottom: 15px;
+    display: inline-block;
+    background: black;
+    color:white;
+    padding:5px;
+    border-radius:5px;
+    min-width:150px;
+}
+
+.tool .tip {
+    display:none;}
+
+.tool:hover .tip {
+    display:inline-block;
+}
+
+#gantt p {
+    display:inline-block;
+}
+
+.scroll-table-wrap {
+    overflow: auto;
+    max-height: 400px;
+    margin-top: 20px;
+}
+
+.sticky {
+    top: -20px;}
+
+.scrum-workflow ul li {
+    list-style:none;
+    padding:10px;
+    font-size: 1em;
+}
+
+.scrum-workflow ul li a {
+    color:black;
 }

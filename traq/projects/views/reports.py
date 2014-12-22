@@ -1,6 +1,6 @@
 import json
 from traq.utils import UnicodeWriter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -9,37 +9,55 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.timezone import utc
 from django.contrib.auth.models import User
-from ..forms import ReportIntervalForm
-from ..models import Project, Component
-from traq.tickets.models import Ticket
+from ..forms import ReportIntervalForm, ReportFilterForm
+from ..models import Project, Component, Milestone
+from traq.tickets.models import Ticket, Work
 from django.contrib.auth.decorators import permission_required
 from traq.tickets.templatetags.tickets import tickettimepretty
 
 @permission_required('projects.can_view_all')
 def mega(request):
     form, interval = _intervalHelper(request)
-    users = list(User.objects.all().order_by("username"))
-    projects = list(Project.objects.all())
+    users = list(User.objects.all().filter(is_active=True, groups__name='arc').order_by('username'))
+    status = request.GET.get('status', 1)
+    if status == 'All':
+        projects = list(Project.objects.all())
+    else:
+        projects = list(Project.objects.filter(status = status))
+    filter_form = ReportFilterForm(status=status)
+    
     for user in users:
-        user.projects = Project.objects.timeByUser(user, interval)
+        user.projects = [p for p in Project.objects.timeByUser(user, interval) if p  in projects]
         user.totals = {"total": timedelta(0), "billable": timedelta(0), "non_billable": timedelta(0)}
         for project in user.projects:
             user.totals['total'] += project.total
             user.totals['billable'] += project.billable
             user.totals['non_billable'] += project.non_billable
 
+    for project in projects:
+        project.total_time = timedelta(0)
+        for user in users:
+            for p in user.projects:
+                if project.pk == p.pk:
+                    project.total_time += p.total
+
+        if project.estimated_hours:
+            project.hours_remaining = timedelta(hours=project.estimated_hours) - project.total_time
+            project.in_red = project.hours_remaining < timedelta(minutes=0)
+
     return render(request, 'projects/reports/mega.html', {
         'users': users,
         'projects': projects,
         'interval': interval,
         'form': form,
+        'filter_form': filter_form,
     })
 
 @permission_required('projects.can_view_all')
 def grid(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     # get all the people who have worked on this project
-    form, interval = _intervalHelper(request)
+    form, interval = _intervalHelper(request, project_id)
     users = list(project.users())
     components = list(project.components())
     # for each user, for each component, figure out how much work they spent
@@ -61,9 +79,25 @@ def grid(request, project_id):
     })
 
 @permission_required('projects.can_view_all')
+def summary(request):
+    ''' this is like the mega view but pivoted on projects'''
+    projects = Project.objects.filter(status=1).exclude(name__exact='')
+    for p in projects:
+        p.milestone = Milestone.objects.filter(project = p.project_id, name='Target Completion Date').values_list('due_on',flat=True)
+        p.total_time = timedelta(0)
+        work = Work.objects.filter(ticket__project = p.project_id)
+        for w in work:
+           p.total_time += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second )
+        if p.estimated_hours:
+            p.percent = p.total_time/p.estimated_hours * 100
+    return render(request, 'projects/reports/summary.html', {
+        'projects': projects,
+    })
+
+@permission_required('projects.can_view_all')
 def component(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    form, interval = _intervalHelper(request)
+    form, interval = _intervalHelper(request, project_id)
     components = project.components(interval=interval)
     # queries in loop...stupid but on reports, I don't care
     for comp in components:
@@ -99,7 +133,7 @@ def component(request, project_id):
 def invoice(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
-    form, interval = _intervalHelper(request)
+    form, interval = _intervalHelper(request, project_id)
 
     components = project.components(interval=interval)
     for comp in components:
@@ -115,18 +149,27 @@ def invoice(request, project_id):
         'interval': interval,
     })
 
-def _intervalHelper(request):
+def _intervalHelper(request, project_id=None):
     interval = ()
+    print(project_id)
     if request.GET.get('submit'):
         form = ReportIntervalForm(request.GET)
         if form.is_valid():
             interval = (form.cleaned_data['start'], form.cleaned_data['end'])
-
+    if project_id:
+        project = Project.objects.get(pk=project_id)
+        project_start = project.created_on
+    
     if interval == ():
         now = datetime.utcnow().replace(tzinfo=utc)
-        earlier = now - timedelta(days=30)
-        interval = (earlier, now)
+        if project_id:
+            earlier = project_start
+        else:
+            earlier = now - timedelta(days=30)
+        interval = (earlier.date(), now.date())
 
         if not request.GET.get('submit'):
             form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})
+
+    interval = (interval[0], datetime.combine(interval[1], time(hour=23, minute=59, second=59)))
     return form, interval
