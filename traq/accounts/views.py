@@ -92,3 +92,7 @@ def _projects(request):
     return render(request, "accounts/projects.html", {
         "projects": projects,
     })
+
+@login_required
+def timesheet(request):
+    pass
