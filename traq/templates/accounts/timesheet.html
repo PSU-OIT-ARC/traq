@@ -1,0 +1,45 @@
+{% extends 'bootstrap_base.html' %}
+
+{% load tickets %}
+{% load addcss %}
+
+{% block page_title %}Your Timesheet{% endblock %}
+
+{% block content %}
+	<h2>{{ user.username }}</h2>
+
+	<div class="hidden-print print-hide">
+	    <form class='formi clearfix' method="get" action="">
+	        {{ form.start | bs_group:'3' }}
+	        {{ form.end | bs_group:'3' }}
+	        
+	        <div class='col-md-12'>
+	        <input class='btn btn-primary btn-sm' type="submit" name="submit" value="submit" />
+	        </div>
+	    </form>
+	</div>
+	<hr>
+
+	{% comment %}
+	<div class="col-md-8 left-section-wrapper">
+		<script type="text/javascript">
+	    	TICKETS = {{ tickets_json|safe }};
+	  	</script>
+	  	<script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
+		
+		<div class='panel panel-default'>
+	      <div class='col-md-12 panel-heading'>
+	      {% include 'filterset.html' %}
+	      </div>
+	      {% if do_pagination %}
+	        <div class='panel-body'>
+	          {% include 'pagination.html' %}
+	        </div>
+	     {% endif %}
+	    </div>
+
+  	{#% include 'tickets/_tickettable.html' %#}
+  	</div>
+  	{% endcomment %}
+
+{% endblock %}

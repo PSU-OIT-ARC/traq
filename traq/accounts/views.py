@@ -13,6 +13,8 @@ from traq.projects.models import Project
 from ..tickets.models import Ticket, Work, TicketStatus
 from ..tickets.constants import TICKETS_PAGINATE_BY
 from ..tickets.filters import TicketFilterSet
+from ..projects.views.reports import _intervalHelper
+from ..projects.forms import ReportIntervalForm
 
 
 @login_required
@@ -95,4 +97,31 @@ def _projects(request):
 
 @login_required
 def timesheet(request):
-    pass
+    user = request.user
+    tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))
+    form, interval = _intervalHelper(request)
+
+    print form
+
+    return render(request, "accounts/timesheet.html", {
+        'tickets': tickets,
+        'form': form,
+        'interval': interval })
+
+def _miniIntervalHelper(request):
+    interval = ()
+    
+    if request.GET.get('submit'):
+        form = ReportIntervalForm(request.GET)
+        if form.is_valid():
+            interval = (form.cleaned_data['start'], form.cleaned_data['end'])
+    if interval == ():
+        now = datetime.utcnow().replace(tzinfo=utc)
+        earlier = now - timedelta(days=30)
+        interval = (earlier.date(), now.date())
+
+        if not request.GET.get('submit'):
+            form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})
+
+    interval = (interval[0], datetime.combine(interval[1], time(hour=23, minute=59, second=59)))
+    return form, interval
