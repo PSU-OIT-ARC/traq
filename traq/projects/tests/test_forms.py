@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from traq.tickets.models import Ticket, TicketStatus, TicketPriority
 from traq.projects.models import Project, Component, Milestone
-from traq.projects.forms import ProjectForm, ComponentForm, MilestoneForm, ReportIntervalForm, ProjectSprintForm
+from traq.projects.forms import ProjectForm, ComponentForm, MilestoneForm, ReportIntervalForm, ReportFilterForm, ProjectSprintForm
 from traq.utils.tests import TraqCustomTest
 
 
@@ -105,8 +105,50 @@ class ProjectFormsTest(TraqCustomTest):
 
     def test_valid_component_form(self):
         c = ComponentForm(project=self.project, created_by=self.admin, data={
+            'name': 'Borf',
+            'description': 'just another form to test',
+            'invoice_description': 'this form gets an invoice description',
+            'rank': 1,
+            'is_default': True,
+            'is_deleted': False,
         })
-    
+        self.assertTrue(c.is_valid())
+        count = Component.objects.count()
+        c.save()
+        self.assertEqual(count+1, Component.objects.count())
+
+    def test_invalid_milestone_form(self):
+        m = MilestoneForm(project=self.project, created_by=self.admin)
+        self.assertFalse(m.is_valid())
+
+    def test_valid_milestone_form(self):
+        m = MilestoneForm(project=self.project, created_by=self.admin, data={
+            'name': 'Boris the animal',
+            'due_on': datetime.now(),
+            'is_deleted': False,
+        })
+        self.assertTrue(m.is_valid())
+        count = Milestone.objects.count()
+        m.save()
+        self.assertEqual(count+1, Milestone.objects.count())
+
+    def test_invalid_report_interval_form(self):
+        r = ReportIntervalForm(data={'start': datetime.now() })
+        self.assertFalse(r.is_valid())
+
+    def test_valid_report_interval_form(self):
+        r = ReportIntervalForm(data={'start': datetime.now(), 'end': datetime.now()})
+        self.assertTrue(r.is_valid())
+
+    def test_report_filter_form(self):
+        r = ReportFilterForm(status=100)
+        self.assertFalse(r.is_valid())
+
+    def test_project_sprint_form(self):
+        s = ProjectSprintForm()
+        self.assertFalse(s.is_valid())
+        s = ProjectSprintForm(data={'current_sprint_end': datetime.now()})
+        self.assertTrue(s.is_valid())
 
 class ReportTest(TraqCustomTest):
     def setUp(self):
