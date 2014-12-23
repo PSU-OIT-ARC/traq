@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     # accounts
     url(r'^accounts/profile/$', accounts.views.profile, name='accounts-profile'),
     url(r'^accounts/profile/(?P<tickets>\w+)/$', accounts.views.profile, name='accounts-profile'),
-    url(r'^accounts/profile/timesheet/$', accounts.views.timesheet, name='accounts-timesheet'),
+    url(r'^accounts/timesheet/$', accounts.views.timesheet, name='accounts-timesheet'),
 
     # projects
     url(r'^projects/create/?$', projects.views.create, name='projects-create'),
