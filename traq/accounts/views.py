@@ -102,7 +102,7 @@ def _projects(request):
 def timesheet(request):
     user = request.user
     tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))    
-    form, interval = _miniIntervalHelper(request)
+    form, interval, date_list = _miniIntervalHelper(request)
 
     #print "Timesheet: %s | %s" % (interval[0], interval[1])
 
@@ -110,31 +110,48 @@ def timesheet(request):
             state=Work.DONE, \
             ticket__is_deleted=False, \
             started_on__gte=interval[0], \
-            done_on__lt=interval[1] 
+            done_on__lte=interval[1] 
             ).order_by('started_on')
+
+    work_by_date = dict([(d, []) for d in date_list])
+    for w in work:
+        work_by_date[w.started_on.date()].append(w)
 
     return render(request, "accounts/timesheet.html", {
         'tickets': tickets,
         'form': form,
         'interval': interval,
-        'work': work })
+        'work': work,
+        'date_list': date_list,
+        'work_by_date': sorted(work_by_date.iteritems()),
+         })
 
 def _miniIntervalHelper(request):
     interval = ()
+    date_list = []
+    actual_td = 0
     
     if request.GET.get('submit'):
 
         form = ReportIntervalForm(request.GET)
         if form.is_valid():
             interval = (form.cleaned_data['start'], form.cleaned_data['end'])
+            now = interval[1]
+
     if interval == ():        
         # default timesheet period: 16th of current month to the 15th of next month
-        now = datetime(date.today().year, date.today().month, 15).replace(tzinfo=utc)
+        now = datetime(date.today().year, date.today().month, 15)#.replace(tzinfo=utc)
+        now = now.replace(hour=0, minute=0)
         delta = now - timedelta(days=30)
-        earlier = datetime(delta.year, delta.month, 16).replace(tzinfo=utc)
+        earlier = datetime(delta.year, delta.month, 16)#.replace(tzinfo=utc)
+        earlier = earlier.replace(hour=0, minute=0)
         interval = (earlier.date(), now.date())
 
         if not request.GET.get('submit'):
             form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})
+    
+    _td = interval[1] - interval[0]
+    actual_td = _td.days + 1
+    date_list = [now - timedelta(days=x) for x in range(0, actual_td)]
 
-    return form, interval
+    return form, interval, date_list

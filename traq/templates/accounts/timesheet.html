@@ -38,29 +38,52 @@
 	     {% endif %}
 	    </div>
 
-	    <table class="table table-condensed table-striped">	    	
-	    		<tr>
+	    <table class="table">	    	
+	    		<thead>
 	    			<th>Date</th>
-	    			<th>Time</th>
-	    			<th>Ticket</th>
-	    			<th>Billable</th>
-	    		</tr>
-	    	{% for w in work %}
+	    			<th>Works</th>
+	    		</thead>
+	    		<tbody>
+	    	{% for date, works in work_by_date %}
 	    		<tr>
-	    			<td>{{ w.started_on }} - {{ w.done_on }}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>{{ w.time|tickettime }}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>{{ w.ticket }}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>{% if w.billable %}Yes{% else %}No{% endif %}</td>
-	    		</tr>
+	    			<td>{{ date }}</td>
+	    			<td>
+	    			{% if works %}
+	    			<table class="table table-condensed table-striped">
+		    				<thead>
+			    				<th>Time</th>
+				    			<th>Ticket</th>
+				    			<th>Billable</th>
+				    		</thead>
+				    		<tbody>
+		    				{% for w in works %}
+		    			
+				    		<tr>
+				    			<td>{{ w.started_on }} - {{ w.done_on }}</td>
+				    		</tr>
+				    		<tr>
+				    			<td>{{ w.time|tickettime }}</td>
+				    		</tr>
+				    		<tr>
+				    			<td>{{ w.ticket }}</td>
+				    		</tr>
+				    		<tr>
+				    			<td>{% if w.billable %}Yes{% else %}No{% endif %}</td>
+				    		</tr>
+				    		
+			    			{% endfor %}
+			    			</tbody>
+				    	</table>
+				    {% else %}
+				    	No work found. Have you been slacking?
+				    					    		
+				    {% endif %}
+		    		</td>
+		    	</tr>
 	    	{% endfor %}
+	    	</tbody>
 	    </table>
-
+	    
   	</div>
   	
 {% endblock %}
