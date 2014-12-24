@@ -1,3 +1,5 @@
+from datetime import datetime, date, timedelta
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -5,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Q
+from django.utils.timezone import utc
 
 from traq.utils import querySetToJSON
 from traq.permissions import STAFF_GROUP, CLIENT_GROUP
@@ -98,30 +101,40 @@ def _projects(request):
 @login_required
 def timesheet(request):
     user = request.user
-    tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))
-    form, interval = _intervalHelper(request)
+    tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))    
+    form, interval = _miniIntervalHelper(request)
 
-    print form
+    #print "Timesheet: %s | %s" % (interval[0], interval[1])
+
+    work = Work.objects.filter(ticket__assigned_to=user, \
+            state=Work.DONE, \
+            ticket__is_deleted=False, \
+            started_on__gte=interval[0], \
+            done_on__lt=interval[1] 
+            ).order_by('started_on')
 
     return render(request, "accounts/timesheet.html", {
         'tickets': tickets,
         'form': form,
-        'interval': interval })
+        'interval': interval,
+        'work': work })
 
 def _miniIntervalHelper(request):
     interval = ()
     
     if request.GET.get('submit'):
+
         form = ReportIntervalForm(request.GET)
         if form.is_valid():
             interval = (form.cleaned_data['start'], form.cleaned_data['end'])
-    if interval == ():
-        now = datetime.utcnow().replace(tzinfo=utc)
-        earlier = now - timedelta(days=30)
+    if interval == ():        
+        # default timesheet period: 16th of current month to the 15th of next month
+        now = datetime(date.today().year, date.today().month, 15).replace(tzinfo=utc)
+        delta = now - timedelta(days=30)
+        earlier = datetime(delta.year, delta.month, 16).replace(tzinfo=utc)
         interval = (earlier.date(), now.date())
 
         if not request.GET.get('submit'):
             form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})
 
-    interval = (interval[0], datetime.combine(interval[1], time(hour=23, minute=59, second=59)))
     return form, interval
