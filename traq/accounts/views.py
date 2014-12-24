@@ -103,6 +103,7 @@ def timesheet(request):
     user = request.user
     tickets = Ticket.objects.tickets().filter(Q(assigned_to=user))    
     form, interval, date_list = _miniIntervalHelper(request)
+    work_by_date = []
 
     #print "Timesheet: %s | %s" % (interval[0], interval[1])
 
@@ -113,7 +114,8 @@ def timesheet(request):
             done_on__lte=interval[1] 
             ).order_by('started_on')
 
-    work_by_date = dict([(d, []) for d in date_list])
+    work_by_date = dict([(d.date(), []) for d in date_list])
+    
     for w in work:
         work_by_date[w.started_on.date()].append(w)
 
@@ -136,7 +138,8 @@ def _miniIntervalHelper(request):
         form = ReportIntervalForm(request.GET)
         if form.is_valid():
             interval = (form.cleaned_data['start'], form.cleaned_data['end'])
-            now = interval[1]
+            # intervals will be datetime.date type. MUST convert to datetime.datetime type
+            now = datetime(interval[1].year, interval[1].month, interval[1].day)
 
     if interval == ():        
         # default timesheet period: 16th of current month to the 15th of next month
