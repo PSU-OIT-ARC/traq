@@ -2,6 +2,7 @@
 
 {% load tickets %}
 {% load addcss %}
+{% load timesheet %}
 
 {% block page_title %}Your Timesheet{% endblock %}
 
@@ -46,10 +47,10 @@
 	    		<tbody>
 	    	{% for date, works in work_by_date %}
 	    		<tr>
-	    			<td>{{ date }}</td>
+	    			<td>{{ date }}</td>	    			
 	    			<td>
-	    			{% if works %}
-	    			<table class="table table-condensed table-striped">
+	    			{% if works %}	
+	    				<table class="table table-condensed table-striped">
 		    				<thead>
 			    				<th class="col-md-3">Time</th>
 			    				<th class="col-md-2">Duration</th>
@@ -62,18 +63,19 @@
 				    		<tr>
 				    			<td>{{ w.started_on|date:"P" }} - {{ w.done_on|date:"P" }}</td>
 				    			<td>{{ w.time|tickettime }}</td>
-				    			<td>{{ w.ticket }}</td>
+				    			<td><a href="{% url 'tickets-detail' w.ticket.pk %}" title="Ticket {{ w.ticket }}">{{ w.ticket|truncatechars:70 }}</a></td>
 				    			<td>{% if w.billable %}Yes{% else %}No{% endif %}</td>
 				    		</tr>
 				    		
 			    			{% endfor %}
 			    			</tbody>
 				    	</table>
-				    {% else %}
-				    	No work found. Have you been slacking?
-				    					    		
+				    
+				    {% else %}				    
+				    	<p class="text-muted">No work found. {% why %}</p>
+				    
 				    {% endif %}
-		    		</td>
+				    </td>
 		    	</tr>
 	    	{% endfor %}
 	    	</tbody>

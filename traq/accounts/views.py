@@ -143,6 +143,8 @@ def _miniIntervalHelper(request):
 
     if interval == ():        
         # default timesheet period: 16th of current month to the 15th of next month
+        # NOTE/TODO: may make date range change depending where you are in the month.
+        # i.e. seeing current-future timesheet vs. past-current timesheet
         now = datetime(date.today().year, date.today().month, 15)#.replace(tzinfo=utc)
         now = now.replace(hour=0, minute=0)
         delta = now - timedelta(days=30)

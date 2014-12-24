@@ -26,6 +26,14 @@ class SimpleTest(TestCase):
 
 
 class TimesheetTest(TestCase):
+
+    ticket_titles = ("Need additional text marquee on header and footer.", \
+                     "Not enough frames on the main page.", \
+                     "Google Maps not working in Netscape 4.0. Fix it.", \
+                     "Flash doesn't work. Need more pizzazz.",
+                     "Please add the thing to that page with the thingy.", \
+                     "I don't know what I'm doing. Need help ASAP.", \
+                     "Instructions unclear. I ordered a Pikachu in a blender.")
     
     def setUp(self):
         super(TimesheetTest, self).setUp()
@@ -52,9 +60,9 @@ class TimesheetTest(TestCase):
     def create_tickets(self):
 
         for i in range(10):
-            ticket = G(Ticket, assigned_to=self.admin)
-            for j in range(randint(1,3)):
-                end = self.end_date - datetime.timedelta(days=randint(0,30))
+            ticket = G(Ticket, title=self.ticket_titles[randint(0,len(self.ticket_titles)-1)], assigned_to=self.admin)
+            for j in range(randint(1,4)):
+                end = self.end_date - datetime.timedelta(days=randint(0,40))
                 end = end.replace(tzinfo=utc)
                 start = end - datetime.timedelta(hours=randint(1,7))
                 start = start.replace(tzinfo=utc)
