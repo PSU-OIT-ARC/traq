@@ -21,7 +21,7 @@
 	<hr>
 
 	
-	<div class="col-md-8 left-section-wrapper">
+	<div class="col-md-12 left-section-wrapper">
 		<script type="text/javascript">
 	    	TICKETS = {{ tickets_json|safe }};
 	  	</script>
@@ -51,23 +51,18 @@
 	    			{% if works %}
 	    			<table class="table table-condensed table-striped">
 		    				<thead>
-			    				<th>Time</th>
+			    				<th class="col-md-3">Time</th>
+			    				<th class="col-md-2">Duration</th>
 				    			<th>Ticket</th>
-				    			<th>Billable</th>
+				    			<th class="col-md-1">Billable</th>
 				    		</thead>
 				    		<tbody>
 		    				{% for w in works %}
 		    			
 				    		<tr>
-				    			<td>{{ w.started_on }} - {{ w.done_on }}</td>
-				    		</tr>
-				    		<tr>
+				    			<td>{{ w.started_on|date:"P" }} - {{ w.done_on|date:"P" }}</td>
 				    			<td>{{ w.time|tickettime }}</td>
-				    		</tr>
-				    		<tr>
 				    			<td>{{ w.ticket }}</td>
-				    		</tr>
-				    		<tr>
 				    			<td>{% if w.billable %}Yes{% else %}No{% endif %}</td>
 				    		</tr>
 				    		

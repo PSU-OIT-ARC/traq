@@ -54,7 +54,7 @@ class TimesheetTest(TestCase):
         for i in range(10):
             ticket = G(Ticket, assigned_to=self.admin)
             for j in range(randint(1,3)):
-                end = self.end_date - datetime.timedelta(days=randint(0,23))
+                end = self.end_date - datetime.timedelta(days=randint(0,30))
                 end = end.replace(tzinfo=utc)
                 start = end - datetime.timedelta(hours=randint(1,7))
                 start = start.replace(tzinfo=utc)
@@ -67,4 +67,3 @@ class TimesheetTest(TestCase):
         response = self.client.get('/accounts/timesheet/')
         print response
         self.assertEqual(response.status_code, 200)
-        
