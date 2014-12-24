@@ -6,7 +6,7 @@
 {% block page_title %}Your Timesheet{% endblock %}
 
 {% block content %}
-	<h2>{{ user.username }}</h2>
+	<h2>Timesheet for user: {{ user.username }}</h2>
 
 	<div class="hidden-print print-hide">
 	    <form class='formi clearfix' method="get" action="">
@@ -20,7 +20,7 @@
 	</div>
 	<hr>
 
-	{% comment %}
+	
 	<div class="col-md-8 left-section-wrapper">
 		<script type="text/javascript">
 	    	TICKETS = {{ tickets_json|safe }};
@@ -38,8 +38,29 @@
 	     {% endif %}
 	    </div>
 
-  	{#% include 'tickets/_tickettable.html' %#}
-  	</div>
-  	{% endcomment %}
+	    <table class="table table-condensed table-striped">	    	
+	    		<tr>
+	    			<th>Date</th>
+	    			<th>Time</th>
+	    			<th>Ticket</th>
+	    			<th>Billable</th>
+	    		</tr>
+	    	{% for w in work %}
+	    		<tr>
+	    			<td>{{ w.started_on }} - {{ w.done_on }}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>{{ w.time|tickettime }}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>{{ w.ticket }}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>{% if w.billable %}Yes{% else %}No{% endif %}</td>
+	    		</tr>
+	    	{% endfor %}
+	    </table>
 
+  	</div>
+  	
 {% endblock %}

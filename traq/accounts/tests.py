@@ -4,13 +4,17 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
+import random
+from random import random, randint
+import time, datetime
 
 from django.test import TestCase 
 from django.contrib.auth.models import User, Group, Permission
+from django.utils.timezone import utc
 
 from django_dynamic_fixture import G
 
-from ..tickets.models import Ticket
+from ..tickets.models import Ticket, Work
 
 
 class SimpleTest(TestCase):
@@ -37,10 +41,30 @@ class TimesheetTest(TestCase):
         admin.user_permissions.add(perm)
         self.admin = admin
 
+        self.end_date = datetime.datetime.now()
+        #self.start_date = self.end_date - datetime.timedelta(hours=randint(1,7))
+        #print "Start: %s vs. %s" % (self.start_date, self.end_date)
+
+        self.create_tickets()
+
         self.client.login(username='jdoe', password='12345')
 
+    def create_tickets(self):
+
+        for i in range(10):
+            ticket = G(Ticket, assigned_to=self.admin)
+            for j in range(randint(1,3)):
+                end = self.end_date - datetime.timedelta(days=randint(0,23))
+                end = end.replace(tzinfo=utc)
+                start = end - datetime.timedelta(hours=randint(1,7))
+                start = start.replace(tzinfo=utc)
+                print "Start: %s vs. End: %s" % (start, end)          
+                work = G(Work, ticket=ticket, started_on=start, done_on=end, state=Work.DONE)
+                work.save()
+            ticket.save()
 
     def test_timesheet_url(self):
         response = self.client.get('/accounts/timesheet/')
-        #print response
+        print response
         self.assertEqual(response.status_code, 200)
+        
