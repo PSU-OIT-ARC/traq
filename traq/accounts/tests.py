@@ -4,8 +4,7 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
-import random
-from random import random, randint
+import random as r
 import time, datetime
 
 from django.test import TestCase 
@@ -58,20 +57,56 @@ class TimesheetTest(TestCase):
         self.client.login(username='jdoe', password='12345')
 
     def create_tickets(self):
-
-        for i in range(10):
-            ticket = G(Ticket, title=self.ticket_titles[randint(0,len(self.ticket_titles)-1)], assigned_to=self.admin)
-            for j in range(randint(1,4)):
-                end = self.end_date - datetime.timedelta(days=randint(0,40))
+        # This ticket+work is within the date range
+        self.inrange_ticket = G(Ticket, title="In range", assigned_to=self.admin)
+        end = self.end_date - datetime.timedelta(days=20)
+        end = end.replace(tzinfo=utc)
+        start = end - datetime.timedelta(hours=r.randint(1,7))
+        start = start.replace(tzinfo=utc)
+        self.inrange_work = G(Work, ticket=self.inrange_ticket, \
+                 started_on=start, \
+                 done_on=end, \
+                 state=Work.DONE)
+        # Create some random tickets+work
+        for i in range(5):
+            ticket = G(Ticket, title=r.choice(self.ticket_titles), assigned_to=self.admin)
+            for j in range(r.randint(1,4)):
+                end = self.end_date - datetime.timedelta(days=r.randint(0,40))
                 end = end.replace(tzinfo=utc)
-                start = end - datetime.timedelta(hours=randint(1,7))
+                start = end - datetime.timedelta(hours=r.randint(1,7))
                 start = start.replace(tzinfo=utc)
-                print "Start: %s vs. End: %s" % (start, end)          
-                work = G(Work, ticket=ticket, started_on=start, done_on=end, state=Work.DONE)
+                #print "Start: %s vs. End: %s" % (start, end)          
+                work = G(Work, ticket=ticket, \
+                         started_on=start, \
+                         done_on=end, \
+                         state=Work.DONE)
                 work.save()
             ticket.save()
 
+        # This ticket is out of the date range
+        end = self.end_date - datetime.timedelta(days=60)
+        end = end.replace(tzinfo=utc)
+        start = end - datetime.timedelta(days=40)
+        start = start.replace(tzinfo=utc)
+        self.outofrange_ticket = G(Ticket, title="Out of range", assigned_to=self.admin)
+        self.outofrange_work = G(Work, ticket=self.outofrange_ticket, \
+                 started_on=start, \
+                 done_on=end, \
+                 state=Work.DONE)
+
     def test_timesheet_url(self):
+        """Checks the url works
+        """
         response = self.client.get('/accounts/timesheet/')
-        print response
+        #print response
         self.assertEqual(response.status_code, 200)
+
+    def test_timesheet_range(self):
+        """Checks only tickets & work in the specified date range appear
+        """
+        response = self.client.get('/accounts/timesheet/')
+        #print dir(response.content)
+        self.assertNotIn(u'#%s: %s' % (self.outofrange_ticket.pk, self.outofrange_ticket.title), response.content)
+        self.assertIn(u'#%s: %s' % (self.inrange_ticket.pk, self.inrange_ticket.title), response.content)
+
+
