@@ -28,15 +28,10 @@
 	  	</script>
 	  	<script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
 		
-		<div class='panel panel-default'>
-	      <div class='col-md-12 panel-heading'>
-	      {% include 'filterset.html' %}
-	      </div>
-	      {% if do_pagination %}
-	        <div class='panel-body'>
-	          {% include 'pagination.html' %}
-	        </div>
-	     {% endif %}
+	    <div class='panel panel-default'>
+	    	<div class='panel-body'>
+	    		<span style="font-size:2rem;"><strong>Total hours worked this period: {{ total_hours|tickettime }}</strong></span>
+	    	</div>
 	    </div>
 
 	    <table class="table">	    	
@@ -45,6 +40,7 @@
 	    			<th>Works</th>
 	    		</thead>
 	    		<tbody>
+	    	{% imgurize as imgurd %}
 	    	{% for date, works in work_by_date %}
 	    		<tr>
 	    			<td>{{ date }}</td>	    			
@@ -71,11 +67,11 @@
 			    			</tbody>
 				    	</table>
 				    
-				    {% else %}				    
+				    {% else %}
+				    {% get_image as image %}
 				    	<p class="text-muted">No work found. {% why %}</p>
 				    	{# WARNING: repeated use of imgurize may cause HTTP Error 429: Too Many Requests. #}
 				    	{#% comment %#}
-				    	{% imgurize as image %}
 				    	<a href="{{ image.0 }}"><img src="{{ image.1 }}" /></a>
 				    	{#% endcomment %#}
 				    

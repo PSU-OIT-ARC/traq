@@ -115,9 +115,12 @@ def timesheet(request):
             ).order_by('started_on')
 
     work_by_date = dict([(d.date(), []) for d in date_list])
+
+    total_hours = timedelta(0)
     
     for w in work:
         work_by_date[w.started_on.date()].append(w)
+        total_hours += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second)
 
     return render(request, "accounts/timesheet.html", {
         'tickets': tickets,
@@ -126,6 +129,7 @@ def timesheet(request):
         'work': work,
         'date_list': date_list,
         'work_by_date': sorted(work_by_date.iteritems()),
+        'total_hours': total_hours,
          })
 
 def _miniIntervalHelper(request):

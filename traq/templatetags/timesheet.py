@@ -7,6 +7,8 @@ from django import template
 
 register = template.Library()
 
+imgur_images = []
+
 @register.assignment_tag
 def imgurize():
 	"""
@@ -34,15 +36,27 @@ def imgurize():
 	#	count += 1
 	#p = pick['data']
 
-	image_url = p['url'].strip('?1')
-	thumbnail = p['thumbnail'].strip('?1')
+	#image_url = p['url'].strip('?1')
+	#thumbnail = p['thumbnail'].strip('?1')
 
-	return image_url, thumbnail
+	
+	for d in data:
+		pick = d['data']
+		if pick['url'].find('i.imgur') == -1:			
+			img_url = pick['url'].strip('?1')
+			img_thumb = pick['thumbnail'].strip('?1')
+			imgur_images.append((img_url, img_thumb))
+
+	#return image_url, thumbnail
+
+@register.assignment_tag
+def get_image():
+	return r.choice(imgur_images)
 
 whys = ("... why?",
 	"Sad panda :(",
-	"We missed you. ... I missed you.",
-	"Woohoo!")
+	"Aw, we missed you.",
+	"Woo-hoo!")
 
 @register.simple_tag
 def why():

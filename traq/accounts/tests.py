@@ -61,24 +61,31 @@ class TimesheetTest(TestCase):
         self.inrange_ticket = G(Ticket, title="In range", assigned_to=self.admin)
         end = self.end_date - datetime.timedelta(days=20)
         end = end.replace(tzinfo=utc)
-        start = end - datetime.timedelta(hours=r.randint(1,7))
+        delta = datetime.timedelta(hours=r.randint(1,7))
+        start = end - delta
         start = start.replace(tzinfo=utc)
+
         self.inrange_work = G(Work, ticket=self.inrange_ticket, \
                  started_on=start, \
                  done_on=end, \
+                 time=str(delta), \
                  state=Work.DONE)
+        self.inrange_work.save()
+        self.inrange_ticket.save()
         # Create some random tickets+work
         for i in range(5):
             ticket = G(Ticket, title=r.choice(self.ticket_titles), assigned_to=self.admin)
             for j in range(r.randint(1,4)):
                 end = self.end_date - datetime.timedelta(days=r.randint(0,40))
                 end = end.replace(tzinfo=utc)
-                start = end - datetime.timedelta(hours=r.randint(1,7))
+                delta = datetime.timedelta(hours=r.randint(1,7))
+                start = end - delta
                 start = start.replace(tzinfo=utc)
                 #print "Start: %s vs. End: %s" % (start, end)          
                 work = G(Work, ticket=ticket, \
                          started_on=start, \
                          done_on=end, \
+                         time=str(delta), \
                          state=Work.DONE)
                 work.save()
             ticket.save()
@@ -86,26 +93,29 @@ class TimesheetTest(TestCase):
         # This ticket is out of the date range
         end = self.end_date - datetime.timedelta(days=60)
         end = end.replace(tzinfo=utc)
-        start = end - datetime.timedelta(days=40)
+        delta = datetime.timedelta(hours=5)
+        start = end - delta
         start = start.replace(tzinfo=utc)
         self.outofrange_ticket = G(Ticket, title="Out of range", assigned_to=self.admin)
         self.outofrange_work = G(Work, ticket=self.outofrange_ticket, \
                  started_on=start, \
                  done_on=end, \
+                 time=str(delta), \
                  state=Work.DONE)
+        self.outofrange_work.save()
+        self.outofrange_ticket.save()
 
     def test_timesheet_url(self):
         """Checks the url works
         """
         response = self.client.get('/accounts/timesheet/')
-        #print response
+        print response
         self.assertEqual(response.status_code, 200)
 
     def test_timesheet_range(self):
         """Checks only tickets & work in the specified date range appear
         """
         response = self.client.get('/accounts/timesheet/')
-        #print dir(response.content)
         self.assertNotIn(u'#%s: %s' % (self.outofrange_ticket.pk, self.outofrange_ticket.title), response.content)
         self.assertIn(u'#%s: %s' % (self.inrange_ticket.pk, self.inrange_ticket.title), response.content)
 
