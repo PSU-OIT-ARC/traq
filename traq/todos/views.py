@@ -164,6 +164,9 @@ def edit(request, todo_id):
         'files':files,
     })
 
+"""
+This function has no entry in urls, and appears to never be called
+
 @permission_required('todos.change_todo')
 def comments_edit(request, comment_id):
     # there is no corresponding comments_create view since a comment is created
@@ -186,6 +189,7 @@ def comments_edit(request, comment_id):
         'ticket': ticket,
         'project': project,
     })
+"""
 
 @can_view_project
 @permission_required('todos.change_todo')

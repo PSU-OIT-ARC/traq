@@ -11,6 +11,7 @@
         shell \
         test \
 		coverage \
+		love \
 
 .DEFAULT_GOAL := run
 
@@ -110,5 +111,8 @@ test:
 # go to `0.0.0.0:8000/htmlcov/index.html` to view test coverage
 coverage:
 	coverage run ./manage.py test $(test) && coverage html
+
+love:
+	@echo Not war?
 
 ## /Django
