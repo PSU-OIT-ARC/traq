@@ -1,7 +1,8 @@
+from datetime import datetime
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from traq.projects.models import Project, Component
-from traq.tickets.models import Ticket, TicketStatus, TicketPriority
+from traq.tickets.models import Ticket, TicketStatus, TicketPriority, Work, WorkType, Comment
 from traq.todos.models import ToDo
 
 class TraqCustomTest(TestCase):
@@ -75,3 +76,18 @@ class TraqCustomTest(TestCase):
 
         #self.todo.tickets.add(self.ticket)
         self.todo.save()
+
+        work = Work(
+            description="foo",
+            billable=False,
+            time='10:00:00',
+            state=1,
+            started_on=datetime.now(),
+            done_on=datetime.now(),
+            type=WorkType.objects.first(),
+            ticket=self.ticket,
+            created_by=self.admin,
+            is_deleted=False,
+        )
+        work.save()
+        self.work = work

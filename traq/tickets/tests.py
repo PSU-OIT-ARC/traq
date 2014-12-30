@@ -12,6 +12,7 @@ from model_mommy.mommy import make
 from django.contrib.auth.models import User, Permission
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import TicketForm, WorkForm, CommentForm, BulkForm
 from ..utils.tests import TraqCustomTest
@@ -370,6 +371,49 @@ class CommentEditTest(TraqCustomTest):
                 with mock.patch('traq.tickets.forms.CommentForm.is_valid', return_value=True) as data:
                     with mock.patch('traq.tickets.forms.CommentForm.save', return_value=True):
                         response = self.client.post(reverse('comments-edit', args=[comment.pk]), data=data)
+        self.assertEqual(response.status_code, 302)
+
+
+class TicketWorkViewTest(TraqCustomTest):
+    def setUp(self):
+        super(TicketWorkViewTest, self).setUp()
+        required_permissions = Permission.objects.get(codename='change_work')
+        self.admin.user_permissions.add(required_permissions)
+        required_permissions = Permission.objects.get(codename='add_work')
+        self.admin.user_permissions.add(required_permissions)
+        self.logged_in = self.client.login(username='moltres', password='foo')
+
+    def test_edit_get(self):
+        response = self.client.get(reverse('work-edit', args=[self.work.pk]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_invalid_post(self):
+        response = self.client.post(reverse('work-edit', args=[self.work.pk,]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_invalid_post(self):
+        with patch('traq.tickets.forms.WorkForm.is_valid', return_value=True):
+            with patch('traq.tickets.models.Work.done', return_value=True):
+                with patch('traq.tickets.forms.WorkForm.save', return_value=True):
+                    response = self.client.post(reverse('work-edit', args=[self.work.pk,]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_create_get(self):
+        response = self.client.get(reverse('work-create', args=[self.ticket.pk,]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_pause(self):
+        work = self.work
+        work.state = 1
+        work.ticket = self.ticket
+        response = self.client.post(reverse('work-pause', args=[self.work.pk,]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_continue(self):
+        work = self.work
+        work.state = 2
+        work.ticket = self.ticket
+        response = self.client.post(reverse('work-continue', args=[self.work.pk,]))
         self.assertEqual(response.status_code, 302)
 
 from traq.projects.models import Project, Component
