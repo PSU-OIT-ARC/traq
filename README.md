@@ -1,4 +1,7 @@
 # Install
+
+Make sure you are on the correct branch
+
 ## Requirements
 
 To build `python-ldap` with pip on centos, you need the `openldap24-libs-devel` package.
