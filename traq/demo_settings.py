@@ -1,3 +1,5 @@
+from .settings import LDAP_URL, LDAP_BASE_DN
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
