@@ -20,5 +20,14 @@ DATABASES = {
     }
 }
 
+LDAP = {
+    'default': {
+        'host': LDAP_URL,
+        'username': 'traq',
+        'password': '',
+        'search_dn': LDAP_BASE_DN,
+    }
+}
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ''
