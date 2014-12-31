@@ -1,5 +1,5 @@
 # Install
-## Prerequisites
+## Requirements
 
 To build `python-ldap` with pip on centos, you need the `openldap24-libs-devel` package.
 
@@ -14,6 +14,7 @@ Create a virtual environment, and install the required packages in it:
 
     virtualenv --no-site-packages -p python3 .env
     source .env/bin/activate
+    make install
 
 ## Settings
 Create a settings file from the template, and fill in the blanks:
@@ -21,13 +22,8 @@ Create a settings file from the template, and fill in the blanks:
     cp traq/demo_settings.py traq/local_settings.py
     vim traq/local_settings.py
 
-## Requirements
-Install necessary packages 
-
-    make install
-
 ## Databases
-Update/recreate the database
+To update/recreate the database
 
     make recreate-db
 
