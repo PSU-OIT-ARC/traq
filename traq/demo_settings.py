@@ -1,3 +1,5 @@
+from .settings import LDAP_URL, LDAP_BASE_DN
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -17,6 +19,15 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+LDAP = {
+    'default': {
+        'host': LDAP_URL,
+        'username': 'traq',
+        'password': '',
+        'search_dn': LDAP_BASE_DN,
     }
 }
 
