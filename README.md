@@ -1,4 +1,7 @@
 # Install
+
+Make sure you are on the correct branch
+
 ## Requirements
 
 Create a virtual environment, and install the required packages in it:
