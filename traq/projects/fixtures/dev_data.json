@@ -1,0 +1,267 @@
+[
+    {
+        "fields": {
+            "status": 1,
+            "team_dynamix_id": 123456,
+            "is_scrum": false,
+            "current_sprint_end": null,
+            "clients": [],
+            "point_of_contact": "Herry Dylan\r\nRoyale Orsino",
+            "pm_email": false,
+            "invoice_description": "Early adopters stealth business-to-business handshake churn rate. Business model canvas user experience direct mailing www.discoverartisans.com. Interaction design buzz crowdfunding release influencer. Non-disclosure agreement network effects burn rate mass market channels seed money. Business plan holy grail infographic pitch A/B testing social proof ",
+            "name": "ORACLE DATABASE IMPACTS ",
+            "is_deleted": false,
+            "description": "ORACLE DATABASE IMPACTS THE CISCO VENDOR NEGATIVELY BECAUSE OF THE HOSTED",
+            "created_by": 2,
+            "pm": null,
+            "catch_all": "That we can have an idea and start our own business without paying a bribe. It's that folks are hungry for change - they're hungry for something new. But what my former pastor too often failed to understand is that embarking on a program of self-help also requires a belief that society can change.",
+            "technical": "pivot business-to-business partner network bandwidth. Angel investor burn rate social proof series A financing facebook early adopters strategy launch party learning curve business model canvas handshake infographic analytics long tail. Traction low hanging fruit leverage alpha iPad entrepreneur infographic founders investor vesting period. Seed round network effects buyer holy grail customer sales incubator entrepreneur prototype focus. Infrastructure virality traction startup network effects. Traction series A financing user experience niche market research & development launch party churn rate founders monetization.",
+            "created_on": "2015-01-05T22:56:20Z",
+            "estimated_hours": 62
+        },
+        "model": "projects.project",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "status": 1,
+            "team_dynamix_id": 456789,
+            "is_scrum": false,
+            "current_sprint_end": null,
+            "clients": [],
+            "point_of_contact": "Ezekiel Elvin\r\nVinny Irwin\r\nDenton Aristide",
+            "pm_email": false,
+            "invoice_description": "User experience traction ramen. Virality iPad infrastructure business model canvas. Hackathon interaction design validation low hanging fruit. Creative disruptive advisor iPhone scrum project accelerator equity beta early adopters hackathon long tail gamification. Founders buyer twitter gamification prototype virality channels partnership business-to-business. ",
+            "name": "COMBINE WEB2.0 AND COLLOBARATIVE CHAT ",
+            "is_deleted": false,
+            "description": "USER SUPPORT SERVICES TRIED TO COMBINE WEB2.0 AND COLLOBARATIVE CHAT AND ALL WE GOT WAS HAGGARD MAGICAL PHISHING ATTACK",
+            "created_by": 2,
+            "pm": null,
+            "catch_all": "Vangelis, muse about radio telescope Cambrian explosion shores of the cosmic ocean are creatures of the cosmos prime number star stuff harvesting star light bits of moving fluff corpus callosum as a patch of light. Descended from astronomers laws of physics, cosmic fugue. ",
+            "technical": "Crowdfunding partner network termsheet marketing non-disclosure agreement crowdsource venture. Influencer seed money seed round infrastructure strategy partnership handshake alpha. Leverage partnership rockstar. Vesting period traction iPad low hanging fruit innovator burn rate user experience. Launch party series A financing metrics deployment A/B testing.",
+            "created_on": "2015-01-05T22:59:09Z",
+            "estimated_hours": 84
+        },
+        "model": "projects.project",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "status": 1,
+            "team_dynamix_id": 789456,
+            "is_scrum": true,
+            "current_sprint_end": null,
+            "clients": [],
+            "point_of_contact": "Ralph Francis,\r\nAzad David,\r\nAndie Ingo",
+            "pm_email": false,
+            "invoice_description": "Take root and flourish a billion trillion. Euclid rogue, prime number concept of the number one a mote of dust suspended in a sunbeam quasar the carbon in our apple pies, from which we spring with pretty stories for which there's little good evidence, radio telescope? Laws of physics cosmic fugue! Trillion.",
+            "name": "THE NEXT PROVOST CHALLENGE (Scrum Project)",
+            "is_deleted": false,
+            "description": "THE NEXT PROVOST CHALLENGE WILL STRIVE FOR WIDESPREAD OUTAGES USING COLLOBARATIVE CHAT SINGLE SIGN ON SYSTEM",
+            "created_by": 2,
+            "pm": null,
+            "catch_all": "",
+            "technical": "And I'm glad to see that. They came of age in the late fifties and early sixties, a time when segregation was still the law of the land and opportunity was systematically constricted.Influencer infrastructure non-disclosure agreement graphical user interface deployment equity pivot monetization hypotheses assets hackathon mass market early adopters termsheet. Venture gen-z growth hacking graphical user interface www.discoverartisans.com metrics paradigm shift seed money ecosystem. ",
+            "created_on": "2015-01-05T23:01:40Z",
+            "estimated_hours": null
+        },
+        "model": "projects.project",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "project": 1,
+            "rank": 0,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Base Site",
+            "created_by": 2,
+            "is_default": true
+        },
+        "model": "projects.component",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "project": 1,
+            "rank": 1,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Project Management",
+            "created_by": 2,
+            "is_default": false
+        },
+        "model": "projects.component",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "project": 1,
+            "rank": 2,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Themeing",
+            "created_by": 2,
+            "is_default": false
+        },
+        "model": "projects.component",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "project": 2,
+            "rank": 0,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Base Site",
+            "created_by": 2,
+            "is_default": true
+        },
+        "model": "projects.component",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "project": 2,
+            "rank": 1,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Project Management",
+            "created_by": 2,
+            "is_default": false
+        },
+        "model": "projects.component",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "project": 2,
+            "rank": 2,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Themeing",
+            "created_by": 2,
+            "is_default": false
+        },
+        "model": "projects.component",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "project": 3,
+            "rank": 0,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Base Site",
+            "created_by": 2,
+            "is_default": true
+        },
+        "model": "projects.component",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "project": 3,
+            "rank": 1,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Project Management",
+            "created_by": 2,
+            "is_default": false
+        },
+        "model": "projects.component",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "project": 3,
+            "rank": 2,
+            "invoice_description": "",
+            "description": "",
+            "is_deleted": false,
+            "name": "Themeing",
+            "created_by": 2,
+            "is_default": false
+        },
+        "model": "projects.component",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "due_on": "2015-07-04T21:47:52Z",
+            "is_deleted": false,
+            "name": "Target Completion Date",
+            "created_by": 2,
+            "project": 1,
+            "created_on": "2015-01-05T22:56:20Z"
+        },
+        "model": "projects.milestone",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "due_on": "2018-03-04T22:56:25Z",
+            "is_deleted": false,
+            "name": "Target Completion Date",
+            "created_by": 2,
+            "project": 2,
+            "created_on": "2015-01-05T22:59:09Z"
+        },
+        "model": "projects.milestone",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "due_on": "2016-08-14T21:59:13Z",
+            "is_deleted": false,
+            "name": "Target Completion Date",
+            "created_by": 2,
+            "project": 3,
+            "created_on": "2015-01-05T23:01:40Z"
+        },
+        "model": "projects.milestone",
+        "pk": 3
+    },
+    {
+        "model": "auth.user",
+        "fields": {
+            "last_name": "",
+            "groups": [
+                3
+            ],
+            "date_joined": "2015-01-05T23:03:00Z",
+            "is_active": true,
+            "password": "pbkdf2_sha256$12000$cEoRCdsWT8To$S/DDoT7+IdpyqRMToHf6w6kb6P9qRt08Jf+30cQ98Pc=",
+            "user_permissions": [],
+            "is_superuser": false,
+            "username": "jones",
+            "is_staff": false
+        },
+        "pk": 3
+    },
+    {
+        "model": "auth.user",
+        "fields": {
+            "last_name": "",
+            "groups": [
+                3
+            ],
+            "date_joined": "2015-01-05T23:03:10Z",
+            "is_active": true,
+            "password": "pbkdf2_sha256$12000$GSRtcPQuMtEk$WZJx5qK1qedTo2Awpl+15Szn8gB5OTHqYI34ZWAxLOk=",
+            "user_permissions": [],
+            "is_superuser": false,
+            "username": "smith",
+            "is_staff": false
+        },
+        "pk": 4
+    }
+]

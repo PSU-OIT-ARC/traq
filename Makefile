@@ -75,6 +75,9 @@ recreate-db:
 	$(MANAGE) migrate
 	$(MANAGE) loaddata initial_data
 
+load-dev-data:
+	$(MANAGE) loaddata dev_data
+
 ## Django (wrappers for ./manage.py commands)
 
 # Run a manage.py command

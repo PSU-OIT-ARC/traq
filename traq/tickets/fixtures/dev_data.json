@@ -1,0 +1,287 @@
+[
+    {
+        "model": "tickets.ticketstatus",
+        "pk": 1,
+        "fields": {
+            "rank": 1,
+            "name": "Open",
+            "is_default": true,
+            "importance": 1
+        }
+    },
+    {
+        "model": "tickets.ticketstatus",
+        "pk": 2,
+        "fields": {
+            "rank": 2,
+            "name": "In Progress",
+            "is_default": false,
+            "importance": 1
+        }
+    },
+    {
+        "model": "tickets.ticketstatus",
+        "pk": 3,
+        "fields": {
+            "rank": 3,
+            "name": "Stalled",
+            "is_default": false,
+            "importance": 3
+        }
+    },
+    {
+        "model": "tickets.ticketstatus",
+        "pk": 4,
+        "fields": {
+            "rank": 4,
+            "name": "Completed",
+            "is_default": false,
+            "importance": 4
+        }
+    },
+    {
+        "model": "tickets.ticketstatus",
+        "pk": 5,
+        "fields": {
+            "rank": 5,
+            "name": "Closed",
+            "is_default": false,
+            "importance": 5
+        }
+    },
+    {
+        "model": "tickets.ticketpriority",
+        "pk": 1,
+        "fields": {
+            "rank": 1,
+            "name": "Normal",
+            "is_default": true
+        }
+    },
+    {
+        "model": "tickets.tickettype",
+        "pk": 1,
+        "fields": {
+            "description": null,
+            "name": "New Feature"
+        }
+    },
+    {
+        "model": "tickets.tickettype",
+        "pk": 2,
+        "fields": {
+            "description": null,
+            "name": "Bug Fixes"
+        }
+    },
+    {
+        "model": "tickets.tickettype",
+        "pk": 3,
+        "fields": {
+            "description": null,
+            "name": "Code Maintenance"
+        }
+    },
+    {
+        "model": "tickets.ticket",
+        "pk": 1,
+        "fields": {
+            "priority": 1,
+            "created_on": "2015-01-05T23:05:33Z",
+            "assigned_to": 3,
+            "due_on": null,
+            "started_on": "2015-01-05T23:04:31Z",
+            "component": 4,
+            "project": 2,
+            "branch": "",
+            "release": "",
+            "estimated_time": "01:00:00",
+            "milestone": null,
+            "created_by": 2,
+            "is_deleted": false,
+            "type": 1,
+            "is_internal": false,
+            "status": 2,
+            "title": "Learning curve crowdfunding infrastructure facebook deployment",
+            "body": "Citizens of distant epochs finite but unbounded. Prime number. Colonies gathered by gravity another world rich in mystery trillion. Decipherment, venture worldlets! Tendrils of gossamer clouds? Dispassionate extraterrestrial observer.",
+            "is_extra": false,
+            "edited_on": "2015-01-05T23:13:30Z"
+        }
+    },
+    {
+        "model": "tickets.ticket",
+        "pk": 2,
+        "fields": {
+            "priority": 1,
+            "created_on": "2015-01-05T23:06:12Z",
+            "assigned_to": 4,
+            "due_on": null,
+            "started_on": "2015-01-15T23:05:36Z",
+            "component": 5,
+            "project": 2,
+            "branch": "",
+            "release": "",
+            "estimated_time": "04:00:00",
+            "milestone": null,
+            "created_by": 2,
+            "is_deleted": false,
+            "type": 2,
+            "is_internal": false,
+            "status": 1,
+            "title": "FIX REMOTE ENTERPRISE BLOG",
+            "body": "GRADUATE STUDENT WANTS INCOMING FRESHMEN TO FIX REMOTE ENTERPRISE BLOG",
+            "is_extra": false,
+            "edited_on": "2015-01-05T23:06:12Z"
+        }
+    },
+    {
+        "model": "tickets.ticket",
+        "pk": 3,
+        "fields": {
+            "priority": 1,
+            "created_on": "2015-01-05T23:07:26Z",
+            "assigned_to": 3,
+            "due_on": null,
+            "started_on": "2015-01-05T23:06:21Z",
+            "component": 3,
+            "project": 1,
+            "branch": "",
+            "release": "",
+            "estimated_time": "04:00:00",
+            "milestone": 1,
+            "created_by": 2,
+            "is_deleted": false,
+            "type": 3,
+            "is_internal": false,
+            "status": 1,
+            "title": "REPLACE REDUNDANT SINGLE SIGN ON SYSTEM WITH PAAS REST API",
+            "body": "Incubator partner network user experience influencer buzz ramen. Www.discoverartisans.com hackathon termsheet agile development graphical user interface partnership scrum project iPad bandwidth funding buyer.",
+            "is_extra": true,
+            "edited_on": "2015-01-05T23:07:26Z"
+        }
+    },
+    {
+        "model": "tickets.ticket",
+        "pk": 4,
+        "fields": {
+            "priority": 1,
+            "created_on": "2015-01-05T23:09:02Z",
+            "assigned_to": 3,
+            "due_on": null,
+            "started_on": "2015-01-01T23:07:27Z",
+            "component": 1,
+            "project": 1,
+            "branch": "",
+            "release": "",
+            "estimated_time": "10:00:00",
+            "milestone": 1,
+            "created_by": 2,
+            "is_deleted": false,
+            "type": 1,
+            "is_internal": false,
+            "status": 3,
+            "title": "To discourage you by telling",
+            "body": "One of the greatest barriers to making the sale is your prospect's natural. To discourage you by telling. To discourage you by telling. The real goal of any talk or speech. The real goal of any talk or speech. To discourage you by telling. One of the greatest barriers to making the sale is your prospect's natural. The real goal of any talk or speech. To discourage you by telling. The real goal of any talk or speech. The real goal of any talk or speech. -And Gain Power By Learning Ways To Become Peaceful. To discourage you by telling. To discourage you by telling. The real goal of any talk or speech.\r\n",
+            "is_extra": false,
+            "edited_on": "2015-01-05T23:13:39Z"
+        }
+    },
+    {
+        "model": "tickets.ticket",
+        "pk": 5,
+        "fields": {
+            "priority": 1,
+            "created_on": "2015-01-05T23:09:59Z",
+            "assigned_to": 4,
+            "due_on": "2017-06-15T07:00:00Z",
+            "started_on": "2015-01-05T23:09:02Z",
+            "component": 3,
+            "project": 1,
+            "branch": "",
+            "release": "",
+            "estimated_time": "08:00:00",
+            "milestone": 1,
+            "created_by": 2,
+            "is_deleted": false,
+            "type": 3,
+            "is_internal": false,
+            "status": 2,
+            "title": "Market startup technology buyer focus",
+            "body": "Channels supply chain low hanging fruit handshake. Market startup technology buyer focus social proof channels pitch success graphical user interface learning curve long tail accelerator. Customer buzz rockstar lean startup crowdfunding handshake niche market deployment low hanging fruit.",
+            "is_extra": false,
+            "edited_on": "2015-01-05T23:13:46Z"
+        }
+    },
+    {
+        "model": "tickets.ticket",
+        "pk": 6,
+        "fields": {
+            "priority": 1,
+            "created_on": "2015-01-05T23:10:59Z",
+            "assigned_to": 3,
+            "due_on": "2019-01-01T08:00:00Z",
+            "started_on": "2015-01-05T23:10:10Z",
+            "component": 8,
+            "project": 3,
+            "branch": "",
+            "release": "",
+            "estimated_time": "11:00:00",
+            "milestone": 3,
+            "created_by": 2,
+            "is_deleted": false,
+            "type": 1,
+            "is_internal": false,
+            "status": 1,
+            "title": "COMBINE CHEF RECIPIES AND BULK EMAILER",
+            "body": "Business-to-consumer stock responsive web design business model canvas. Crowdfunding focus equity analytics gen-z bootstrapping strategy. Business-to-consumer alpha long tail. Scrum project crowdsource burn rate vesting period branding.",
+            "is_extra": false,
+            "edited_on": "2015-01-05T23:10:59Z"
+        }
+    },
+    {
+        "model": "tickets.ticket",
+        "pk": 7,
+        "fields": {
+            "priority": 1,
+            "created_on": "2015-01-05T23:11:43Z",
+            "assigned_to": 4,
+            "due_on": "2019-05-05T07:00:00Z",
+            "started_on": "2015-01-05T23:11:00Z",
+            "component": 9,
+            "project": 3,
+            "branch": "",
+            "release": "",
+            "estimated_time": "08:00:00",
+            "milestone": 3,
+            "created_by": 2,
+            "is_deleted": false,
+            "type": 1,
+            "is_internal": false,
+            "status": 4,
+            "title": "IMITATION DRUPAL THEME ",
+            "body": "Finite but unbounded emerged into consciousness billions upon billions, \r\ndispassionate extraterrestrial observer extraplanetary Euclid network of wormholes rings of Uranus.",
+            "is_extra": false,
+            "edited_on": "2015-01-05T23:14:26Z"
+        }
+    },
+    {
+        "model": "tickets.worktype",
+        "pk": 1,
+        "fields": {
+            "rank": 1,
+            "name": "New Feature",
+            "is_default": true,
+            "price": "100.00"
+        }
+    },
+    {
+        "model": "tickets.worktype",
+        "pk": 2,
+        "fields": {
+            "rank": 2,
+            "name": "New Feature",
+            "is_default": false,
+            "price": "100.00"
+        }
+    }
+]

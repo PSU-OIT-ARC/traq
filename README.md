@@ -21,6 +21,11 @@ To update/recreate the database
 
     make recreate-db
 
+## Dummy Data
+To load some dummy projects and tickets
+
+    make load-dev-data
+
 ## Media
 Create the media upload dir (for user files)
 
