@@ -1,12 +1,13 @@
 .PHONY: print-env \
-        initial-setup \
+        init \
         install \
         install-update \
         install-package \
         virtualenv \
         clean \
         recreate-db \
-        manage \
+ 		load-dev-data \
+		manage \
         run \
         shell \
         test \
@@ -34,9 +35,10 @@ print-env:
 	@echo PIP: $(PIP)
 	@echo MANAGE: $(MANAGE)
 
-initial-setup:
-	@$(MAKE) virtualenv args='-p python3.3'
+init:
+	@$(MAKE) virtualenv args='-p python3'
 	@$(MAKE) recreate-db
+	@$(MAKE) load-dev-data
 	@$(MANAGE) test
 
 install:
