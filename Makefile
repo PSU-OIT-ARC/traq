@@ -74,8 +74,6 @@ clean:
 recreate-db:
 	mysql -u root -e 'drop database $(PROJECT_NAME);' || true
 	mysql -u root -e 'create database $(PROJECT_NAME);'
-	mysql -u root -e 'create user $(PROJECT_NAME)@"localhost";'|| true
-	mysql -u root -e 'grant all privileges on $(PROJECT_NAME).* to $(PROJECT_NAME)@"localhost"; FLUSH PRIVILEGES;'
 	$(MANAGE) syncdb
 	$(MANAGE) migrate
 	$(MANAGE) loaddata initial_data
