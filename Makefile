@@ -37,6 +37,7 @@ print-env:
 
 init:
 	@$(MAKE) virtualenv args='-p python3'
+	cp ./traq/demo_settings.py ./traq/local_settings.py
 	@$(MAKE) recreate-db
 	@$(MAKE) load-dev-data
 	@$(MANAGE) test
@@ -73,6 +74,7 @@ clean:
 recreate-db:
 	mysql -u root -e 'drop database $(PROJECT_NAME);' || true
 	mysql -u root -e 'create database $(PROJECT_NAME);'
+	mysql -u root -e 'create user $(PROJECT_NAME)@"localhost";'
 	$(MANAGE) syncdb
 	$(MANAGE) migrate
 	$(MANAGE) loaddata initial_data
