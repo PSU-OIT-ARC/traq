@@ -6,13 +6,13 @@
         virtualenv \
         clean \
         recreate-db \
- 		load-dev-data \
-		manage \
+        load-dev-data \
+        manage \
         run \
         shell \
         test \
-		coverage \
-		love \
+        coverage \
+        love \
 
 .DEFAULT_GOAL := run
 
