@@ -2,6 +2,13 @@
 
 Make sure you are on the correct branch
 
+## Full Install and Setup
+
+If you want to install requirements, create a local db and load 
+some dummy data, and run tests all at once just run:
+
+    make init
+
 ## Requirements
 
 Create a virtual environment, and install the required packages in it:
