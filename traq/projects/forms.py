@@ -1,5 +1,6 @@
 import datetime
 from django import forms
+from django.utils.timezone import now
 from .models import Project, Component, Milestone
 from ..tickets.models import Ticket
 
@@ -10,7 +11,7 @@ class ProjectForm(forms.ModelForm):
         self.instance.created_by = created_by
 
         if self.instance.pk is None:
-            self.fields['target_completion_date'] = forms.DateTimeField(initial=datetime.datetime.now()+datetime.timedelta(days=180))
+            self.fields['target_completion_date'] = forms.DateTimeField(initial=now()+datetime.timedelta(days=180))
 
     def save(self, *args, **kwargs):
         is_new = self.instance.pk is None

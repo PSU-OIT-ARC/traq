@@ -6,7 +6,6 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
-from datetime import date, timedelta, datetime
 from django.db.models import Q
 
 from traq.permissions.decorators import can_view_project

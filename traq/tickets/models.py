@@ -1,5 +1,6 @@
 from itertools import chain
 from datetime import timedelta, datetime
+from django.utils.timezone import now
 from django.conf import settings as SETTINGS
 from django.db import models
 from django.contrib.auth.models import User
@@ -82,7 +83,7 @@ class Ticket(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    started_on = models.DateTimeField(default=lambda:datetime.now())
+    started_on = models.DateTimeField(default=now)
     edited_on = models.DateTimeField(auto_now=True)
     estimated_time = models.TimeField(null=True, default=None)
     is_deleted = models.BooleanField(default=False)
@@ -115,8 +116,7 @@ class Ticket(models.Model):
             return self.milestone.due_on
 
     def isOverDue(self):
-        # unorderable types: NoneType() < datetime.datetime()
-        return False if self.due_on is None else self.due_on < datetime.utcnow().replace(tzinfo=utc)
+        return False if self.due_on is None else self.due_on < now()
 
     def finishWork(self):
         work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
@@ -306,7 +306,7 @@ class Work(models.Model):
             # since the clock is still ticking, we need to calculate the amount
             # of time since the work was paused, or created_on
             start = self.state_changed_on or self.created_on
-            delta = datetime.utcnow().replace(tzinfo=utc) - start
+            delta = now() - start
             return (datetime.combine(datetime.today(), self.time) + delta).time()
         else:
             raise ValueError("Work object with pk=%d has an invalid work state, %d" % (self.pk, self.state))
@@ -320,10 +320,10 @@ class Work(models.Model):
         self.state = Work.PAUSED
         # calculate how much time has past since this work was last continued or created
         start = self.state_changed_on or self.created_on
-        delta = datetime.utcnow().replace(tzinfo=utc) - start
+        delta = now() - start
         t = (datetime.combine(datetime.today(), self.time) + delta).time()
         self.time = t
-        self.state_changed_on = datetime.now()
+        self.state_changed_on = now()
         self.save()
 
     def continue_(self):
@@ -331,7 +331,7 @@ class Work(models.Model):
         self.state = Work.RUNNING
         # this is important because it is required to calculate how much time
         # has elasped when the work is paused or set as done
-        self.state_changed_on = datetime.now()
+        self.state_changed_on = now()
         self.save()
 
     def done(self):
@@ -339,7 +339,7 @@ class Work(models.Model):
         # once the done_on date is set, it should never be changed because it
         # affects the billing reports
         if self.done_on is None:
-            self.done_on = datetime.now()
+            self.done_on = now()
 
     class Meta:
         db_table = 'work'
@@ -424,8 +424,6 @@ def my_handler(sender, instance, **kwargs):
         for todo in instance.todos.all():
             todo.due_on = instance.due
             tic = Ticket.objects.filter(todos=todo).values_list('status', flat=True)
-            print(instance.status)
-            print(tic)
             if 1 in tic or 2 in tic or 3 in tic: 
                 todo.status_id=2
             else: 

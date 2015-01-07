@@ -7,6 +7,7 @@ Replace this with more appropriate tests for your application.
 from unittest import mock
 from unittest.mock import patch
 from datetime import datetime
+from django.utils.timezone import now
 from django.contrib.auth.models import User, Permission
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -121,7 +122,7 @@ class ProjectComponentsViewsTest(TraqCustomTest):
 class ProjectsMilestonesViewsTest(TraqCustomTest):
     def setUp(self):
         super(ProjectsMilestonesViewsTest, self).setUp()
-        self.milestone = Milestone.objects.create(due_on=datetime.now(), created_by=self.admin, project=self.project)
+        self.milestone = Milestone.objects.create(due_on=now(), created_by=self.admin, project=self.project)
         perm = Permission.objects.get(codename='can_view_all') 
         self.admin.user_permissions.add(perm)
         self.client.login(username='moltres', password='foo')

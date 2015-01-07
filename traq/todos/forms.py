@@ -1,7 +1,8 @@
 import os
 import uuid
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.conf import settings as SETTINGS
+from django.utils.timezone import now
 from django import forms
 from django.contrib.auth.models import User
 from traq.tickets.models import (
@@ -35,7 +36,7 @@ class ToDoForm(forms.ModelForm):
         
         if project.is_scrum:
             backlog = project.current_sprint_end - timedelta(days=2)
-            if backlog >= datetime.now().date():
+            if backlog >= now().date():
                 self.fields['due_on'].initial = backlog
             else:
                 self.fields['due_on'].initial = backlog + timedelta(days = 14)

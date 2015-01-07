@@ -7,7 +7,8 @@ Replace this with more appropriate tests for your application.
 import pytz
 from unittest import TestCase, mock
 from unittest.mock import patch
-from datetime import datetime, timedelta
+from django.utils.timezone import now
+import datetime
 from model_mommy.mommy import make
 from django.contrib.auth.models import User, Permission
 from django.core.urlresolvers import reverse
@@ -42,13 +43,13 @@ class TicketModelsTest(TraqCustomTest):
         t = Ticket(
             title='Test Ticket',
             body='Test ticket body',
-            created_on=datetime.now(),
-            started_on=datetime.now(),
-            edited_on=datetime.now(),
+            created_on=now(),
+            started_on=now(),
+            edited_on=now(),
             estimated_time= '01:00:00',
             is_deleted=False,
             is_extra=False,
-            due_on=datetime.now(),
+            due_on=now(),
             is_internal=False,
             release='Test',
             branch='Test',
@@ -84,13 +85,13 @@ class TicketModelsTest(TraqCustomTest):
 
     def test_work_model(self):
         w = Work(
-            created_on=datetime.now(),
+            created_on=now(),
             description='Description of work',
             billable=True,
             time='10:00:00',
-            started_on=pytz.UTC.localize(datetime.now()),
-            done_on=pytz.UTC.localize(datetime.now()),
-            state_changed_on=pytz.UTC.localize(datetime.now()),
+            started_on=now(),
+            done_on=now(),
+            state_changed_on=now(),
             type=WorkType.objects.first(),
             ticket=Ticket.objects.first(),
             created_by=self.admin,
@@ -114,8 +115,8 @@ class TicketModelsTest(TraqCustomTest):
     def test_comment_model(self):
         c = Comment(
             body='Test comment body',
-            created_on=datetime.now(),
-            edited_on=datetime.now(),
+            created_on=now(),
+            edited_on=now(),
             is_deleted=False,
             todo=self.todo,
             created_by=self.admin,
@@ -147,7 +148,7 @@ class TicketFormsTest(TraqCustomTest):
             'status': self.ticket.status.pk,
             'type': 1,
             'component': Component.objects.first().pk,
-            'started_on': datetime.now(),
+            'started_on': now(),
             'priority': 1,
         })
         self.assertTrue(f.is_valid())
@@ -178,7 +179,7 @@ class TicketFormsTest(TraqCustomTest):
                 'description': 'desc',
                 'billable': True,
                 'time': '10:10:00',
-                'started_on': datetime.now(),
+                'started_on': now(),
                 'type': WorkType.objects.first().pk,
                 'is_deleted': False,
             },
@@ -276,7 +277,7 @@ class TicketCreateTest(TraqCustomTest):
         data =  {
                 'title': 'Peas',
                 'body': 'Random body that is telling you what to do',
-                'started_on': datetime.now(),
+                'started_on': datetime.datetime.now(),
                 'estimated_time': '01:00:00',
                 'status': TicketStatus.objects.first().pk,
                 'priority': 1,

@@ -1,6 +1,6 @@
 import json
 import csv, codecs, io
-from datetime import timedelta, time, datetime
+from datetime import time
 from django.db import connection
 from django.forms.util import ErrorList
 
