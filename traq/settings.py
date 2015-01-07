@@ -103,6 +103,10 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+ATOMIC_REQUESTS = True
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -110,7 +114,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'djangocas.middleware.CASMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'cloak.middleware.CloakMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
