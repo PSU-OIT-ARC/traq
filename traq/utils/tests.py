@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils.timezone import now
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from traq.projects.models import Project, Component
@@ -82,8 +82,8 @@ class TraqCustomTest(TestCase):
             billable=False,
             time='10:00:00',
             state=1,
-            started_on=datetime.now(),
-            done_on=datetime.now(),
+            started_on=now(),
+            done_on=now(),
             type=WorkType.objects.first(),
             ticket=self.ticket,
             created_by=self.admin,

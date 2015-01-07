@@ -15,7 +15,6 @@ from traq.todos.forms import *
 from django.contrib.auth.decorators import permission_required
 from traq.permissions.decorators import can_view_project, can_view_todo
 import datetime
-from django.utils.timezone import now
 
 @can_view_project
 @permission_required('todos.add_todo')

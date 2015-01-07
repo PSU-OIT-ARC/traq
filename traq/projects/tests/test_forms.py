@@ -7,6 +7,7 @@ Replace this with more appropriate tests for your application.
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now
 from django.test import TestCase
 from traq.tickets.models import Ticket, TicketStatus, TicketPriority
 from traq.projects.models import Project, Component, Milestone
@@ -23,7 +24,7 @@ class ProjectModelsTest(TraqCustomTest):
             name='Test Project',
             team_dynamix_id=111,
             description='hello, world',
-            created_on=datetime.now(),
+            created_on=now(),
             is_deleted=False,
             pm_email=False,
             pm=self.user,
@@ -56,9 +57,9 @@ class ProjectModelsTest(TraqCustomTest):
 
     def test_milestone_model(self):
         m = Milestone(
-            created_on=datetime.now(),
+            created_on=now(),
             name='Test Milestone',
-            due_on=datetime.now(),
+            due_on=now(),
             is_deleted=False,
             created_by=self.admin,
             project=self.project,
@@ -91,7 +92,7 @@ class ProjectFormsTest(TraqCustomTest):
                 'pm':self.admin.pk,
                 'estimated_hours':10,
                 'is_scrum':False,
-                'target_completion_date':datetime.now(),
+                'target_completion_date':now(),
             }
         )
         self.assertTrue(p.is_valid())
@@ -124,7 +125,7 @@ class ProjectFormsTest(TraqCustomTest):
     def test_valid_milestone_form(self):
         m = MilestoneForm(project=self.project, created_by=self.admin, data={
             'name': 'Boris the animal',
-            'due_on': datetime.now(),
+            'due_on': now(),
             'is_deleted': False,
         })
         self.assertTrue(m.is_valid())
@@ -133,11 +134,11 @@ class ProjectFormsTest(TraqCustomTest):
         self.assertEqual(count+1, Milestone.objects.count())
 
     def test_invalid_report_interval_form(self):
-        r = ReportIntervalForm(data={'start': datetime.now() })
+        r = ReportIntervalForm(data={'start': now() })
         self.assertFalse(r.is_valid())
 
     def test_valid_report_interval_form(self):
-        r = ReportIntervalForm(data={'start': datetime.now(), 'end': datetime.now()})
+        r = ReportIntervalForm(data={'start': now(), 'end': now()})
         self.assertTrue(r.is_valid())
 
     def test_report_filter_form(self):
@@ -147,7 +148,7 @@ class ProjectFormsTest(TraqCustomTest):
     def test_project_sprint_form(self):
         s = ProjectSprintForm()
         self.assertFalse(s.is_valid())
-        s = ProjectSprintForm(data={'current_sprint_end': datetime.now()})
+        s = ProjectSprintForm(data={'current_sprint_end': now()})
         self.assertTrue(s.is_valid())
 
 class ReportTest(TraqCustomTest):

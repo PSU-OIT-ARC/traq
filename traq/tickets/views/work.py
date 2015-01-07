@@ -1,7 +1,8 @@
-from datetime import datetime, time
+from datetime import time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now
 from django.db import connection
 from django.contrib import messages
 from ..forms import TicketForm, CommentForm, WorkForm
@@ -51,7 +52,7 @@ def create(request, ticket_id):
         description="", 
         billable=True, 
         time=time(), 
-        started_on=datetime.now(),
+        started_on=now(),
         state=Work.RUNNING,
         type=WorkType.objects.default(),
         created_by=request.user,

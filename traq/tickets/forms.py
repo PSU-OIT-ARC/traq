@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime, timedelta
 from django.conf import settings as SETTINGS
 from django import forms
+from django.utils.timezone import now
 from django.contrib.auth.models import User
 from .models import (
     Ticket, 
@@ -105,8 +106,8 @@ class TicketForm(forms.ModelForm):
             w.ticket = self.instance
             w.created_by = self.instance.created_by
             # assume the work started w.time hours/minutes ago
-            w.started_on = datetime.now() - timedelta(hours=w.time.hour, minutes=w.time.minute)
-            w.done_on = datetime.now()
+            w.started_on = now() - timedelta(hours=w.time.hour, minutes=w.time.minute)
+            w.done_on = now()
             w.state = Work.DONE
             w.save()
 
@@ -203,13 +204,13 @@ class WorkForm(forms.ModelForm):
         if not self.is_bound:
             # set some nice default values
             self.fields['type'].initial = WorkType.objects.get(is_default=1)
-            self.fields['started_on'].initial = datetime.now()
+            self.fields['started_on'].initial = now()
 
     def clean_started_on(self):
         # if this field is empty, assume the work started now
         started_on = self.cleaned_data.get('started_on', "")
         if not started_on:
-            started_on = datetime.now()
+            started_on = now()
 
         return started_on
 

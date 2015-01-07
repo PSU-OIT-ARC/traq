@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from model_mommy.mommy import make
 from django.contrib.auth.models import User, Permission
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from traq.tickets.forms import TicketForm, WorkForm, CommentForm, BulkForm
@@ -30,10 +31,10 @@ class TodoModelsTest(TraqCustomTest):
         t = ToDo(
             title="Todo title",
             body='todo body',
-            created_on=datetime.now(),
+            created_on=now(),
             estimate=10,
             is_deleted=False,
-            due_on=datetime.now(),
+            due_on=now(),
             status=TicketStatus.objects.first(),
             rank=1,
             project=self.project,
@@ -61,13 +62,13 @@ class TodoFormsTest(TraqCustomTest):
             data={
                 'title':"Todo title",
                 'body': "todo body",
-                'started_on': datetime.now(),
+                'started_on': now(),
                 'estimate': 100,
                 'is_deleted': False,
                 'status': 1,
                 'priority': 1,
                 'component': Component.objects.first().pk,
-                'due_on': datetime.now(),
+                'due_on': now(),
             }
         )
         self.assertTrue(t.is_valid())

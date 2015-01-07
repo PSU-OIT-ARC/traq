@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from .models import ToDo 
 from traq.projects.models import Project
 from traq.tickets.filters import range_from_today, StartDateRangeFilter, TicketFilterSet, get_choices
-import datetime
 from django.shortcuts import get_object_or_404
 
 class CustomBooleanFilter(django_filters.BooleanFilter):
@@ -58,7 +57,6 @@ class BacklogFilterSet(ToDoPriorityFilterSet):
         extra ={'status':1}
         if not self.data:
             qdict = QueryDict('sprint_end=%s&estimate=%s' % (project.backlog(), False)) 
-            print(qdict)
             self.data = qdict
         self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project, extra)) 
         
