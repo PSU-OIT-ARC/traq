@@ -115,7 +115,8 @@ class Ticket(models.Model):
             return self.milestone.due_on
 
     def isOverDue(self):
-        return str(self.due_on) < str(datetime.utcnow().replace(tzinfo=utc))
+        # unorderable types: NoneType() < datetime.datetime()
+        return False if self.due_on is None else self.due_on < datetime.utcnow().replace(tzinfo=utc)
 
     def finishWork(self):
         work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
