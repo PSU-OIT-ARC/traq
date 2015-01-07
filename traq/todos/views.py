@@ -72,7 +72,7 @@ def create(request, project_id):
             # future. Save the data on a per project basis (using the project's pk)
             if "todo_form" not in request.session:
                 request.session['todo_form'] = {}
-            request.session['todo_form'][project.pk] = list(form.cleaned_data)
+            request.session['todo_form'][project.pk] = form.cleaned_data
             # Django won't know to save the session because we are modifying a
             # 2D dictionary
             request.session.modified = True

@@ -16,6 +16,8 @@ LDAP_DISABLED = False
 # When an email is sent to a user, the address is formed by username@EMAIL_DOMAIN
 EMAIL_DOMAIN = 'pdx.edu'
 
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 # allow the use of wildcards in the INTERAL_IPS setting
 class IPList(list):
     # do a unix-like glob match
