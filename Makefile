@@ -1,17 +1,18 @@
 .PHONY: print-env \
-        initial-setup \
+        init \
         install \
         install-update \
         install-package \
         virtualenv \
         clean \
         recreate-db \
+        load-dev-data \
         manage \
         run \
         shell \
         test \
-		coverage \
-		love \
+        coverage \
+        love \
 
 .DEFAULT_GOAL := run
 
@@ -34,9 +35,11 @@ print-env:
 	@echo PIP: $(PIP)
 	@echo MANAGE: $(MANAGE)
 
-initial-setup:
-	@$(MAKE) virtualenv args='-p python3.3'
+init:
+	@$(MAKE) virtualenv args='-p python3'
+	cp ./traq/demo_settings.py ./traq/local_settings.py
 	@$(MAKE) recreate-db
+	@$(MAKE) load-dev-data
 	@$(MANAGE) test
 
 install:
@@ -74,6 +77,9 @@ recreate-db:
 	$(MANAGE) syncdb
 	$(MANAGE) migrate
 	$(MANAGE) loaddata initial_data
+
+load-dev-data:
+	$(MANAGE) loaddata dev_data
 
 ## Django (wrappers for ./manage.py commands)
 
