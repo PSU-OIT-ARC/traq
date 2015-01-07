@@ -1,0 +1,87 @@
+{% extends 'bootstrap_base.html' %}
+
+{% load tickets %}
+{% load addcss %}
+{% load timesheet %}
+
+{% block page_title %}Your Timesheet{% endblock %}
+
+{% block content %}
+	<h2>Timesheet for user: {{ user.username }}</h2>
+
+	<div class="hidden-print print-hide">
+	    <form class='formi clearfix' method="get" action="">
+	        {{ form.start | bs_group:'3' }}
+	        {{ form.end | bs_group:'3' }}
+	        
+	        <div class='col-md-12'>
+	        <input class='btn btn-primary btn-sm' type="submit" name="submit" value="submit" />
+	        </div>
+	    </form>
+	</div>
+	<hr>
+
+	
+	<div class="col-md-12 left-section-wrapper">
+		<script type="text/javascript">
+	    	TICKETS = {{ tickets_json|safe }};
+	  	</script>
+	  	<script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
+		
+	    <div class='panel panel-default'>
+	    	<div class='panel-body'>
+	    		<span style="font-size:2rem;"><strong>Total hours worked this period: {{ total_hours|tickettime }}</strong></span>
+	    	</div>
+	    </div>
+
+	    <table class="table">	    	
+	    		<thead>
+	    			<th>Date</th>
+	    			<th>Works</th>
+	    		</thead>
+	    		<tbody>
+	    	{% imgurize as imgurd %}
+	    	{% for date, works in work_by_date %}
+	    		<tr>
+	    			<td>{{ date }}</td>	    			
+	    			<td>
+	    			{% if works %}	
+	    				<table class="table table-condensed table-striped">
+		    				<thead>
+			    				<th class="col-md-3">Time</th>
+			    				<th class="col-md-2">Duration</th>
+				    			<th>Ticket</th>
+				    			<th class="col-md-1">Billable</th>
+				    		</thead>
+				    		<tbody>
+		    				{% for w in works %}
+		    			
+				    		<tr>
+				    			<td>{{ w.started_on|date:"P" }} - {{ w.done_on|date:"P" }}</td>
+				    			<td>{{ w.time|tickettime }}</td>
+				    			<td><a href="{% url 'tickets-detail' w.ticket.pk %}" title="Ticket {{ w.ticket }}">{{ w.ticket|truncatechars:70 }}</a></td>
+				    			<td>{% if w.billable %}Yes{% else %}No{% endif %}</td>
+				    		</tr>
+				    		
+			    			{% endfor %}
+			    			</tbody>
+				    	</table>
+				    
+				    {% else %}
+				    {% get_image as image %}
+				    	<p class="text-muted">No work found. {% why %}</p>
+				    	{# WARNING: repeated use of imgurize may cause HTTP Error 429: Too Many Requests. #}
+				    	{#% comment %#}
+				    	<a href="{{ image.0 }}"><img src="{{ image.1 }}" /></a>
+				    	{#% endcomment %#}
+				    
+				    {% endif %}
+				    </td>
+		    	</tr>
+	    	{% endfor %}
+	    	</tbody>
+	    </table>
+	    
+  	</div>
+  	
+{% endblock %}
