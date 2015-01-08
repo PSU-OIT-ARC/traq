@@ -6,6 +6,7 @@ sudo: false
 install:
   - virtualenv --no-site-packages -p python3 .env
   - source .env/bin/activate
+  - cp traq/travis_settings.py traq/local_settings.py
   - make install
 # command to run tests
 script: make test
