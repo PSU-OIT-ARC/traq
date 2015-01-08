@@ -1,14 +1,8 @@
-.env
 *~
 *.pyc
-local_settings.py
 *.sql
-logs/*
 .*
-htdocs/media
-bin/manage
-bin/driver
-.coverage
-ngrok
-htmlcov/
 !.travis.yml
+/htdocs/media
+/htmlcov
+/variables.py
