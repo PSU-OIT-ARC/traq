@@ -12,3 +12,4 @@ pyasn1==0.1.7
 python3-ldap==0.9.6.2
 pytz==2014.9
 six==1.7.3
+django-dynamic-fixture==1.6.0
