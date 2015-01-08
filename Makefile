@@ -74,8 +74,8 @@ clean:
 recreate-db:
 	mysql -u root -e 'drop database $(PROJECT_NAME);' || true
 	mysql -u root -e 'create database $(PROJECT_NAME);'
-	$(MANAGE) syncdb
-	$(MANAGE) migrate
+	$(MANAGE) syncdb --noinput
+	$(MANAGE) migrate --noinput
 	$(MANAGE) loaddata initial_data
 
 load-dev-data:
@@ -113,7 +113,7 @@ shell:
 test:
 	$(MANAGE) test $(test)
 
-# run the unit tests with coverage. 
+# run the unit tests with coverage.
 # go to `0.0.0.0:8000/htmlcov/index.html` to view test coverage
 coverage:
 	coverage run ./manage.py test $(test) && coverage html
