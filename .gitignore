@@ -11,3 +11,4 @@ bin/driver
 .coverage
 ngrok
 htmlcov/
+!.travis.yml

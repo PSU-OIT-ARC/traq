@@ -1,0 +1,10 @@
+language: python
+python:
+  - "3.4"
+# command to install dependencies
+install:
+  - virtualenv --no-site-packages -p python3 .env
+  - source .env/bin/activate
+  - make install
+# command to run tests
+script: make test
