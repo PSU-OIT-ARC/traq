@@ -1,10 +1,12 @@
+[![Build Status](https://travis-ci.org/bcomnes/traq.svg?branch=master)](https://travis-ci.org/bcomnes/traq)
+
 # Install
 
 Make sure you are on the correct branch
 
 ## Full Install and Setup
 
-If you want to install requirements, create a local db and load 
+If you want to install requirements, create a local db and load
 some dummy data, and run tests all at once just run:
 
     make init
@@ -52,5 +54,5 @@ To test the site, use either
     make test
 
 Or
-    
+
     make coverage
