@@ -1,7 +1,7 @@
 import os
 from fnmatch import fnmatch
 from django.conf import global_settings
-
+from varlet import variable
 import pymysql
 pymysql.install_as_MySQLdb()
 
@@ -9,13 +9,43 @@ pymysql.install_as_MySQLdb()
 PROJECT_DIR = os.path.dirname(__file__)
 HOME_DIR = os.path.normpath(os.path.join(PROJECT_DIR, '../'))
 
-LDAP_URL = "ldap://ldap-login.oit.pdx.edu"
-LDAP_BASE_DN = 'dc=pdx,dc=edu'
-LDAP_DISABLED = False
+DEBUG = variable("DEBUG", default=False)
+TEMPLATE_DEBUG = DEBUG
+
+# if you're having trouble connecting to LDAP set this to True so you can login
+# to track, bypassing LDAP group checks
+LDAP_DISABLED = variable("LDAP_DISABLED", default=False)
+
+LDAP = {
+    'default': {
+        'host': "ldap://ldap-login.oit.pdx.edu",
+        'username': 'traq',
+        'password': '',
+        'search_dn': 'dc=pdx,dc=edu'
+    }
+}
+
+# ('Your Name', 'your_email@example.com'),
+ADMINS = variable("ADMINS", [])
+MANAGERS = ADMINS
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': variable("DB_NAME", 'traq'),
+        'USER': variable("DB_USER", 'root'),
+        'PASSWORD': variable("DB_PASSWORD", ''),
+        'HOST': '',
+        'PORT': '',
+    }
+}
+
+BASE_URL = 'http://traq.research.pdx.edu' # no trailing slash
 
 # When an email is sent to a user, the address is formed by username@EMAIL_DOMAIN
 EMAIL_DOMAIN = 'pdx.edu'
 
+# we need to use the pickler since we save abitrary objects to sessions
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # allow the use of wildcards in the INTERAL_IPS setting
@@ -152,10 +182,8 @@ INSTALLED_APPS = (
     'traq.todos',
     'traq.tickets',
     'traq.accounts',
-    'traq.permissions',
     'traq',
     'model_mommy',
-    #'south', <-- no need in django 1.7
     'cloak',
     'coverage',
     # Uncomment the next line to enable the admin:
@@ -165,34 +193,4 @@ INSTALLED_APPS = (
     'django_extensions',
 )
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    }
-}
-
-#SECRET_KEY = 'changeme'
-from .local_settings import *
+SECRET_KEY = variable("SECRET_KEY", default=os.urandom(64).decode("latin1"))
