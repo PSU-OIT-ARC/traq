@@ -3,6 +3,7 @@
 *.sql
 .*
 !.travis.yml
-/htdocs/media
+/media
 /htmlcov
 /variables.py
+/static
