@@ -1,6 +1,7 @@
 language: python
 python:
   - "3.4"
+sudo: false
 # command to install dependencies
 install:
   - virtualenv --no-site-packages -p python3 .env
