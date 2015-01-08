@@ -6,11 +6,13 @@ Replace this with more appropriate tests for your application.
 """
 import random as r
 import time, datetime
+from unittest.mock import patch, Mock
+from django.utils.timezone import now
 from django.contrib.auth.models import User, Group, Permission
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.timezone import utc
-from django_dynamic_fixture import G
+from model_mommy.mommy import make
 from traq.projects.models import Component, Milestone, Project
 from traq.tickets.models import Ticket, Work, TicketStatus, TicketPriority
 from traq.utils.tests import TraqCustomTest
@@ -32,7 +34,7 @@ class SimpleTest(TestCase):
         """
         self.assertEqual(1 + 1, 2)
 
-
+@patch("traq.templatetags.timesheet.get_image", new=Mock())
 class TimesheetTest(TestCase):
 
     ticket_titles = ("Need additional text marquee on header and footer.", \
@@ -57,7 +59,7 @@ class TimesheetTest(TestCase):
         admin.user_permissions.add(perm)
         self.admin = admin
 
-        self.end_date = datetime.datetime.now()
+        self.end_date = now()
         #self.start_date = self.end_date - datetime.timedelta(hours=randint(1,7))
         #print "Start: %s vs. %s" % (self.start_date, self.end_date)
 
@@ -67,14 +69,14 @@ class TimesheetTest(TestCase):
 
     def create_tickets(self):
         # This ticket+work is within the date range
-        self.inrange_ticket = G(Ticket, title="In range", assigned_to=self.admin)
+        self.inrange_ticket = make(Ticket, title="In range", assigned_to=self.admin)
         end = self.end_date - datetime.timedelta(days=20)
         end = end.replace(tzinfo=utc)
         delta = datetime.timedelta(hours=r.randint(1,7))
         start = end - delta
         start = start.replace(tzinfo=utc)
 
-        self.inrange_work = G(Work, ticket=self.inrange_ticket, \
+        self.inrange_work = make(Work, ticket=self.inrange_ticket, \
                  started_on=start, \
                  done_on=end, \
                  time=str(delta), \
@@ -83,7 +85,7 @@ class TimesheetTest(TestCase):
         self.inrange_ticket.save()
         # Create some random tickets+work
         for i in range(5):
-            ticket = G(Ticket, title=r.choice(self.ticket_titles), assigned_to=self.admin)
+            ticket = make(Ticket, title=r.choice(self.ticket_titles), assigned_to=self.admin)
             for j in range(r.randint(1,4)):
                 end = self.end_date - datetime.timedelta(days=r.randint(0,40))
                 end = end.replace(tzinfo=utc)
@@ -91,7 +93,7 @@ class TimesheetTest(TestCase):
                 start = end - delta
                 start = start.replace(tzinfo=utc)
                 #print "Start: %s vs. End: %s" % (start, end)          
-                work = G(Work, ticket=ticket, \
+                work = make(Work, ticket=ticket, \
                          started_on=start, \
                          done_on=end, \
                          time=str(delta), \
@@ -105,8 +107,8 @@ class TimesheetTest(TestCase):
         delta = datetime.timedelta(hours=5)
         start = end - delta
         start = start.replace(tzinfo=utc)
-        self.outofrange_ticket = G(Ticket, title="Out of range", assigned_to=self.admin)
-        self.outofrange_work = G(Work, ticket=self.outofrange_ticket, \
+        self.outofrange_ticket = make(Ticket, title="Out of range", assigned_to=self.admin)
+        self.outofrange_work = make(Work, ticket=self.outofrange_ticket, \
                  started_on=start, \
                  done_on=end, \
                  time=str(delta), \

@@ -1,4 +1,4 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Q
-from django.utils.timezone import utc
+from django.utils.timezone import utc, make_aware, get_current_timezone
 
 from traq.utils import querySetToJSON
 from traq.permissions import STAFF_GROUP, CLIENT_GROUP
@@ -153,16 +153,20 @@ def _miniIntervalHelper(request):
         # default timesheet period: 16th of current month to the 15th of next month
         # NOTE/TODO: may make date range change depending where you are in the month.
         # i.e. seeing current-future timesheet vs. past-current timesheet
-        now = datetime(date.today().year, date.today().month, 15)#.replace(tzinfo=utc)
+        now = datetime(date.today().year, date.today().month, 15)
         now = now.replace(hour=0, minute=0)
         delta = now - timedelta(days=30)
-        earlier = datetime(delta.year, delta.month, 16)#.replace(tzinfo=utc)
+        earlier = datetime(delta.year, delta.month, 16)
         earlier = earlier.replace(hour=0, minute=0)
         interval = (earlier.date(), now.date())
 
         if not request.GET.get('submit'):
             form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})
-    
+
+    # we need to convert the date and datetime objects into aware datetime objects
+    interval = (make_aware(datetime.combine(interval[0], time()), get_current_timezone()),
+                make_aware(datetime.combine(interval[1], time()), get_current_timezone()))
+    now = make_aware(now, get_current_timezone())
     _td = interval[1] - interval[0]
     actual_td = _td.days + 1
     date_list = [now - timedelta(days=x) for x in range(0, actual_td)]
