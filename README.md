@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/bcomnes/traq.svg?branch=master)](https://travis-ci.org/bcomnes/traq)
+[![Build Status](https://travis-ci.org/PSU-OIT-ARC/traq.svg?branch=master)](https://travis-ci.org/PSU-OIT-ARC/traq)
 
 # Install
 
