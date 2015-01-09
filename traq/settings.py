@@ -35,7 +35,7 @@ DATABASES = {
         'NAME': variable("DB_NAME", 'traq'),
         'USER': variable("DB_USER", 'root'),
         'PASSWORD': variable("DB_PASSWORD", ''),
-        'HOST': '',
+        'HOST': variable("DB_HOST", ""),
         'PORT': '',
     }
 }

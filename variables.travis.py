@@ -13,4 +13,6 @@ DB_USER = 'root'
 
 DB_PASSWORD = ''
 
+DB_HOST = ''
+
 SECRET_KEY = 'foobar'
