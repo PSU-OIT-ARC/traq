@@ -1,5 +1,5 @@
 import sys, os
-from .settings import LDAP_URL, LDAP_BASE_DN, LDAP_DISABLED
+from .settings import LDAP_DISABLED
 from arcutils import ldap
 from djangocas.backends import CASBackend
 from django.contrib.auth.models import User, Group

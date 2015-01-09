@@ -2,28 +2,15 @@
 
 # Install
 
-Make sure you are on the correct branch
-
 ## Full Install and Setup
-
 If you want to install requirements, create a local db and load
 some dummy data, and run tests all at once just run:
 
     make init
 
-## Requirements
+## Minimal Install and Setup (for production)
 
-Create a virtual environment, and install the required packages in it:
-
-    virtualenv --no-site-packages -p python3 .env
-    source .env/bin/activate
     make install
-
-## Settings
-Create a settings file from the template, and fill in the blanks:
-
-    cp traq/demo_settings.py traq/local_settings.py
-    vim traq/local_settings.py
 
 ## Databases
 To update/recreate the database
@@ -56,3 +43,5 @@ To test the site, use either
 Or
 
     make coverage
+
+Then go to http://<host|ip>:port/htmlcov/index.html for the report

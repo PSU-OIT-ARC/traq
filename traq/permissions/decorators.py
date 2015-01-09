@@ -6,7 +6,6 @@ from django.core.urlresolvers import reverse
 from djangocas.views import login as cas_login
 from traq.projects.models import Project
 from traq.todos.models import ToDo
-from . import checkers
 
 def can_view_project(fn):
     """
