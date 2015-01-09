@@ -6,6 +6,7 @@ sudo: false
 # command to install dependencies
 install:
   - cp variables.travis.py variables.py
+  - make recreate-db
   - make install
 # command to run tests
 script: make test
