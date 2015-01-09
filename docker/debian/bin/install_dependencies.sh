@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LOCAL_PATH=/usr/local/docker
-
+export DEBIAN_FRONTEND=noninteractive
 
 # Refresh local APT cache
 apt-get update && \
