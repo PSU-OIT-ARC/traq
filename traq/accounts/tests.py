@@ -6,6 +6,7 @@ Replace this with more appropriate tests for your application.
 """
 import random as r
 import time, datetime
+import json
 from unittest.mock import patch, Mock
 from django.utils.timezone import now
 from django.contrib.auth.models import User, Group, Permission
@@ -34,7 +35,20 @@ class SimpleTest(TestCase):
         """
         self.assertEqual(1 + 1, 2)
 
-@patch("traq.templatetags.timesheet.get_image", new=Mock())
+# need to mockup the JSON that reddit returns
+json_binary = json.dumps({
+    "data": {
+        "children": [
+            {
+                "data": {
+                    "url": "http://b.thumbs.redditmedia.com/cbzTf1qlV61zh4RfdQNbWBe-cQFkytvrIHmYvEevc5I.jpg",
+                    "thumbnail": "http://b.thumbs.redditmedia.com/cbzTf1qlV61zh4RfdQNbWBe-cQFkytvrIHmYvEevc5I.jpg?1"
+                }
+            }
+        ]
+    }
+}).encode("utf8")
+@patch("traq.templatetags.timesheet.urllib.request.urlopen", new=Mock(return_value=Mock(read=lambda: json_binary)))
 class TimesheetTest(TestCase):
 
     ticket_titles = ("Need additional text marquee on header and footer.", \
