@@ -1,35 +1,16 @@
-from .settings import LDAP_URL, LDAP_BASE_DN
-
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
-BASE_URL = 'http://traq.research.pdx.edu' # no trailing slash
+# if you're having trouble connecting to LDAP set this to True so you can login
+# to track, bypassing LDAP group checks
+LDAP_DISABLED = False
 
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
+# ('Your Name', 'your_email@example.com'),
+ADMINS = []
 
-MANAGERS = ADMINS
+DB_NAME = 'traq'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'traq',                      # Or path to database file if using sqlite3.
-        'USER': 'root',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
+DB_USER = 'root'
 
-LDAP = {
-    'default': {
-        'host': LDAP_URL,
-        'username': 'traq',
-        'password': '',
-        'search_dn': LDAP_BASE_DN,
-    }
-}
+DB_PASSWORD = ''
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'fdsfasljfdsalkff8904328423jklj342j'
+SECRET_KEY = 'foobar'
