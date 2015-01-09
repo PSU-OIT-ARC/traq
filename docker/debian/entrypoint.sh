@@ -31,5 +31,6 @@ fi
 
 echo "Starting services..."
 service apache2 start
+service mysql start
 service supervisor start
 exec /bin/bash
