@@ -9,7 +9,7 @@ django-filter==0.8
 -e git+https://github.com/mdj2/djangocas.git@6b5dc4c012b287b7e02b5f6336697cb01955915b#egg=djangocas-master
 model-mommy==1.2.2
 pyasn1==0.1.7
-python3-ldap==0.9.6.2
+ldap3==0.9.7.1
 pytz==2014.9
 six==1.7.3
 varlet
