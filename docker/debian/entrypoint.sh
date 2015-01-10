@@ -5,6 +5,11 @@
 BASE_PATH="/webapps"
 PROJECT_NAME='traq'
 
+echo "Starting services..."
+service apache2 start
+service mysql start
+service supervisor start
+
 if [[ ! -d "${BASE_PATH}" ]]; then
   mkdir ${BASE_PATH}
   cd ${BASE_PATH}
@@ -29,8 +34,4 @@ if [[ ! -d "media" ]]; then
   ln -sv /opt/host/${PROJECT_NAME}/media .
 fi
 
-echo "Starting services..."
-service apache2 start
-service mysql start
-service supervisor start
 exec /bin/bash
