@@ -27,6 +27,8 @@ cp /opt/host/${PROJECT_NAME}/traq/local_settings.docker.py traq/local_settings.p
 echo "Bootstrapping..."
 virtualenv --no-site-packages --python=python3 .env
 source .env/bin/activate
+pip install -r requirements.txt
+make recreate-db
 make install
 
 echo "Configuring file system..."

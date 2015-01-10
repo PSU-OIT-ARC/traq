@@ -63,7 +63,7 @@ clean:
 	find . -iname "__pycache__" -delete
 
 recreate-db: $(VENV_DIR)
-	mysql -u root -e 'drop database $(PROJECT_NAME);' || true
+	mysql -u root -e 'drop database if exists $(PROJECT_NAME);'
 	mysql -u root -e 'create database $(PROJECT_NAME);'
 	$(MANAGE) migrate --noinput
 	$(MANAGE) loaddata initial_data
