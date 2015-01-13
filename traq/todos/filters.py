@@ -52,7 +52,6 @@ class BacklogFilterSet(ToDoPriorityFilterSet):
         if not self.data:
             qdict = QueryDict('sprint_end=%s&estimate=%s' % (project.backlog(), False))
             self.data = qdict
-        print(self.data)
         self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project))
         self.filters.pop('status')
         self.filters.pop('priority')
