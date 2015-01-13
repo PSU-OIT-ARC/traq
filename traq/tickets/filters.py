@@ -122,12 +122,15 @@ class TicketFilterSet(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         project_id = kwargs.pop('project_id', None)
+        status = kwargs.pop('status', None)
         if project_id is not None:
             project = get_object_or_404(Project, pk=project_id)
         else:
             project = None
         super(TicketFilterSet, self).__init__(*args, **kwargs)
         self.filters['sprint_end'].widget=forms.Select(choices = get_choices(self.Meta.model, project=project),)
+        if status is not None:
+            self.filters['status'].extra.update({'queryset':TicketStatus.objects.filter(pk__in=status)})
 
     class Meta:
         model = Ticket
