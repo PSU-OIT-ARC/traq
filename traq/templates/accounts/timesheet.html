@@ -69,7 +69,7 @@
 				    
 				    {% else %}
 				    {% get_image as image %}
-				    	<p class="text-muted">No work found. {#% why %#}</p>
+				    	<p class="text-muted">No work found.</p>
 				    	<!-- WARNING: repeated use of imgurize may cause HTTP Error 429: Too Many Requests. -->
 				    	{#% comment %#}
 				    	<a href="{{ image.0 }}"><img src="{{ image.1 }}" /></a>

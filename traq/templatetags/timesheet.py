@@ -30,12 +30,3 @@ def imgurize():
 @register.assignment_tag
 def get_image():
     return r.choice(imgur_images)
-
-whys = ("... why?",
-    "Sad panda :(",
-    "Aw, we missed you.",
-    "Woo-hoo!")
-
-@register.simple_tag
-def why():
-    return r.choice(whys)
