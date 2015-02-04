@@ -84,7 +84,11 @@ class TimesheetTest(TestCase):
     def create_tickets(self):
         # This ticket+work is within the date range
         self.inrange_ticket = make(Ticket, title="In range", assigned_to=self.admin)
-        end = self.end_date - datetime.timedelta(days=20)
+        # the default interval for the timesheet is the 15th of the current
+        # month, to the 16th of the previous month, so the end date of the work
+        # must not be greater than 15 -- otherwise the tests will fail if they
+        # run at the beginning of a month
+        end = self.end_date - datetime.timedelta(days=5)
         end = end.replace(tzinfo=utc)
         delta = datetime.timedelta(hours=r.randint(1,7))
         start = end - delta
