@@ -1,12 +1,20 @@
+from datetime import timedelta
+from pytz import timezone
+import logging
 import math
 import json
-from pytz import timezone
+
 from django.conf import settings as SETTINGS
-from datetime import timedelta
-from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import utc, now
+from django.dispatch import receiver
+from django.db import models
+
+from github_hook.models import hook_signal
+
 from ..utils import dictfetchall, jsonhandler
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectManager(models.Manager):
@@ -345,5 +353,16 @@ class Milestone(models.Model):
 
 # circular dependance problem
 from ..tickets.models import Ticket, Work
+from .webhooks import handle_webhook
 
+@receiver(hook_signal)
+def process_webhook(sender, **kwargs):
+    """
+    TBD
+    """
+    if 'payload' not in kwargs:
+        logger.warning("Model-based hook definition are ignored.")
+        return
 
+    logger.info("Dispatching webhook...%s" % (kwargs.get('payload')))
+    handle_webhook(kwargs.pop('request'), kwargs.pop('payload'))
