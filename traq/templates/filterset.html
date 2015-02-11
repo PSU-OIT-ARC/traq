@@ -16,11 +16,38 @@
 {# TODO: enable better dependency handling and loading of Javascript assets #}
 <script type="text/javascript">
     $(document).ready(function() {
-            $('select').addClass('form-control');
+    $('select').addClass('form-control');
     $('#minmax, #closethis').click(function(){
         $('.filterset').toggle();})
     $("#id_filterset_form input,select").change(function() {
       $("#id_filterset_form").submit();
     });
+    if($("#id_sprint_end").size()){
+        due = $("#id_sprint_end");
+        date = $("<input type='date' name='sprint_end'>").addClass('form-control').hide();
+        cal = $("<div class='glyphicon glyphicon-calendar'></div>").css('padding-left','5px');
+        close = $("<div class='glyphicon glyphicon-remove'></div>").css('padding-left','5px').hide();
+        due.after(date);
+        due.after(cal);
+        date.after(close);
+        cal.click(handler)
+        close.click(handler)
+
+        function handler(){
+            due.toggle();
+            cal.toggle();
+            close.toggle();
+            date.toggle();
+            };
+
+        date.keypress(function(e){
+            if(e.which == 13){
+              $("#id_filterset_form").submit();
+            }
+        });
+        date.blur(function(){
+              $("#id_filterset_form").submit();
+            });
+    }
   });
 </script>
