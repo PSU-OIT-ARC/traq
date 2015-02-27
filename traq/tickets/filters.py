@@ -112,9 +112,13 @@ class DueOnFilter(django_filters.DateFilter):
             qs = qs.distinct()
         return qs
 
+class CustomSelectMultiple(forms.SelectMultiple):
+    class Media:
+        css = {'screen':('css/bootstrap-multiselect.css',)}
+        js= ('js/bootstrap-multiselect.js','js/multiselect.js','js/filterset.js',)
 
 class TicketFilterSet(django_filters.FilterSet):
-    status = django_filters.ModelChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all())
+    status = django_filters.ModelMultipleChoiceFilter('status', label=_('Status'), queryset=TicketStatus.objects.all(), widget=CustomSelectMultiple())
     priority = django_filters.ModelChoiceFilter('priority', label=_('Priority'), queryset=TicketPriority.objects.all())
     sprint_end = DueOnFilter('due_on', label=_('Due On'), lookup_type='range', distinct=True)
     due_range = StartDateRangeFilter('due_on', label=_('Due Date'))

@@ -9,28 +9,21 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
-
     <title>{% block page_title %}Deafult Title{% endblock %} - Traq</title>
     <!-- Bootstrap core CSS -->
     <link href="{% cdn_url '/bootstrap/3.3.1/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{{STATIC_URL}}css/site_bootstrap.css" rel="stylesheet">
     {% block styles %}{% endblock %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//cdn.research.pdx.edu/jquery/2.1.1/jquery-2.1.1.min.js"></script>
     <script type='text/javascript' src='{{ STATIC_URL }}js/cssua.min.js'></script>
     {% block scripts %}{% endblock %}
-
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    {% block form_media %}
+      {{ filterset.form.media }}
+      {{ form.media }}
+    {% endblock %}
   </head>
 
   <body>
-
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -70,7 +63,7 @@
 
     <div class="container-fluid">
       <div id='content' class="container ">
-        <!-- django messanging tool --> 
+        <!-- django messanging tool -->
         {% if messages %}
             <div class="messages">
             {% for message in messages %}
@@ -82,7 +75,7 @@
         {% block content %}{% endblock %}
       <div class="clear"></div>
     </div>
-    
+
     <div id="footer">
     {% block footer %}
         <hr />
@@ -104,7 +97,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% cdn_url '/bootstrap/3.3.1/js/bootstrap.min.js' %}"></script>
+   <script src="{% cdn_url '/bootstrap/3.3.1/js/bootstrap.min.js' %}"></script>
   </body>
 </html>
 

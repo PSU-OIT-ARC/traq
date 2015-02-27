@@ -6,12 +6,12 @@ from django import forms
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 from .models import (
-    Ticket, 
-    Comment, 
-    Work, 
-    TicketStatus, 
-    TicketPriority, 
-    WorkType, 
+    Ticket,
+    Comment,
+    Work,
+    TicketStatus,
+    TicketPriority,
+    WorkType,
     TicketFile,
 )
 from ..projects.models import Component, Milestone
@@ -19,7 +19,7 @@ from ..projects.models import Component, Milestone
 class TicketForm(forms.ModelForm):
     """Ticket creation and editing form"""
     # these are fields that aren't part of the Ticket model, so they need to be
-    # added here 
+    # added here
     add_work = forms.BooleanField(required=False)
     files = forms.FileField(required=False, widget=forms.FileInput(attrs={"multiple": True}))
     existing_files = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple())
@@ -32,20 +32,20 @@ class TicketForm(forms.ModelForm):
         self.user = kwargs.pop("user")
         self.todos = kwargs.pop('todo', None)
         super(TicketForm, self).__init__(*args, **kwargs)
-        
+
         # if this is a new ticket, we need to set some additional fields
         if self.instance.pk is None:
             self.instance.created_by = self.user
             self.instance.project = project
-        
+
         if project.is_scrum:
-            self.fields['due_on'].initial = project.current_sprint_end 
+            self.fields['due_on'].initial = project.current_sprint_end
         # remove the blank choices from the fields
         self.fields['status'].empty_label = None
         self.fields['priority'].empty_label = None
         self.fields['component'].empty_label = None
         self.fields['assigned_to'].queryset = User.objects.filter(is_active=True, groups__name='arc')
-        
+
         # set some sensible default values
         if not self.is_bound:
             self.fields['status'].initial = TicketStatus.objects.get(is_default=1)
@@ -54,7 +54,7 @@ class TicketForm(forms.ModelForm):
             self.fields['estimated_time'].initial = "1:00"
             self.fields['assigned_to'].initial = self.user
             self.fields['type'].initial = 1
-            
+
         if self.todos:
             self.fields['body'].initial = "%s " % self.todos.body
 
@@ -69,7 +69,7 @@ class TicketForm(forms.ModelForm):
         self.fields['existing_files'].queryset = TicketFile.objects.filter(ticket=self.instance)
 
         self.fields['type'].help_text = u"New: Client-driven feature work. \nCode Maintenace: Refactoring and revisions. \nBug Fixes: yep."
-    
+
     def hasFiles(self):
         # does this Ticket have any files associated with it?
         return self.fields['existing_files'].queryset.count() != 0
@@ -81,7 +81,7 @@ class TicketForm(forms.ModelForm):
         body = cleaned_data.get("body", None)
         title = cleaned_data.get("title", None)
         if body and not title:
-            # keep the title fairly short  
+            # keep the title fairly short
             max_length = min(Ticket._meta.get_field('title').max_length, 80)
             if len(body) > max_length:
                 last_space = body.rfind(' ', 0, max_length)
@@ -125,23 +125,23 @@ class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = (
-            'title', 
-            'body', 
-            'started_on', 
-            'estimated_time', 
+            'title',
+            'body',
+            'started_on',
+            'estimated_time',
             'is_deleted',
-            'is_extra', 
+            'is_extra',
             'is_internal',
-            'assigned_to', 
-            'status', 
-            'priority', 
+            'assigned_to',
+            'status',
+            'priority',
             'component',
             'milestone',
             'due_on',
             'release',
             'branch',
             'type',
-            
+
         )
 
         widgets = {
@@ -153,14 +153,14 @@ class TicketForm(forms.ModelForm):
 
 class CommentForm(forms.ModelForm):
     cc = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True).exclude(groups__isnull=True), required=False)
-    
+
     def __init__(self, *args, **kwargs):
         # these fields won't appear on the form; they need to be specified by
         # the caller
         created_by = kwargs.pop("created_by")
-        
+
         ticket = kwargs.pop("ticket", None)
-        
+
         todo = kwargs.pop('todo', None)
         super(CommentForm, self).__init__(*args, **kwargs)
 
@@ -180,7 +180,9 @@ class CommentForm(forms.ModelForm):
             'body',
             'is_deleted',
             )
-
+    class Media:
+        css = {'screen':('css/bootstrap-multiselect.css',)}
+        js = ('js/bootstrap-multiselect.js', 'js/multiselect.js',)
 
 class WorkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -273,12 +275,12 @@ class BulkForm(forms.Form):
                 if is_being_updated and corresponding_data == None:
                     # if the field has an empty value specified, then it is ok
                     empty_ok = getattr(self.fields[corresponding_name], 'empty_label', None)
-                    if not empty_ok: 
+                    if not empty_ok:
                         self._errors[corresponding_name] = self.error_class(['Fail'])
 
         return cleaned
 
-    def bulkUpdate(self, ticket_ids):    
+    def bulkUpdate(self, ticket_ids):
         # figure out all the fields that needs to be updated on a ticket
         change_to = {}
         for k, field in self.fields.items():

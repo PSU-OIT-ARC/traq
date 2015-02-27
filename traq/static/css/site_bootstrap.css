@@ -42,10 +42,9 @@ body {
     font-size: 13px;
 }
 
-select.form-control {
-    height:25px;
+#deselect-all {
+    border-radius: 4px;
 }
-
 ul li {
     list-style:none;
 }
