@@ -1,4 +1,4 @@
-from urllib import urlencode
+from urllib.parse import urlencode
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -6,7 +6,6 @@ from django.core.urlresolvers import reverse
 from djangocas.views import login as cas_login
 from traq.projects.models import Project
 from traq.todos.models import ToDo
-from . import checkers
 
 def can_view_project(fn):
     """

@@ -12,7 +12,7 @@
 
     <title>{% block page_title %}Deafult Title{% endblock %} - Traq</title>
     <!-- Bootstrap core CSS -->
-    <link href="{{STATIC_URL}}bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% cdn_url '/bootstrap/3.3.1/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{{STATIC_URL}}css/site_bootstrap.css" rel="stylesheet">
     {% block styles %}{% endblock %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -104,7 +104,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{{STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{% cdn_url '/bootstrap/3.3.1/js/bootstrap.min.js' %}"></script>
   </body>
 </html>
 

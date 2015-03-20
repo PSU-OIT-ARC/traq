@@ -1,9 +1,11 @@
-import ldap
+import sys, os
+from .settings import LDAP_DISABLED
+from arcutils import ldap
 from djangocas.backends import CASBackend
 from django.contrib.auth.models import User, Group
 from django.conf import settings as SETTINGS
 from django.core.exceptions import PermissionDenied
-from permissions import LOGIN_GROUPS
+from .permissions import LOGIN_GROUPS
 
 class PSUBackend(CASBackend):
     def get_or_init_user(self, username):
@@ -28,13 +30,15 @@ class PSUBackend(CASBackend):
             user.groups.add(group)
 
     def get_groups(self, username):
-        if SETTINGS.DEBUG and SETTINGS.LDAP_DISABLED:
+        """
+        Method to get the groups the user is involved in.
+        Calls an LDAP search.
+        Returns a list of groups.
+        """
+        if SETTINGS.DEBUG and LDAP_DISABLED:
             return LOGIN_GROUPS
 
-        # figure out which ldap groups this user belongs to
-        ld = ldap.initialize(SETTINGS.LDAP_URL)
-        ld.simple_bind_s()
-        results = ld.search_s(SETTINGS.LDAP_BASE_DN, ldap.SCOPE_SUBTREE, "(& (memberUid=" + username + ") (cn=*))")
+        results = ldap.ldapsearch("(& (memberUid=" + username + ") (cn=*))")
         groups = [result[1]['cn'][0] for result in results]
         try:
             user = User.objects.get(username=username)

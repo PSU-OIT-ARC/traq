@@ -19,7 +19,7 @@ def dashboard(request, project_id):
     sprint_end = request.session.get(sess_sprint, project.current_sprint_end)
     ticket_filterset = TicketFilterSet(request.GET, queryset=project.tickets(), project_id = project_id)
     todo_list = ToDo.objects.prefetch_related('tickets')
-    
+
     q = request.GET.get('q', '')
     if request.GET.get('q'):
         tickets = ticket_filterset.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
@@ -36,13 +36,13 @@ def dashboard(request, project_id):
     work = project.latestWork(10)
     milestones = Milestone.objects.filter(project=project)
     if sprint_end is not None:
-        next = sprint_end + timedelta(days=14) 
+        next = sprint_end + timedelta(days=14)
         prev = sprint_end - timedelta(days=14)
     else:
         next = None
         prev = None
-    tix_completed = tickets.filter(Q(status__name='Completed')|Q(status__name='Closed')).count() 
-    todos_completed = todos.filter(Q(status__name='Completed')|Q(status__name='Closed')).count() 
+    tix_completed = tickets.filter(Q(status__name='Completed')|Q(status__name='Closed')).count()
+    todos_completed = todos.filter(Q(status__name='Completed')|Q(status__name='Closed')).count()
     return render(request, "projects/dashboard.html", {
         'project': project,
         'tickets': tickets,
@@ -62,18 +62,18 @@ def dashboard(request, project_id):
 @can_view_project
 @permission_required('todos.change_todo')
 def backlog(request, project_id):
-    '''todos with no estimates''' 
+    '''todos with no estimates'''
     project = get_object_or_404(Project, pk=project_id)
-    
-    todo_filterset = BacklogFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1, estimate__isnull=True).order_by('rank'), project_id=project_id)
+    todo_filterset = BacklogFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'), project_id=project_id, )
     todos = todo_filterset
-    q = request.GET.get('q', None) 
+    q = request.GET.get('q', None)
     if q is not None:
         todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
-        
+
     return render(request, 'projects/backlog.html', {
         'todos': todos,
         'project': project,
+        'page':u'Backlog',
         'filterset': todo_filterset,
         })
 
@@ -82,17 +82,16 @@ def backlog(request, project_id):
 def sprint_planning(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     #open or in progress todos not completed but with an estimate
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id=5), project_id=project_id)
+    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, estimate__gte=0).exclude(status_id__in=[4,5]).order_by('status','rank', 'due_on'), project_id=project_id)
     todos = todo_filterset
-    for todo in todos:
-        print todo.estimate
-    q = request.GET.get('q', None) 
+    q = request.GET.get('q', None)
     if q is not None:
         todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
-        
+
     return render(request, 'projects/backlog.html', {
         'todos': todos,
         'project': project,
+        'page':u'Sprint Planning',
         'filterset': todo_filterset,
         })
 
@@ -105,12 +104,12 @@ def scrum(request, project_id):
         'project': project,
         'sprint_end': sprint_end,
         })
-    
-    
+
+
 def which_sprint(request, project_id):
     project = get_object_or_404(Project,pk= project_id)
     if request.method == "POST":
         end = request.POST.get('current_sprint_end', project.current_sprint_end)
         sprint = "sprint_end%d" % project.pk
-        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date() 
+        request.session[sprint] = datetime.strptime(end, "%Y-%m-%d").date()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

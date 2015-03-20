@@ -1,21 +1,28 @@
+[![Build Status](https://travis-ci.org/PSU-OIT-ARC/traq.svg?branch=master)](https://travis-ci.org/PSU-OIT-ARC/traq)
+
 # Install
-## Environment
 
-To build `python-ldap` with pip on centos, you need the `openldap24-libs-devel` package.
+## Full Install and Setup
+If you want to install requirements, create a local db and load
+some dummy data, and run tests all at once just run:
 
-    yum install openldap24-libs-devel
+    make init
 
-And when you install python-ldap with pip, you need to set these envars:
+## Minimal Install and Setup (for production)
 
-    export CPATH=/usr/include/openldap24
-    export LIBRARY_PATH=/usr/lib/openldap24/
+    make install
 
-Create a virtual environment, and install the required packages in it:
+## Databases
+To update/recreate the database
 
-    virtualenv-2.6 --no-site-packages .env
-    source .env/bin/activate
-    pip install -r requirements.txt
+    make recreate-db
 
+## Dummy Data
+To load some dummy projects and tickets
+
+    make load-dev-data
+
+## Media
 Create the media upload dir (for user files)
 
     mkdir htdocs/media
@@ -23,16 +30,18 @@ Create the media upload dir (for user files)
     # or make apache the owner of the dir
     chown apache htdocs/media || chmod 1777 htdocs/media
 
-## Settings
-Create a settings file from the template, and fill in the blanks:
+## Run
+Run the server
 
-    cp traq/demo_settings.py traq/local_settings.py
-    vim traq/local_settings.py
+    make
 
-## Running
-If running VM using Vagrant (e.g. with port forwarding guest: 8000 -> host: 8088), to be able to open the site from the host OS, run the site (in the VM) using:
+## Test
+To test the site, use either
 
-    python manage.py runserver 0.0.0.0:8000
+    make test
 
-In host, open browser to URL: localhost:8088
-[[Source](http://stackoverflow.com/questions/5984217/vagrants-port-forwarding-not-working)]
+Or
+
+    make coverage
+
+Then go to http://<host|ip>:port/htmlcov/index.html for the report

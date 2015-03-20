@@ -1,5 +1,6 @@
 from itertools import chain
 from datetime import timedelta, datetime
+from django.utils.timezone import now
 from django.conf import settings as SETTINGS
 from django.db import models
 from django.contrib.auth.models import User
@@ -24,7 +25,7 @@ class TicketStatus(models.Model):
         ordering = ['rank']
         db_table = 'ticket_status'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketPriority(models.Model):
@@ -37,7 +38,7 @@ class TicketPriority(models.Model):
         ordering = ['rank']
         db_table = 'ticket_priority'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketType(models.Model):
@@ -45,12 +46,12 @@ class TicketType(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, null=True, blank=True, default=None)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class TicketManager(models.Manager):
-    def get_query_set(self):
-        return super(TicketManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(TicketManager, self).get_queryset().filter(is_deleted=False)
 
     def tickets(self):
         """Return a query set of tickets with all the useful related fields and
@@ -82,7 +83,7 @@ class Ticket(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    started_on = models.DateTimeField(default=lambda:datetime.now())
+    started_on = models.DateTimeField(default=now)
     edited_on = models.DateTimeField(auto_now=True)
     estimated_time = models.TimeField(null=True, default=None)
     is_deleted = models.BooleanField(default=False)
@@ -106,8 +107,16 @@ class Ticket(models.Model):
     
     objects = TicketManager()
 
+    @property
+    def due(self):
+        """Return due_on or milestone.due_on or None."""
+        if self.due_on:
+            return self.due_on
+        elif self.milestone:
+            return self.milestone.due_on
+
     def isOverDue(self):
-        return self.due_on < datetime.utcnow().replace(tzinfo=utc)
+        return False if self.due_on is None else self.due_on < now()
 
     def finishWork(self):
         work = Work.objects.filter(ticket=self).exclude(state=Work.DONE)
@@ -199,7 +208,7 @@ class Ticket(models.Model):
             msg.attach_alternative(html_content, "text/html")
             msg.send()
     
-    def __unicode__(self):
+    def __str__(self):
         return u'#%s: %s' % (self.pk, self.title) 
 
     class Meta:
@@ -218,7 +227,7 @@ class TicketFile(models.Model):
         db_table = "ticket_file"
         ordering = ['file']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.file.name)
 
 class WorkTypeManager(models.Manager):
@@ -242,12 +251,12 @@ class WorkType(models.Model):
         ordering = ['rank']
         db_table = 'work_type'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class WorkManager(models.Manager):
-    def get_query_set(self):
-        return super(WorkManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(WorkManager, self).get_queryset().filter(is_deleted=False)
 
     def pauseRunning(self, created_by):
         """Sets the state to pause for all running work created by `created_by`.
@@ -297,7 +306,7 @@ class Work(models.Model):
             # since the clock is still ticking, we need to calculate the amount
             # of time since the work was paused, or created_on
             start = self.state_changed_on or self.created_on
-            delta = datetime.utcnow().replace(tzinfo=utc) - start
+            delta = now() - start
             return (datetime.combine(datetime.today(), self.time) + delta).time()
         else:
             raise ValueError("Work object with pk=%d has an invalid work state, %d" % (self.pk, self.state))
@@ -311,10 +320,10 @@ class Work(models.Model):
         self.state = Work.PAUSED
         # calculate how much time has past since this work was last continued or created
         start = self.state_changed_on or self.created_on
-        delta = datetime.utcnow().replace(tzinfo=utc) - start
+        delta = now() - start
         t = (datetime.combine(datetime.today(), self.time) + delta).time()
         self.time = t
-        self.state_changed_on = datetime.now()
+        self.state_changed_on = now()
         self.save()
 
     def continue_(self):
@@ -322,7 +331,7 @@ class Work(models.Model):
         self.state = Work.RUNNING
         # this is important because it is required to calculate how much time
         # has elasped when the work is paused or set as done
-        self.state_changed_on = datetime.now()
+        self.state_changed_on = now()
         self.save()
 
     def done(self):
@@ -330,7 +339,7 @@ class Work(models.Model):
         # once the done_on date is set, it should never be changed because it
         # affects the billing reports
         if self.done_on is None:
-            self.done_on = datetime.now()
+            self.done_on = now()
 
     class Meta:
         db_table = 'work'
@@ -338,8 +347,8 @@ class Work(models.Model):
     objects = WorkManager()
 
 class CommentManager(models.Manager):
-    def get_query_set(self):
-        return super(CommentManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(CommentManager, self).get_queryset().filter(is_deleted=False)
 
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
@@ -413,10 +422,8 @@ class Comment(models.Model):
 def my_handler(sender, instance, **kwargs):
     if instance.todos.all():
         for todo in instance.todos.all():
-            todo.due_on = instance.due_on
+            todo.due_on = instance.due
             tic = Ticket.objects.filter(todos=todo).values_list('status', flat=True)
-            print instance.status
-            print tic
             if 1 in tic or 2 in tic or 3 in tic: 
                 todo.status_id=2
             else: 

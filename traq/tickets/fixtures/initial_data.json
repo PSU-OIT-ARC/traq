@@ -1,23 +1,62 @@
 [
-  {
-  "model":"tickets.TicketType",
-  "pk":1,
-  "fields": {
-    "name":"New Feature"
+    {
+        "model":"tickets.TicketType",
+        "pk":1,
+        "fields": {
+            "name":"New Feature"
+        }
+    },
+    {
+        "model":"tickets.TicketType",
+        "pk":2,
+        "fields": {
+            "name":"Bug Fixes"
+        }
+    },
+    {
+        "model":"tickets.TicketType",
+        "pk":3,
+        "fields": {
+            "name":"Code Maintenance"
+        }
+    },
+    {
+        "model": "tickets.TicketStatus",
+        "pk": "1",
+        "fields": {
+            "rank": 1,
+            "name": "Open",
+            "is_default": true,
+            "importance": 1
+        }
+    },
+    {
+        "model": "tickets.TicketPriority",
+        "pk": "1",
+        "fields": {
+            "name": "Normal",
+            "rank": 1,
+            "is_default": true
+        }
+    },
+    {
+        "model": "tickets.Worktype",
+        "pk": "1",
+        "fields": {
+            "name": "New Feature",
+            "price": 100,
+            "rank": 1,
+            "is_default": true
+        }
+    },
+    {
+        "model": "tickets.Worktype",
+        "pk": "2",
+        "fields": {
+            "name": "New Feature",
+            "price": 100,
+            "rank": 2,
+            "is_default": false
+        }
     }
-  },
-  {
-  "model":"tickets.TicketType",
-  "pk":2,
-  "fields": {
-    "name":"Bug Fixes"
-    }
-  },
-  {
-  "model":"tickets.TicketType",
-  "pk":3,
-  "fields": {
-    "name":"Code Maintenance"
-    }
-  }
 ]

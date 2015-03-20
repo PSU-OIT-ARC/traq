@@ -111,7 +111,7 @@
         {% for todo in upcoming %}
           <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{% url "todos-detail" todo.pk %}">{{todo }}</a></td>
-            <td>{{todo.due_on |date:"SHORT_DATE_FORMAT"}}</td>
+            <td>{{todo.due |date:"SHORT_DATE_FORMAT"}}</td>
             {% empty %}
               No more todos
             {% endfor %}

@@ -1,4 +1,3 @@
-from datetime import datetime, time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
@@ -38,7 +37,6 @@ def detail(request, ticket_id):
     work = Work.objects.filter(ticket=ticket).filter(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     running_work = Work.objects.filter(ticket=ticket).exclude(state=Work.DONE).select_related("created_by", "type").order_by('-created_on')
     times = ticket.totalTimes()
-    
     return_to = request.GET.get('return_to', None)
 
     # this view has two forms on it. We multiplex between the two using a
@@ -138,7 +136,11 @@ def create(request, project_id):
 @permission_required('tickets.change_ticket')
 def bulk(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    ticket_ids = request.GET['tickets'].split(",")
+    # handled via javascript in the template, but still needs to check during tests.
+    if 'tickets' in request.GET:
+        ticket_ids = request.GET['tickets'].split(",")
+    else:
+        ticket_ids = [] 
     # TODO add permissions checking on a ticket level. 
 
     if request.method == "POST":

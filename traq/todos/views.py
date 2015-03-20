@@ -15,7 +15,6 @@ from traq.todos.forms import *
 from django.contrib.auth.decorators import permission_required
 from traq.permissions.decorators import can_view_project, can_view_todo
 import datetime
-from django.utils.timezone import now
 
 @can_view_project
 @permission_required('todos.add_todo')
@@ -25,9 +24,9 @@ def listing(request, project_id):
     todos = todo_filterset
     if project.is_scrum:
         backlog = project.current_sprint_end - datetime.timedelta(days=2)
-    else: 
+    else:
         backlog = None
-    
+
     q = request.GET.get('q', '')
     if request.GET.get('q'):
         todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
@@ -80,7 +79,7 @@ def create(request, project_id):
             # Go to the ticket detail page, or if they clicked the "Save and
             # add another ticket button, display the ticket form again
             if request.POST.get("submit", "submit").lower() == "submit":
-                return HttpResponseRedirect(reverse("todos-detail", args=(todo.pk,)))
+                return HttpResponseRedirect(reverse("todos-detail", args=[todo.pk,]))
                 #return HttpResponseRedirect(request.path)
             else:
                 return HttpResponseRedirect(request.path)
@@ -101,7 +100,7 @@ def create(request, project_id):
         'project': project,
     })
 
-@can_view_todo    
+@can_view_todo
 @permission_required('todos.add_todo')
 def detail(request, todo_id):
     todo = get_object_or_404(ToDo, pk=todo_id)
@@ -119,7 +118,7 @@ def detail(request, todo_id):
                 comment_form.save()
                 messages.success(request, 'Comment Added')
                 return HttpResponseRedirect(request.path)
-    
+
     return_to = request.GET.get('return_to', '')
     return render(request, 'todos/detail.html', {
         'project': project,
@@ -164,6 +163,9 @@ def edit(request, todo_id):
         'files':files,
     })
 
+"""
+This function has no entry in urls, and appears to never be called
+
 @permission_required('todos.change_todo')
 def comments_edit(request, comment_id):
     # there is no corresponding comments_create view since a comment is created
@@ -186,6 +188,7 @@ def comments_edit(request, comment_id):
         'ticket': ticket,
         'project': project,
     })
+"""
 
 @can_view_project
 @permission_required('todos.change_todo')
@@ -196,11 +199,11 @@ def prioritize(request, project_id):
             todo = get_object_or_404(ToDo, pk=pk)
             todo.rank = index
             todo.save()
-    	messages.success(request, 'To Do Items Prioritized')
+        messages.success(request, 'To Do Items Prioritized')
 
-    
+
     project = get_object_or_404(Project, pk=project_id)
-    todo_filterset = ToDoPriorityFilterSet(request.GET, queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id=1).order_by('rank'), project_id=project_id)
+    todo_filterset = ToDoPriorityFilterSet(request.GET, status = [1,2,3], queryset=ToDo.objects.filter(project=project, is_deleted=False, status_id__pk__in=[1,2]).order_by('rank'), project_id=project_id)
     todos = todo_filterset
     return render(request, 'todos/prioritize.html', {
         'todos': todos,
@@ -213,7 +216,7 @@ def prioritize(request, project_id):
 def bulk(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     todos_ids = request.GET['todos'].split(",")
-    # TODO add permissions checking on a ticket level. 
+    # TODO add permissions checking on a ticket level.
 
     if request.method == "POST":
         form = BulkToDoForm(request.POST, project=project)

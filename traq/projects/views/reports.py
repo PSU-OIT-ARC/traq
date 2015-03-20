@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.contrib import messages
 from django.template.loader import render_to_string
-from django.utils.timezone import utc
+from django.utils.timezone import utc, now
 from django.contrib.auth.models import User
 from ..forms import ReportIntervalForm, ReportFilterForm
 from ..models import Project, Component, Milestone
@@ -109,7 +109,7 @@ def component(request, project_id):
     # render as CSV?
     if request.GET.get('format', '') == 'csv':
         response = HttpResponse(content_type='text/csv')
-        filename = "report-" + datetime.now().strftime("%Y-%m-%d") + ".csv"
+        filename = "report-" + now().strftime("%Y-%m-%d") + ".csv"
         response['Content-Disposition'] = 'attachment; filename="%s"' % (filename)
         csv = UnicodeWriter(response)
         csv.writerow([interval[0].strftime("%Y-%m-%d"), interval[1].strftime("%Y-%m-%d")])
@@ -151,7 +151,6 @@ def invoice(request, project_id):
 
 def _intervalHelper(request, project_id=None):
     interval = ()
-    print project_id
     if request.GET.get('submit'):
         form = ReportIntervalForm(request.GET)
         if form.is_valid():
@@ -161,12 +160,12 @@ def _intervalHelper(request, project_id=None):
         project_start = project.created_on
     
     if interval == ():
-        now = datetime.utcnow().replace(tzinfo=utc)
+        now_ = now()
         if project_id:
             earlier = project_start
         else:
-            earlier = now - timedelta(days=30)
-        interval = (earlier.date(), now.date())
+            earlier = now_ - timedelta(days=30)
+        interval = (earlier.date(), now_.date())
 
         if not request.GET.get('submit'):
             form = ReportIntervalForm(initial={"start": interval[0], "end": interval[1]})

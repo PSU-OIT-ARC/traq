@@ -28,10 +28,12 @@
                 {% endif %}
             </th>
         </tr>
-        {% if w.description %}<tr class="{% cycle 'odd' 'even' %}">
-            <td colspan="3">{{ w.description }}</td>
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td colspan="2">{% if w.description %}{{ w.description }}{% else %}<em>No description given</em>{% endif %}</td>
+            <td>
+                <a href="{% url 'tickets-detail' w.ticket.pk %}" title="Ticket {{ w.ticket }}">#{{ w.ticket.pk }}</a>
+            </td>
         </tr>
-        {% endif %}
     {% empty %}
         <tr><th class="center">No work logged</th></tr>
     {% endfor %}

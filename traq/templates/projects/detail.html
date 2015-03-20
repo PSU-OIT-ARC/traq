@@ -14,7 +14,8 @@
 <hr>
 
 <script type="text/javascript">
-//TICKETS = {{ tickets_json|safe }};
+
+//TICKETS={{ tickets_json|safe }};
 
 $(document).ready(function(){
     $('#bulk-action').click(function(e){
@@ -28,21 +29,16 @@ $(document).ready(function(){
             return;
         }
         var query = vals.join(",");
-
         var href = $(this).attr('href');
         href += "?tickets=" + query;
         window.location = href;
     });
-})
+});
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/tickets_search.js"></script>
 <div class="col-md-8 pull-left-section-wrapper">
  <div class='row'>
-  {% if project.is_scrum %}
-    <h3 class='pull-left col-md-5 iblock pad5'><a href="{% url 'tickets-list' project.pk%}/?sprint_end={{project.current_sprint_end|date:'c'}}">Tickets</a> 
-  {% else %}
     <h3 class='pull-left col-md-5 iblock pad5'><a href="{% url 'tickets-list' project.pk%}">Tickets</a> 
-  {% endif %}
     <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a> |
     <a href="{% url 'tickets-bulk' project.pk %}" class="btn btn-primary btn-xs" id="bulk-action">Bulk Action</a>
   </h3>
@@ -76,7 +72,7 @@ $(document).ready(function(){
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td>
                         {% if perms.projects.change_milestone %}
-                            <a href="{% url 'milestones-edit' milestone.pk %}" class="discrete">{{ milestone.name }}</a></td>
+                            <a href="{% url 'milestones-detail' milestone.pk %}" class="discrete">{{ milestone.name }}</a></td>
                         {% else %}
                             {{ milestone.name }}
                         {% endif %}

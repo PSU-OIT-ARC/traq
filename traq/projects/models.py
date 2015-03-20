@@ -10,8 +10,10 @@ from ..utils import dictfetchall, jsonhandler
 
 
 class ProjectManager(models.Manager):
-    def get_query_set(self):
-        return super(ProjectManager, self).get_query_set().filter(is_deleted=False)
+    
+    
+    def get_queryset(self):
+        return super(ProjectManager, self).get_queryset().filter(is_deleted=False)
 
     def timeByUser(self, user, interval=()):
         sql_where = "(1 = 1)"
@@ -55,6 +57,11 @@ class ProjectManager(models.Manager):
 class Project(models.Model):
     ACTIVE = 1
     INACTIVE = 0
+
+    '''scrum stuff'''
+    BACKLOG_DAYS_BEFORE_SPRINT_END = 2
+    SPRINT_LENGTH = 14 #in days 
+
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     team_dynamix_id = models.IntegerField(default=None, blank=True, null=True)
@@ -84,7 +91,7 @@ class Project(models.Model):
     current_sprint_end= models.DateField(null=True, blank=True, verbose_name="Sprint End")  
     
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.name
 
     def createDefaultComponents(self):
@@ -198,13 +205,14 @@ class Project(models.Model):
         return queryset
 
     def get_next_sprint(self):
-        return (self.current_sprint_end or now().date()) + timedelta(days=14)
+        return (self.current_sprint_end or now().date()) + timedelta(days=self.SPRINT_LENGTH)
      
     def get_prev_sprint(self):
-        return (self.current_sprint_end or now().date()) - timedelta(days=14)
+        return (self.current_sprint_end or now().date()) - timedelta(days=self.SPRINT_LENGTH)
         
     def backlog(self):
-        return (self.current_sprint_end - timedelta(days=2)).strftime('%Y-%m-%d')
+        '''returns date BACKLOG_DAYS_BEFORE_SPRINT_END days before current sprint end'''
+        return (self.current_sprint_end - timedelta(days=self.BACKLOG_DAYS_BEFORE_SPRINT_END)).strftime('%Y-%m-%d')
 
     class Meta:
         db_table = 'project'
@@ -214,8 +222,8 @@ class Project(models.Model):
                 )
 
 class ComponentManager(models.Manager):
-    def get_query_set(self):
-        return super(ComponentManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(ComponentManager, self).get_queryset().filter(is_deleted=False)
 
     def timeByUser(self, project, user, interval=()):
         sql_where = "(1 = 1)"
@@ -306,12 +314,12 @@ class Component(models.Model):
         db_table = 'component'
         ordering = ['rank']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % (self.name)
 
 class MilestoneManager(models.Manager):
-    def get_query_set(self):
-        return super(MilestoneManager, self).get_query_set().filter(is_deleted=False)
+    def get_queryset(self):
+        return super(MilestoneManager, self).get_queryset().filter(is_deleted=False)
 
 class Milestone(models.Model):
     milestone_id = models.AutoField(primary_key=True)
@@ -329,7 +337,7 @@ class Milestone(models.Model):
         db_table = 'milestone'
         ordering = ['due_on']
 
-    def __unicode__(self):
+    def __str__(self):
         utc_date = self.due_on.replace(tzinfo=utc)
         tz = timezone(SETTINGS.TIME_ZONE)
         return u'%s %s' % (self.name, utc_date.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")) 

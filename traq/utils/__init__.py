@@ -1,6 +1,6 @@
 import json
-import csv, codecs, cStringIO
-from datetime import timedelta, time, datetime
+import csv, codecs, io
+from datetime import time
 from django.db import connection
 from django.forms.util import ErrorList
 
@@ -20,7 +20,7 @@ def jsonhandler(obj):
     elif isinstance(obj, time):
         return str(time)
     else:
-        raise TypeError, 'Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj))
+        raise Exception('TypeError: Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
 
 def querySetToJSON(qs):
     """Return a json string of a queryset object as an array containing dicts"""
@@ -37,7 +37,7 @@ class UnicodeWriter:
 
     def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
         # Redirect output to a queue
-        self.queue = cStringIO.StringIO()
+        self.queue = io.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
         self.stream = f
         self.encoder = codecs.getincrementalencoder(encoding)()
@@ -66,8 +66,9 @@ def get_next_scrum_day(dates, day):
     return None 
 
 class BootstrapErrorList(ErrorList):
-    def __unicode__(self):
+    def __str__(self):
         return self.as_divs()
     def as_divs(self):
         if not self: return u''
         return u'<div class="errorlist text-danger">%s</div>' % ''.join([u'<div class="error">%s</div>' % e for e in self])
+
