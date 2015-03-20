@@ -123,8 +123,9 @@ def timesheet(request):
     total_hours = timedelta(0)
     
     for w in work:
-        work_by_date[w.started_on.date()].append(w)
-        total_hours += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second)
+        if w.started_on.date() in work_by_date:
+            work_by_date[w.started_on.date()].append(w)
+            total_hours += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second)
 
     return render(request, "accounts/timesheet.html", {
         'tickets': tickets,
@@ -168,7 +169,7 @@ def _miniIntervalHelper(request):
                 make_aware(datetime.combine(interval[1], time()), get_current_timezone()))
     now = make_aware(now, get_current_timezone())
     _td = interval[1] - interval[0]
-    actual_td = _td.days + 1
+    actual_td = _td.days + 2
     date_list = [now - timedelta(days=x) for x in range(0, actual_td)]
 
     return form, interval, date_list
