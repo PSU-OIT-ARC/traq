@@ -141,6 +141,7 @@ def _miniIntervalHelper(request):
     interval = ()
     date_list = []
     actual_td = 0
+    timesheet_deadline = 16
     
     if request.GET.get('submit'):
 
@@ -152,9 +153,15 @@ def _miniIntervalHelper(request):
 
     if interval == ():        
         # default timesheet period: 16th of current month to the 15th of next month
-        # NOTE/TODO: may make date range change depending where you are in the month.
+        # Behavior: date range change depending where you are in the month;
         # i.e. seeing current-future timesheet vs. past-current timesheet
-        now = datetime(date.today().year, date.today().month, 15)
+        today = date.today()
+        if today.day < timesheet_deadline:  # if in the first half of month, see past-current timesheet
+            month = today.month
+        else:
+            month = today.month + 1 # Otherwise, see current-future (next period's) timesheet
+
+        now = datetime(today.year, month, 15)
         now = now.replace(hour=0, minute=0)
         delta = now - timedelta(days=30)
         earlier = datetime(delta.year, delta.month, 16)
@@ -169,7 +176,7 @@ def _miniIntervalHelper(request):
                 make_aware(datetime.combine(interval[1], time()), get_current_timezone()))
     now = make_aware(now, get_current_timezone())
     _td = interval[1] - interval[0]
-    actual_td = _td.days + 2
+    actual_td = _td.days + 1
     date_list = [now - timedelta(days=x) for x in range(0, actual_td)]
 
     return form, interval, date_list
