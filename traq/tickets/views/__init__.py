@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.db.models import Q
 from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
+from ..utils import get_user_ticket
 from traq.projects.models import Project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.todos.models import ToDo
@@ -18,6 +19,8 @@ from django.core.exceptions import PermissionDenied
 @permission_required('todos.add_todo')
 def detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
+    #get all other tickets assigned to the user
+    tickets = Ticket.objects.filter(assigned_to=request.user).values_list('pk', flat=True)
     todos = ticket.todos.all()
     #try to redirect client to todo item if it exists. else they'll get 403
     if todos:
@@ -43,7 +46,8 @@ def detail(request, ticket_id):
     # hidden form_type field on the page 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
     work_form = WorkForm(initial={"time": "00:30:00"}, user=request.user, ticket=ticket)
-
+    ticket_next = get_user_ticket(request.user.pk, ticket.pk, 1)
+    ticket_prev = get_user_ticket(request.user.pk, ticket.pk, -1)
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
         # was submitted
@@ -63,6 +67,9 @@ def detail(request, ticket_id):
                 return HttpResponseRedirect(request.path)
 
     return render(request, 'tickets/detail.html', {
+        'ticket_prev': ticket_prev,
+        'ticket_next': ticket_next,
+        'tickets': tickets,
         'project': project,
         'ticket': ticket,
         'comments': comments,

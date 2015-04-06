@@ -9,12 +9,22 @@
 {% block page_title %}{{ ticket.title }}{% endblock %}
 {% block content %}
 <h3>
-    <span class="label lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
-    #{{ ticket.pk }}: {{ ticket.title | truncatechars:50}}
-    {% if perms.tickets.change_ticket %}
-    <a href="{% url 'tickets-edit' ticket.pk %}" class="btn btn-primary btn-xs">Edit</a>
-    {% endif %}
-    <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a>
+    <div class="row">
+        <div class="col-md-8">
+            <span class="label lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
+            #{{ ticket.pk }}: {{ ticket.title | truncatechars:50}}
+            {% if perms.tickets.change_ticket %}
+            <a href="{% url 'tickets-edit' ticket.pk %}" class="btn btn-primary btn-xs">Edit</a>
+            {% endif %}
+            <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6"><a href="{% url 'tickets-detail' ticket_prev.pk %}" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-arrow-left"></span> Previous Ticket</a></div>
+                    <div class="col-md-6"><a href="{% url 'tickets-detail' ticket_next.pk %}" class="btn btn-primary btn-block">Next Ticket <span class="glyphicon glyphicon-arrow-right"></span></a></div>
+            </div>
+        </div>
+    </div>
 </h3>
 <hr>
 <div class="col-md-8 left-section-wrapper">
