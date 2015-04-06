@@ -57,9 +57,36 @@ class TraqCustomTest(TestCase):
                 priority=TicketPriority.objects.first(),
                 project=self.project,
                 component=self.component,
+                assigned_to_id=self.admin.pk
                 )
         ticket.save()
         self.ticket = ticket
+
+        ticket_2 = Ticket(
+                title='ticket 2',
+                body='body',
+                created_by=self.user,
+                status=TicketStatus.objects.first(),
+                priority=TicketPriority.objects.first(),
+                project=self.project,
+                component=self.component,
+                assigned_to_id=self.user.pk
+                )
+        ticket_2.save()
+        self.ticket_2 = ticket_2
+
+        ticket_3 = Ticket(
+                title='ticket 3',
+                body='body',
+                created_by=self.admin,
+                status=TicketStatus.objects.first(),
+                priority=TicketPriority.objects.first(),
+                project=self.project,
+                component=self.component,
+                assigned_to_id=self.admin.pk
+                )
+        ticket_3.save()
+        self.ticket_3 = ticket_3
 
         todo = ToDo(
                 title='todo',
