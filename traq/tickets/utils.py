@@ -14,7 +14,7 @@ def get_user_ticket(user_id, ticket_id, index_difference):
 
     """
     current = get_object_or_404(Ticket, pk=ticket_id)
-    tickets = list(Ticket.objects.filter(created_by_id=user_id))
+    tickets = list(Ticket.objects.filter(assigned_to_id=user_id))
     current_index = tickets.index(current)
     length = len(tickets)
     new_index = current_index + index_difference

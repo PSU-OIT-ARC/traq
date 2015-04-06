@@ -19,8 +19,6 @@ from django.core.exceptions import PermissionDenied
 @permission_required('todos.add_todo')
 def detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
-    #get all other tickets assigned to the user
-    tickets = Ticket.objects.filter(assigned_to=request.user).values_list('pk', flat=True)
     todos = ticket.todos.all()
     #try to redirect client to todo item if it exists. else they'll get 403
     if todos:
@@ -69,7 +67,6 @@ def detail(request, ticket_id):
     return render(request, 'tickets/detail.html', {
         'ticket_prev': ticket_prev,
         'ticket_next': ticket_next,
-        'tickets': tickets,
         'project': project,
         'ticket': ticket,
         'comments': comments,
