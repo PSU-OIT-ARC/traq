@@ -30,6 +30,8 @@ def listing(request, project_id):
     q = request.GET.get('q', '')
     if request.GET.get('q'):
         todos = todos.qs.filter(Q(body__icontains=q)|Q(title__icontains=q)|Q(pk__icontains=q))
+
+    do_pagination = False
     if not request.GET.get('showall', False):
         paginator = Paginator(todos, TICKETS_PAGINATE_BY)
         page = request.GET.get('page')
