@@ -3,16 +3,18 @@
 {% load tickets %}
 {% load addcss %}
 
+{% block form_media %}
+    {{ comment_form.media}}
+{% endblock %}
 {% block page_title %}{{ ticket.title }}{% endblock %}
 {% block content %}
-
 <h3>
     <span class="label lameo ticket-priority ticket-priority-{{ ticket.priority|slugify }} ticket-status-{{ ticket.status|slugify }}">{{ ticket.priority }}</span>
-    #{{ ticket.pk }}: {{ ticket.title | truncatechars:50}} 
+    #{{ ticket.pk }}: {{ ticket.title | truncatechars:50}}
     {% if perms.tickets.change_ticket %}
     <a href="{% url 'tickets-edit' ticket.pk %}" class="btn btn-primary btn-xs">Edit</a>
     {% endif %}
-    <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a> 
+    <a href="{% url 'tickets-create' project.pk %}" class="btn btn-primary btn-xs">New Ticket</a>
 </h3>
 <hr>
 <div class="col-md-8 left-section-wrapper">
@@ -49,7 +51,7 @@
                 <ul class='col-md-12 pull-left'><strong>To Do Items:</strong>
                 {% for todo in ticket.todos.all %}
                     <li style='width:100%'><a href="{% url 'todos-detail' todo.pk %}">#{{ todo.pk }} {{ todo.title | truncatechars:50 }}</a></li>
-                {% endfor %} 
+                {% endfor %}
                 </ul>
             {% endif %}
             <div class="clear"></div>
@@ -93,7 +95,7 @@
             {{ comment_form.body }}
         <div class='panel-footer'>
             {{comment_form.cc.label}}: {{ comment_form.cc }}
-            <input class='btn btn-primary btn-xs'type="submit" name="submit" value="Add" class="submit float-right" />
+            <input class='btn btn-primary btn-sm pull-right' type="submit" name="submit" value="Add" class="submit float-right" />
         </form>
         </div>
     </div>
@@ -125,7 +127,7 @@
         {% endfor %}
         </table>
     </div>
-    
+
     <div class="panel panel-default right-section-block">
       <div class='panel-heading' >Add Work </div>
       <div class='panel-body'>

@@ -1,4 +1,6 @@
-{% extends "base.html" %}
+{% extends "bootstrap_base.html" %}
+
+{% load addcss %}
 
 {% block page_title %}Edit Comment{% endblock %}
 {% block breadcrums %}
@@ -14,8 +16,13 @@
 <h2>Edit Comment</h2>
 <form method="post" action="">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" name="submit" value="Submit" />
+    <div class='form-group'>
+    {{ form.cc.label }}
+    {{ form.cc }}
+    {{ form.body | bootstrap }}
+    {{ form.is_deleted | bootstrap}}
+    <input class='btn btn-primary btn-sm' type="submit" name="submit" value="Submit" />
+</div>
 </form>
 {% endblock %}
 

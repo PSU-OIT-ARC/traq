@@ -12,15 +12,7 @@
     {% endfor %}
     </form>
 </div>
-
-{# TODO: enable better dependency handling and loading of Javascript assets #}
-<script type="text/javascript">
-    $(document).ready(function() {
-            $('select').addClass('form-control');
-    $('#minmax, #closethis').click(function(){
-        $('.filterset').toggle();})
-    $("#id_filterset_form input,select").change(function() {
-      $("#id_filterset_form").submit();
-    });
-  });
+<script>
+//filterset.js needs this template variable
+var DUE_PARAM = '{{params.sprint_end}}';
 </script>
