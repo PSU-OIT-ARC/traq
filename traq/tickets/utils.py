@@ -15,7 +15,12 @@ def get_user_ticket(user_id, ticket_id, index_difference):
     """
     current = get_object_or_404(Ticket, pk=ticket_id)
     tickets = list(Ticket.objects.filter(assigned_to_id=user_id))
-    current_index = tickets.index(current)
+    try:
+        current_index = tickets.index(current)
+    except ValueError as e:
+        # currently looking at someone elses tickets.
+        # Gonna get sent back to your first ticket
+        current_index = tickets.index(Ticket.objects.first())
     length = len(tickets)
     new_index = current_index + index_difference
     if new_index < 0:
