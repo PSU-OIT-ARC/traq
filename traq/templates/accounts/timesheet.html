@@ -67,7 +67,7 @@
                     <span class="label label-info">"Hours worked" reflects the number of <em>actual hours of work</em> per day (i.e. sum of hours of work of all tickets for that day).</span></th>
                 </thead>
                 <tbody>
-            {#% imgurize as imgurd %#}{# comment this line to disable imgurize #}
+            {% imgurize as imgurd %}{# comment this line to disable imgurize #}
             {% for date, works in work_by_date %}
                 <tr>
                     <td class="date_col">
@@ -118,10 +118,12 @@
                     
                     {% else %}
                     <p class="text-muted">No work found.</p>
-                    {% comment %}<!-- WARNING: repeated use of imgurize may cause HTTP Error 429: Too Many Requests. -->
-                    {% get_image as image %}                    
-                    <a href="{{ image.0 }}"><img src="{{ image.1 }}" /></a>
-                    {% endcomment %}
+                    {#% comment %#}<!-- WARNING: repeated use of imgurize may cause HTTP Error 429: Too Many Requests. -->
+                    {% get_image as image %}
+                    {% if image %}
+                        <a href="{{ image.0 }}"><img src="{{ image.1 }}" /></a>
+                    {% endif %}
+                    {#% endcomment %#}
                     
                     {% endif %}
                     </td>
