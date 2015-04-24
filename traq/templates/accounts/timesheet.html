@@ -6,16 +6,42 @@
 
 {% block page_title %}Your Timesheet{% endblock %}
 
+{% block scripts %}
+{{ block.super }}
+<style>
+    dl {
+        margin-bottom:0;
+    }
+    .dl-horizontal dt{
+    width: 120px;
+    padding-right: 1em;
+    }
+
+    .dl-horizontal dd{
+        margin-left: 0;
+    }
+    .submit {
+        position: absolute;
+        bottom: 0;
+        margin-bottom: 15px;
+        height: 34px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
 {% block content %}
     <h2>Timesheet for user: {{ user.username }}</h2>
 
     <div class="hidden-print print-hide">
         <form class='formi clearfix' method="get" action="">
+        <div class='col-md-12'>
             {{ form.start | bs_group:'3' }}
             {{ form.end | bs_group:'3' }}
-            
-            <div class='col-md-12'>
-            <input class='btn btn-primary btn-sm' type="submit" name="submit" value="submit" />
+            &nbsp;
+            <input class='btn btn-primary btn-sm submit' type="submit" name="submit" value="submit" />
             </div>
         </form>
     </div>
@@ -36,16 +62,35 @@
 
         <table class="table">           
                 <thead>
-                    <th>Date</th>
-                    <th>Works</th>
+                    <!--th class="date_col">Date</th-->
+                    <th colspan=2><h3>Works</h3>
+                    <span class="label label-info">"Hours worked" reflects the number of <em>actual hours of work</em> per day (i.e. sum of hours of work of all tickets for that day).</span></th>
                 </thead>
                 <tbody>
-            {% imgurize as imgurd %}{# comment this line to disable imgurize #}
+            {#% imgurize as imgurd %#}{# comment this line to disable imgurize #}
             {% for date, works in work_by_date %}
                 <tr>
-                    <td>{{ date }}</td>                 
+                    <td class="date_col">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>{{ date|date:"D, d M Y" }}</h4>
+                            </div>
+                            <div class="panel-body">
+                            {% if works.work %}
+                                <dl class="dl-horizontal">
+                                    <dt>In:</dt>
+                                    <dd>{{ works.in|date:"P" }}</dd>
+                                    <dt>Out:</dt>
+                                    <dd>{{ works.out|date:"P" }}</dd>
+                                    <dt>Hours worked:</dt>
+                                    <dd>{{ works.total }}</dd>
+                                </dl>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </td>
                     <td>
-                    {% if works %}  
+                    {% if works.work %}
                         <table class="table table-condensed table-striped">
                             <thead>
                                 <th class="col-md-3">Time</th>
@@ -54,7 +99,7 @@
                                 <th class="col-md-1">Billable</th>
                             </thead>
                             <tbody>
-                            {% for w in works %}
+                            {% for w in works.work %}
                         
                             <tr>
                                 <td>{{ w.started_on|date:"P" }} - {{ w.done_on|date:"P" }}</td>
@@ -64,15 +109,19 @@
                             </tr>
                             
                             {% endfor %}
+                            <tr style="background-color:white;">
+                                <td><strong>Total</strong></td>
+                                <td colspan="3"><strong>{{ works.total }}</strong></td>
+                            </tr>
                             </tbody>
                         </table>
                     
                     {% else %}
                     <p class="text-muted">No work found.</p>
-                    {#% comment %#}<!-- WARNING: repeated use of imgurize may cause HTTP Error 429: Too Many Requests. -->                    
+                    {% comment %}<!-- WARNING: repeated use of imgurize may cause HTTP Error 429: Too Many Requests. -->
                     {% get_image as image %}                    
                     <a href="{{ image.0 }}"><img src="{{ image.1 }}" /></a>
-                    {#% endcomment %#}
+                    {% endcomment %}
                     
                     {% endif %}
                     </td>

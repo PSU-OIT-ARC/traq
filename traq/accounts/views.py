@@ -118,14 +118,24 @@ def timesheet(request):
             done_on__lte=interval[1] 
             ).order_by('started_on')
 
-    work_by_date = dict([(d.date(), []) for d in date_list])
+    work_by_date = dict([(d.date(), dict({'work': [], 'in': None, 'out': None, 'total': None})) for d in date_list])
 
     total_hours = timedelta(0)
     
     for w in work:
+        wbd = work_by_date[w.started_on.date()]
         if w.started_on.date() in work_by_date:
-            work_by_date[w.started_on.date()].append(w)
+            #work_by_date[w.started_on.date()].append(w)
+            wbd['work'].append(w)
             total_hours += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second)
+
+    # Find in and out time for each day
+    for k, v in work_by_date.items():
+        if v['work']:
+            v['work'].sort(key=lambda x: x.started_on)
+            v['in'] = v['work'][0].started_on
+            v['out'] = v['work'][-1].done_on
+            v['total'] = sum([timedelta(hours=w.time.hour, minutes=w.time.minute) for w in v['work']], timedelta())
 
     return render(request, "accounts/timesheet.html", {
         'tickets': tickets,
@@ -151,7 +161,7 @@ def _miniIntervalHelper(request):
             # intervals will be datetime.date type. MUST convert to datetime.datetime type
             now = datetime(interval[1].year, interval[1].month, interval[1].day)
 
-    if interval == ():        
+    if interval == ():
         # default timesheet period: 16th of current month to the 15th of next month
         # Behavior: date range change depending where you are in the month;
         # i.e. seeing current-future timesheet vs. past-current timesheet
