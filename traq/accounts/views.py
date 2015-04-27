@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Q
-from django.utils.timezone import utc, make_aware, get_current_timezone
+from django.utils.timezone import utc, make_aware, get_current_timezone, localtime
 
 from traq.utils import querySetToJSON
 from traq.permissions import STAFF_GROUP, CLIENT_GROUP
@@ -118,13 +118,13 @@ def timesheet(request):
             done_on__lte=interval[1] 
             ).order_by('started_on')
 
-    work_by_date = dict([(d.date(), dict({'work': [], 'in': None, 'out': None, 'total': None})) for d in date_list])
+    work_by_date = dict([(localtime(d).date(), dict({'work': [], 'in': None, 'out': None, 'total': None})) for d in date_list])
 
     total_hours = timedelta(0)
     
     for w in work:
-        wbd = work_by_date[w.started_on.date()]
-        if w.started_on.date() in work_by_date:
+        wbd = work_by_date[localtime(w.started_on).date()]
+        if localtime(w.started_on).date() in work_by_date:
             #work_by_date[w.started_on.date()].append(w)
             wbd['work'].append(w)
             total_hours += timedelta(hours=w.time.hour,minutes=w.time.minute,seconds=w.time.second)
@@ -132,9 +132,9 @@ def timesheet(request):
     # Find in and out time for each day
     for k, v in work_by_date.items():
         if v['work']:
-            v['work'].sort(key=lambda x: x.started_on)
-            v['in'] = v['work'][0].started_on
-            v['out'] = v['work'][-1].done_on
+            v['work'].sort(key=lambda x: localtime(x.started_on))
+            v['in'] = localtime(v['work'][0].started_on)
+            v['out'] = localtime(v['work'][-1].done_on)
             v['total'] = sum([timedelta(hours=w.time.hour, minutes=w.time.minute) for w in v['work']], timedelta())
 
     return render(request, "accounts/timesheet.html", {
