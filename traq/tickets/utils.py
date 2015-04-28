@@ -20,13 +20,8 @@ def get_user_ticket(user_id, ticket_id, index_difference):
     except ValueError as e:
         # currently looking at someone elses tickets.
         # Gonna get sent back to your first ticket
-        current_index = tickets.index(Ticket.objects.first())
+        current_index = 0
     length = len(tickets)
     new_index = current_index + index_difference
-    if new_index < 0:
-        return tickets[0]
-    elif new_index > length - 1:
-        return tickets[length - 1]
-    else:
-        return tickets[new_index]
+    return tickets[new_index % length]
 
