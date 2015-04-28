@@ -23,5 +23,8 @@ def get_user_ticket(user_id, ticket_id, index_difference):
         current_index = 0
     length = len(tickets)
     new_index = current_index + index_difference
-    return tickets[new_index % length]
+    try:
+        return tickets[new_index % length]
+    except ZeroDivisionError as e:
+        return None
 
