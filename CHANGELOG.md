@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2015-05-04
+### Fixed
+- Reverted the previous/next buttons since they broke things
+- Some things on the scrum views
+
 ## [1.1.0] - 2015-04-27
 ### Added
 - Previous/next buttons on ticket detail page
