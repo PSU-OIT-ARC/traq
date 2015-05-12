@@ -7,7 +7,6 @@ from django.contrib import messages
 from django.db.models import Q
 from ..forms import TicketForm, CommentForm, WorkForm, BulkForm
 from ..models import Ticket, Comment, Work, WorkType, TicketStatus, TicketFile
-from ..utils import get_user_ticket
 from traq.projects.models import Project
 from traq.tickets.constants import TICKETS_PAGINATE_BY
 from traq.todos.models import ToDo

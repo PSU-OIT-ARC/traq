@@ -16,7 +16,6 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import TicketForm, WorkForm, CommentForm, BulkForm
-from .utils import get_user_ticket
 from ..utils.tests import TraqCustomTest
 from traq.projects.models import Project, Component, Milestone
 from traq.tickets.models import Ticket, TicketType, TicketStatus, TicketPriority, Work, WorkType, Comment
@@ -263,7 +262,7 @@ class TicketDetailTest(TraqCustomTest):
         Make sure the value returned by the function is actually the users next ticket, and not just the next ticket in the db
         """
         self.logged_in = self.client.login(username="moltres", password='foo')
-        result = get_user_ticket(self.admin.pk, self.ticket.pk, 1)
+        result = Ticket.objects.next_ticket(self.ticket, self.admin)
         self.assertNotEqual(result, self.ticket_2)
         self.assertEqual(result, self.ticket_3)
 
