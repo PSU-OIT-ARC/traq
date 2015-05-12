@@ -265,6 +265,9 @@ class TicketDetailTest(TraqCustomTest):
         result = Ticket.objects.next_ticket(self.ticket, self.admin)
         self.assertNotEqual(result, self.ticket_2)
         self.assertEqual(result, self.ticket_3)
+        result = Ticket.objects.previous_ticket(self.ticket_3, self.admin)
+        self.assertNotEqual(result, self.ticket_2)
+        self.assertEqual(result, self.ticket)
 
 
 class TicketCreateTest(TraqCustomTest):
