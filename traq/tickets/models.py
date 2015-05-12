@@ -77,6 +77,12 @@ class TicketManager(models.Manager):
 
         return queryset
 
+    def previous_ticket(self, ticket, user):
+        return Ticket.objects.filter(pk__lt=ticket.pk, assigned_to_id=user.pk).order_by("-pk").first() 
+
+    def next_ticket(self, ticket, user):
+        return Ticket.objects.filter(pk__gt=ticket.pk, assigned_to_id=user.pk).order_by("pk").first()
+
 class Ticket(models.Model):
     # the horror, the horror...too many fields
     ticket_id = models.AutoField(primary_key=True)

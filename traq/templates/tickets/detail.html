@@ -20,8 +20,12 @@
         </div>
         <div class="col-md-4">
             <div class="row">
-            {% if ticket_prev and ticket_next %}
+            {% if ticket_prev %}
                 <div class="col-md-6"><a href="{% url 'tickets-detail' ticket_prev.pk %}" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-arrow-left"></span> Previous Ticket</a></div>
+            {% else %}
+                <div class="col-md-6"></div>
+            {% endif %}
+            {% if ticket_next %}
                     <div class="col-md-6"><a href="{% url 'tickets-detail' ticket_next.pk %}" class="btn btn-primary btn-block">Next Ticket <span class="glyphicon glyphicon-arrow-right"></span></a></div>
             {% endif %}
             </div>

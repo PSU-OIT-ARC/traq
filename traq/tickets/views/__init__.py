@@ -44,8 +44,8 @@ def detail(request, ticket_id):
     # hidden form_type field on the page 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
     work_form = WorkForm(initial={"time": "00:30:00"}, user=request.user, ticket=ticket)
-    ticket_next = get_user_ticket(request.user.pk, ticket.pk, 1)
-    ticket_prev = get_user_ticket(request.user.pk, ticket.pk, -1)
+    ticket_next = Ticket.objects.next_ticket(ticket, request.user) 
+    ticket_prev = Ticket.objects.previous_ticket(ticket, request.user)
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
         # was submitted
