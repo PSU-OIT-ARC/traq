@@ -269,6 +269,16 @@ class TicketDetailTest(TraqCustomTest):
         self.assertNotEqual(result, self.ticket_2)
         self.assertEqual(result, self.ticket)
 
+    def test_get_user_ticket_different_project(self):
+        """
+        There is only 1 ticket in the other project. Make sure nothing is returned when getting the next ticket assigned to this user
+        """
+        self.logged_in = self.client.login(username="moltres", password='foo')
+        result = Ticket.objects.next_ticket(self.ticket_4, self.admin)
+        self.assertIsNone(result)
+        result = Ticket.objects.previous_ticket(self.ticket_4, self.admin)
+        self.assertIsNone(result)
+
 
 class TicketCreateTest(TraqCustomTest):
     def setUp(self):

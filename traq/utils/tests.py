@@ -38,6 +38,15 @@ class TraqCustomTest(TestCase):
         project.save()
         self.project = project
 
+        project2 = Project(
+                name='foo2',
+                team_dynamix_id=2,
+                description='this is another project',
+                created_by=self.admin,
+                )
+        project2.save()
+        self.project2 = project2
+
         component = Component(
                     name='component',
                     description='this is a description',
@@ -87,6 +96,19 @@ class TraqCustomTest(TestCase):
                 )
         ticket_3.save()
         self.ticket_3 = ticket_3
+
+        ticket_4 = Ticket(
+                title='ticket 4',
+                body='body',
+                created_by=self.admin,
+                status=TicketStatus.objects.first(),
+                priority=TicketPriority.objects.first(),
+                project=self.project2,
+                component=self.component,
+                assigned_to_id=self.admin.pk
+                )
+        ticket_4.save()
+        self.ticket_4 = ticket_4
 
         todo = ToDo(
                 title='todo',
