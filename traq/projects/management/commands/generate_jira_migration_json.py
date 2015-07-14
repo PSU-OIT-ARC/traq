@@ -1,9 +1,12 @@
 import string, re, json
+import markdown
+
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from traq.projects.models import Project
 from traq.tickets.models import TicketFile
@@ -29,8 +32,7 @@ class Command(BaseCommand):
             raise e
         self.agile = options['agile']
         self.links = []
-        print(self.generate_project_json(project))
-        #self.stdout.write("exported json for %s" % project)
+        self.stdout.write(self.generate_project_json(project))
 
     def generate_project_json(self, project):
         self.project_data = self.get_project_base_data(project)
@@ -63,7 +65,12 @@ class Command(BaseCommand):
         for t in tickets:
             ticket = {}
             ticket["summary"] = t.title
-            ticket["description"] = t.body
+            #convert markdown to html body
+            ticket["description"] = mark_safe(markdown.markdown(t.body, safe_mode='escape', extensions=['nl2br']))
+            try:
+                ticket["duedate"] = t.due_on.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+            except:
+                pass
             ticket["comments"] = self.get_comments(t)
             status = t.status.name
             if status == "Completed":
@@ -79,7 +86,10 @@ class Command(BaseCommand):
                 ticket["assignee"] = assignee
             except:
                 pass
-            ticket["duedate"] = t.due_on.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+            try:
+                ticket["duedate"] = t.due_on.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+            except:
+                pass
 
             if self.agile:
                 if todo:
