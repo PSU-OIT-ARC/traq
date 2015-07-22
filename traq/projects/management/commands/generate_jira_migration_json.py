@@ -6,7 +6,7 @@ from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
-from django.utils.safestring import mark_safe
+from django.utils.html import strip_tags
 
 from traq.projects.models import Project
 from traq.tickets.models import TicketFile
@@ -60,55 +60,52 @@ class Command(BaseCommand):
         project_data["components"] = list(project.component_set.all().values_list('name', flat=True))
         return project_data
 
-    def get_issue_data(self, tickets, todo=False):
-        ticket_list = []
-        for t in tickets:
-            ticket = {}
-            ticket["summary"] = t.title
+    def get_issue_data(self, issues, todo=False):
+        issue_list = []
+        for t in issues:
+            issue = {}
+            issue["summary"] = t.title
+            issue["issueType"] = "Task"
             #convert markdown to html body
-            ticket["description"] = mark_safe(markdown.markdown(t.body, safe_mode='escape', extensions=['nl2br']))
+            issue["description"] = strip_tags(markdown.markdown(t.body, safe_mode='escape', extensions=['nl2br']))
             try:
-                ticket["duedate"] = t.due_on.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+                issue["duedate"] = t.due_on.strftime("%Y-%m-%dT%H:%M:%S+00:00")
             except:
                 pass
-            ticket["comments"] = self.get_comments(t)
+            issue["comments"] = self.get_comments(t)
             status = t.status.name
             if status == "Completed":
                status = "Resolved"
             if status == "Stalled":
                status = "In Progess" #sorry. You'll  have to take care of these later.
-            ticket["status"] = status
-            ticket["components"] = []
-            ticket["components"].append(t.component.name)
-            ticket["created"] = t.created_on.strftime("%Y-%m-%dT%H:%M:%S+00:00") #a la SimpleDateFromat
+            issue["status"] = status
+            issue["components"] = []
+            issue["components"].append(t.component.name)
+            issue["created"] = t.created_on.strftime("%Y-%m-%dT%H:%M:%S+00:00") #a la SimpleDateFromat
             try:
                 assignee = t.assigned_to.username
-                ticket["assignee"] = assignee
+                issue["assignee"] = assignee
             except:
                 pass
             try:
-                ticket["duedate"] = t.due_on.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+                issue["duedate"] = t.due_on.strftime("%Y-%m-%dT%H:%M:%S+00:00")
             except:
                 pass
 
+            issue["attachments"] = self.get_attachments(t, todo)
             if self.agile:
                 if todo:
-                    ticket["issueType"] = "Story"
-                    ticket["attachments"] = self.get_attachments(t, True)
-                    ticket["externalId"] = t.pk + 10000
+                    issue["labels"] = ["ToDo",]
+                    issue["externalId"] = t.pk + 10000
                 else:
-                    ticket["externalId"] = t.pk
-                    ticket["issueType"] = "sub-task"
-                    ticket["attachments"] = self.get_attachments(t)
+                    issue["externalId"] = t.pk
                     #and create a link between ticket and todo
-                    link = self.create_sub_task_link(t)
+                    link = self.create_task_link(t)
                     if link is not None:
-                        self.links.append(self.create_sub_task_link(t))
-            else:
-                ticket["issueType"] = "Task"
+                        self.links.append(link)
 
-            ticket_list.append(ticket)
-        return ticket_list
+            issue_list.append(issue)
+        return issue_list
 
     def get_comments(self, ticket):
         comments = list(ticket.comment_set.all().values("body",
@@ -123,11 +120,11 @@ class Command(BaseCommand):
         else:
             return []
 
-    def create_sub_task_link(self, ticket):
+    def create_task_link(self, ticket):
         try:
             todo_id = ticket.todos.all()[0].pk
             link = {}
-            link['name'] = "sub-task-link"
+            link['name'] = "Derived"
             link['sourceId'] = ticket.pk
             link['destinationId'] = 10000 + todo_id  #shift this so it doesn't collide with a ticket_id
             return link
