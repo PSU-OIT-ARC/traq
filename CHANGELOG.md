@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2015-07-23
+### Added
+- Management command to export project data for Jira:
+  `generate_jira_migration_json <project_id> { --agile }`
+
 ## [1.1.2] - 2015-06-03
 ### Fixed
 - Layout issues on timesheet page
