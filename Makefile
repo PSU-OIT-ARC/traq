@@ -53,7 +53,7 @@ $(VENV_DIR): requirements.txt
 	    exit 1; \
 	fi
 	python3 -m venv $(VENV_DIR)
-	curl https://raw.githubusercontent.com/pypa/pip/master/contrib/get-pip.py | python3
+	curl https://bootstrap.pypa.io/get-pip.py | python3
 	pip install -r requirements.txt
 
 # remove pyc junk
