@@ -2,7 +2,7 @@ Django==1.7.2
 Markdown==2.5.2
 PyMySQL==0.6.2
 coverage==3.7.1
--e git+https://github.com/PSU-OIT-ARC/django-arcutils.git@ac0df5ef2c03a7bf12cb10d45ef5b9c484d4f056#egg=django_arcutils-master
+git+https://github.com/PSU-OIT-ARC/django-arcutils.git@1.x-maint#egg=django_arcutils
 django-cloak==0.1.3
 django-extensions==1.4.6
 django-filter==0.8
