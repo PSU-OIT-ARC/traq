@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.conf import settings
 from django.views.generic import TemplateView
 
+from arcutils.cas import views as cas_views
+
 from . import views
 
 from .projects import views as projects
@@ -25,8 +27,9 @@ urlpatterns = patterns('',
     url(r'^$', views.home),
 
     # auth
-    url(r'^accounts/login/$', 'djangocas.views.login', name='accounts-login'),
-    url(r'^accounts/logout/$', 'djangocas.views.logout', name='accounts-logout', kwargs={"next_page": "/"}),
+    url(r'^accounts/login/$', cas_views.login, name='accounts-login'),
+    url(r'^accounts/logout/$', cas_views.logout, name='accounts-logout'),
+    url(r'^accounts/cas/validate/$', cas_views.validate, name='cas-validate'),
 
     # accounts
     url(r'^accounts/profile/$', accounts.profile, name='accounts-profile'),

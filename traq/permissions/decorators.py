@@ -3,7 +3,6 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.urlresolvers import reverse
-from djangocas.views import login as cas_login
 from traq.projects.models import Project
 from traq.todos.models import ToDo
 
@@ -27,7 +26,7 @@ def can_view_project(fn):
         else:
             # they're just not logged in
             params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})
-            return HttpResponseRedirect(reverse(cas_login) + '?' + params)
+            return HttpResponseRedirect(reverse('accounts-login') + '?' + params)
 
     return wrapper
 
@@ -51,6 +50,6 @@ def can_view_todo(fn):
         else:
             # they're just not logged in
             params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})
-            return HttpResponseRedirect(reverse(cas_login) + '?' + params)
+            return HttpResponseRedirect(reverse('accounts-login') + '?' + params)
 
     return wrapper

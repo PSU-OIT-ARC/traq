@@ -60,12 +60,6 @@ class IPList(list):
 
 INTERNAL_IPS = IPList(['10.*', '192.168.*'])
 
-CAS_SERVER_URL = 'https://sso.pdx.edu/cas/login'
-# prevents CAS login on the admin pages
-CAS_ADMIN_PREFIX = 'admin'
-
-# for django-cas to work, it needs HttpRequest.get_host(), which requires this setting
-# https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['.pdx.edu']
 
 # Local time zone for this installation. Choices can be found here:
@@ -143,7 +137,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'djangocas.middleware.CASMiddleware',
     'cloak.middleware.CloakMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
