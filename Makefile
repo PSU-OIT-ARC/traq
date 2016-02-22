@@ -11,7 +11,6 @@
         shell \
         test \
         coverage \
-        love \
 
 .DEFAULT_GOAL := run
 
@@ -107,8 +106,5 @@ test: $(VENV_DIR)
 # go to `0.0.0.0:8000/htmlcov/index.html` to view test coverage
 coverage: $(VENV_DIR)
 	coverage run ./manage.py test $(test) && coverage html --omit=.env/*
-
-love:
-	@echo Not war?
 
 ## /Django
