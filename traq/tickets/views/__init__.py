@@ -43,7 +43,8 @@ def detail(request, ticket_id):
     # hidden form_type field on the page 
     comment_form = CommentForm(created_by=request.user, ticket=ticket)
     work_form = WorkForm(initial={"time": "00:30:00"}, user=request.user, ticket=ticket)
-
+    ticket_next = Ticket.objects.next_ticket(ticket, request.user) 
+    ticket_prev = Ticket.objects.previous_ticket(ticket, request.user)
     if request.POST:
         # there are a few forms on the page, so we use this to determine which
         # was submitted
@@ -63,6 +64,8 @@ def detail(request, ticket_id):
                 return HttpResponseRedirect(request.path)
 
     return render(request, 'tickets/detail.html', {
+        'ticket_prev': ticket_prev,
+        'ticket_next': ticket_next,
         'project': project,
         'ticket': ticket,
         'comments': comments,
