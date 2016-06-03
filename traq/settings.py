@@ -184,6 +184,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'django_extensions',
+    'github_hook',
 )
 
 SECRET_KEY = variable("SECRET_KEY", default=os.urandom(64).decode("latin1"))
